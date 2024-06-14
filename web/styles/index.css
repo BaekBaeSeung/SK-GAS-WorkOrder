@@ -1,0 +1,116 @@
+/* NanumSquare */
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 300;
+    src: url("../assets/font/NanumSquare/NanumSquareL.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareL.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareL.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareL.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareL.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 400;
+    src: url("../assets/font/NanumSquare/NanumSquareR.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareR.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareR.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareR.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareR.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 700;
+    src: url("../assets/font/NanumSquare/NanumSquareB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareB.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 800;
+    src: url("../assets/font/NanumSquare/NanumSquareEB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareEB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareEB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareEB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareEB.ttf") format("truetype");
+}
+
+/* NanumSquare AC */
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 300;
+    src: url("../assets/font/NanumSquare/NanumSquareAcL.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 400;
+    src: url("../assets/font/NanumSquare/NanumSquareAcR.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 700;
+    src: url("../assets/font/NanumSquare/NanumSquareAcB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 800;
+    src: url("../assets/font/NanumSquare/NanumSquareAcEB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.ttf") format("truetype");
+}
+
+html, body {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -o-text-size-adjust: none;
+    touch-action: pan-y;
+
+    font-family: "NanumSquareAc";
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background-color: #EEEEEE;
+}

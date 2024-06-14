@@ -1,0 +1,166 @@
+html, body {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -o-text-size-adjust: none;
+    touch-action: pan-y;
+
+    font-family: "NanumSquareAc";
+    display: flex;
+    flex-direction: column; /* Changed from row to column */
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background-color: #EEEEEE;
+}
+
+.previous-container {
+    width: 50lvh;
+    min-height: 90lvh; /* Changed from height to min-height */
+    padding: 2lvh;
+    text-align: center;
+    /* background-color: #FFFFFF;
+    border-radius: 1lvh;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15); */
+    overflow-y: auto; /* Added scroll */
+}
+
+.logo {
+    width: 11lvh;
+    margin-bottom: 1.6lvh;
+    margin-left: -29lvh; 
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centered */
+    margin-bottom: 2lvh;
+}
+
+.avatar {
+    width: 8lvh;
+    height: 8lvh;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.initial {
+    font-size: 7.5lvh;
+    font-weight: 900;
+    color: #813DD9;
+    margin-left: 3lvh;
+    margin-right: 1lvh;
+}
+
+.time-container {
+    display: flex;
+    align-items: center;
+    margin-left: 1lvh; /* Gap between elements */
+}
+
+.time-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 0.5lvh;
+    gap: -1lvh; /* Gap between time and date */
+}
+
+.date {
+    font-size: 3lvh;
+    font-weight: 500;
+}
+
+.day {
+    font-size: 6lvh;
+    font-weight: 800;
+    color: #454545;
+    margin-left: 0.2lvh;
+}
+
+.time {
+    font-size: 4lvh;
+    font-weight: 900;
+}
+
+.notice, .previous-records {
+    background-color: #F4F4F4;
+    padding: 1lvh;
+    border-radius: 1lvh;
+    margin-bottom: 2lvh; /* Same gap between notice and schedule */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left; /* Left-aligned */
+}
+
+.notice p, .previous-records p {
+    margin: 0;
+    font-size: 1.5lvh; /* Smaller font */
+    font-weight: 700; /* Bolder font */
+    margin-left: 1.5lvh; /* Left margin */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notice span, .previous-records span {
+    font-size: 3lvh;
+    font-weight: 900;
+    color: #7B7B7B;
+    margin-right: 1lvh;
+}
+
+.schedule {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4lvh; /* Wider gap between time items */
+}
+
+.schedule-item {
+    background-color: #F4F4F4;
+    padding: 1lvh;
+    border-radius: 1lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Vertical */
+    align-items: flex-start; /* Left-aligned */
+    margin-bottom: 2lvh; /* Wider gap between time items */
+}
+
+.schedule-item p {
+    margin: 0;
+}
+
+.shift-time {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1.2lvh;
+    
+}
+
+.location {
+    font-size: 1.5lvh;
+    font-weight: 600;
+    color: #888888;
+}
+
+.shift {
+    font-size: 4lvh;
+    font-weight: 700;
+}
+
+.time {
+    font-size: 4lvh;
+    font-weight: 900;
+}

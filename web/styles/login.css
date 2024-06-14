@@ -1,0 +1,226 @@
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 300;
+    src: url("../assets/font/NanumSquare/NanumSquareL.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareL.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareL.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareL.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareL.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 400;
+    src: url("../assets/font/NanumSquare/NanumSquareR.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareR.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareR.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareR.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareR.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 700;
+    src: url("../assets/font/NanumSquare/NanumSquareB.eot");
+    src: local("���"),
+        url("../assets/font/NanumSquare/NanumSquareB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareB.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 800;
+    src: url("../assets/font/NanumSquare/NanumSquareEB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareEB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareEB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareEB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareEB.ttf") format("truetype");
+}
+
+/* NanumSquare AC */
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 300;
+    src: url("../assets/font/NanumSquare/NanumSquareAcL.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 400;
+    src: url("../assets/font/NanumSquare/NanumSquareAcR.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 700;
+    src: url("../assets/font/NanumSquare/NanumSquareAcB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 800;
+    src: url("../assets/font/NanumSquare/NanumSquareAcEB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.ttf") format("truetype");
+}
+html, body {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -o-text-size-adjust: none;
+    touch-action: pan-y;
+
+    font-family: "NanumSquareAc";
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background-color: #EEEEEE;
+}
+
+.login-container {
+    width: 50lvh;
+    height: 90lvh;
+    padding: 2lvh;
+    text-align: center;
+}
+
+.logo {
+    width: 11lvh;
+    margin-bottom: 0.1lvh;
+}
+
+.title {
+    font-size: 2.5lvh;
+    font-weight: 900;
+    margin-top: 0lvh;
+    margin-bottom: 2lvh;
+    color: #1B1B1B;
+}
+
+.time-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.time-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 0.1lvh;
+}
+
+.date{
+  font-size: 2lvh;
+  color: #1B1B1B;
+}
+
+.time{
+  font-size: 3lvh;
+  color: #1B1B1B;
+}
+.day{
+  font-size: 5lvh;
+  color: #454545;
+}
+
+.time, .day {
+    font-weight: bold;
+}
+
+.login-form-container {
+    width: 35lvh;
+    height: 40lvh;
+    background-color: #F4F4F4;
+    padding: 1lvh;
+    border-radius: 1lvh;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15);
+    margin: 2lvh auto; /* 정가운데로 배치 */
+}
+
+.avatar {
+    width:10lvh;
+    height: 10lvh;
+    margin: 3lvh auto 3lvh;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+}
+
+#loginForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#username, #password {
+    width: 70%;
+    padding: 1lvh;
+    margin-bottom: 10px;
+    border: 1px solid #EBEBEB;
+    background-color: #EBEBEB;
+    border-radius: 50px;
+    font-size: 16px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.18);
+}
+
+#username::placeholder, #password::placeholder {
+    color: #C3C3C3; 
+}
+
+.login-button {
+    width: 3.8lvh;
+    height: 3.8lvh;
+    background-color: #F08000;
+    border: none;
+    border-radius: 50%;
+    color: #EEEEEE;
+    font-size: 2lvh;
+    font-weight: 700;
+    text-align: center;
+    line-height: 3.8lvh;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1.5lvh;
+}
+
+
+.login-button:hover {
+    background-color: #D06A00;
+}

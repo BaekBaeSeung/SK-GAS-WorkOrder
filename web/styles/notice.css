@@ -1,0 +1,176 @@
+html, body {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -o-text-size-adjust: none;
+    touch-action: pan-y;
+
+    font-family: "NanumSquareAc";
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background-color: #EEEEEE;
+}
+
+.notice-container {
+    width: 50lvh;
+    height: 90lvh;
+    padding: 2lvh;
+    text-align: center;
+    /* background-color: #FFFFFF;
+    border-radius: 1lvh;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15); */
+}
+
+.logo {
+    width: 11lvh;
+    margin-bottom: 1.6lvh;
+    margin-left: -29lvh; 
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2lvh;
+}
+
+.avatar {
+    width: 8lvh;
+    height: 8lvh;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.initial {
+    font-size: 7lvh;
+    font-weight: 900;
+    color: #813DD9;
+    margin-left: 3lvh;
+    margin-right: 1lvh;
+}
+
+.time-container {
+    display: flex;
+    align-items: center;
+    margin-left: 1lvh; /* 요소 간 간격 조정 */
+}
+
+.time-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 0.5lvh;
+    gap: -1lvh; /* 시간과 날짜의 위아래 간격 조정 */
+}
+
+.date {
+    font-size: 3lvh;
+    font-weight: 500;
+}
+
+.day {
+    font-size: 6lvh;
+    font-weight: 800;
+    color: #454545;
+    margin-left: 0.2lvh;
+}
+.time {
+    font-size: 4lvh;
+    font-weight: 900;
+}
+
+.notice {
+    background-color: #F4F4F4;
+    padding: 1lvh;
+    border-radius: 1lvh;
+    margin-bottom: 2lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.notice p {
+    margin: 0;
+    font-size: 1.5lvh;
+    font-weight: 700;
+    margin-left: 1.5lvh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.notice span {
+    font-size: 3lvh;
+    font-weight: 900;
+    color: #7B7B7B;
+    margin-right: 1lvh;
+}
+
+.notices {
+    display: flex;
+    flex-direction: column;
+    gap: 1lvh;
+}
+
+.notice-item {
+    background-color: #F4F4F4;
+    padding: 1.5lvh;
+    border-radius: 1lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    display: flex;
+    flex-direction: column; /* 수정 */
+    gap: 0.5lvh; /* 추가 */
+    margin-top: 1lvh;
+}
+
+.notice-item.urgent {
+    border-left: 1lvh solid #F08000;
+}
+
+.notice-item p {
+    margin: 0;
+}
+
+.notice-item .title-date-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notice-item .title {
+    font-size: 2lvh;
+    font-weight: 700;
+}
+
+.notice-item .date {
+    font-size: 1.5lvh;
+    font-weight: 700;
+    color: #6A6A6A; /* 기본 색상 */
+    text-align: right;
+}
+
+
+.notice-item ul {
+    margin: 0;
+    padding-left: 1.5lvh;
+    list-style-type: disc;
+}
+
+.notice-item ul li {
+    font-size: 1.5lvh;
+    font-weight: 400;
+    margin-top: 0.5lvh;
+    color: #6A6A6A;
+}

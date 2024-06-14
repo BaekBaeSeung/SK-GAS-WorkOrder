@@ -1,0 +1,263 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -o-text-size-adjust: none;
+    touch-action: pan-y;
+
+    font-family: "NanumSquareAc";
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background-color: #EEEEEE;
+    overflow-y: auto; /* 스크롤 가능하도록 설정 */
+}
+
+.schedule-detail-detail-container {
+    width: 50lvh;
+    min-height: 90lvh;
+    padding: 2lvh;
+    text-align: center;
+    /* background-color: #FFFFFF;
+    border-radius: 1lvh;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15); */
+    /* overflow-y: auto; 스크롤 가능하도록 설정 */
+    margin-top: 10lvh;
+    max-height: 100vh; /* 최대 높이를 설정하여 스크롤이 생기도록 함 */
+}
+
+.logo {
+    width: 11lvh;
+    margin-bottom: 1.6lvh;
+    margin-left: -29lvh; 
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2lvh;
+}
+
+.avatar {
+    width: 8lvh;
+    height: 8lvh;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.initial {
+    font-size: 7lvh;
+    font-weight: 900;
+    color: #813DD9;
+    margin-left: 3lvh;
+    margin-right: 1lvh;
+}
+
+.time-container {
+    display: flex;
+    align-items: center;
+    margin-left: 1lvh;
+}
+
+.time-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 0.5lvh;
+    gap: -1lvh;
+}
+
+.date {
+    font-size: 3lvh;
+    font-weight: 500;
+}
+
+.day {
+    font-size: 6lvh;
+    font-weight: 800;
+    color: #454545;
+    margin-left: 0.2lvh;
+}
+
+
+.notice {
+    background-color: #F4F4F4;
+    padding: 1lvh;
+    border-radius: 1lvh;
+    margin-bottom: 2lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.notice p {
+    margin: 0;
+    font-size: 1.5lvh;
+    font-weight: 700;
+    margin-left: 1.5lvh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notice span {
+    font-size: 1.5lvh;
+    font-weight: 900;
+    color: #454545;
+    margin-right: 1lvh;
+}
+
+.schedule-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 1lvh;
+}
+
+.schedule-item {
+    background-color: #F4F4F4;
+    padding: 1lvh;
+    border-radius: 1lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 2lvh;
+    width: 96%;
+}
+
+.location-time{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.time-date .time {
+    font-size: 4lvh;
+    font-weight: 900;
+    color: #1B1B1B;
+}
+
+.location-time .time {
+  font-size: 1.5lvh;
+  font-weight: 600;
+  color: #6A6A6A;
+}
+
+
+.location {
+    font-size: 1.5lvh;
+    font-weight: 600;
+    color: #888888;
+}
+
+
+
+.task {
+    display: flex;
+    flex-direction: column;
+    gap: 1lvh;
+    width: 100%;
+}
+
+.task-item {
+    background-color: #EAEAEA;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-item p.task-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.task-item p.task-name-header {
+    width: 46.5lvh;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.8lvh;
+    color: #2A2A2A;
+    border-radius: 50%;
+}
+
+.task-header {
+    display: flex;
+    align-items: center;
+    gap: 1lvh;
+    width: 100%;
+}
+
+.task-number {
+    background-color: #813CD9;
+    color: #FFFFFF;
+    font-size: 1.5lvh;
+    font-weight: 700;
+    border-radius: 1lvh;
+    width: 3.5lvh;
+    height: 2lvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-name {
+    font-size: 2.5lvh;
+    font-weight: 800;
+    color: #2A2A2A;
+    text-align: left;
+    flex-grow: 1;
+}
+
+.task-code {
+    font-size: 1.5lvh;
+    font-weight: 900;
+    color: #2A2A2A;
+}
+
+.task-body {
+    display: flex;
+    align-items: center;
+    gap: 1lvh;
+    width: 100%;
+}
+
+.gauge {
+    width: 100%;
+    max-width: 20lvh;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5lvh;
+    margin-left: 1.5lvh;
+}
+
+.input-field {
+    width: 5lvh;
+    height: 2lvh;
+    border: 0.15lvh solid #813CD9;
+    border-radius: 0.2lvh;
+    text-align: center;
+}
+
+.unit {
+    font-size: 1.5lvh;
+    font-weight: 800;
+    color: #2A2A2A;
+}

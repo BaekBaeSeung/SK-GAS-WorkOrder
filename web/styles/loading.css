@@ -1,0 +1,488 @@
+/* NanumSquare */
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 300;
+    src: url("../assets/font/NanumSquare/NanumSquareL.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareL.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareL.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareL.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareL.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 400;
+    src: url("../assets/font/NanumSquare/NanumSquareR.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareR.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareR.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareR.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareR.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 700;
+    src: url("../assets/font/NanumSquare/NanumSquareB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareB.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquare";
+    font-weight: 800;
+    src: url("../assets/font/NanumSquare/NanumSquareEB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareEB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareEB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareEB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareEB.ttf") format("truetype");
+}
+
+/* NanumSquare AC */
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 300;
+    src: url("../assets/font/NanumSquare/NanumSquareAcL.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcL.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 400;
+    src: url("../assets/font/NanumSquare/NanumSquareAcR.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcR.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 700;
+    src: url("../assets/font/NanumSquare/NanumSquareAcB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcB.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "NanumSquareAc";
+    font-weight: 800;
+    src: url("../assets/font/NanumSquare/NanumSquareAcEB.eot");
+    src: local("☺"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.eot?#iefix") format("embedded-opentype"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.woff2") format("woff2"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.woff") format("woff"),
+        url("../assets/font/NanumSquare/NanumSquareAcEB.ttf") format("truetype");
+}
+
+html, body {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -o-text-size-adjust: none;
+    touch-action: pan-y;
+
+    font-family: "NanumSquareAc";
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background-color: #EEEEEE;
+}
+
+#app {
+    width: 50lvh;
+    height: 90lvh;
+    background-color: #F08000;
+    border-radius: 1lvh 15lvh 1lvh 1lvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    color: #EEEEEE;
+    text-align: center;
+}
+
+#app img {
+    width: 30lvh;
+    margin-bottom: 2lvh;
+    filter: brightness(0) saturate(100%) invert(99%) sepia(1%) saturate(2724%) hue-rotate(303deg) brightness(114%) contrast(87%);
+}
+
+#app p {
+    font-size: 2.3lvh;
+    margin-bottom: 1lvh;
+    font-weight: bold;
+    letter-spacing: 0.02lvh;
+}
+
+#app button {
+    background-color: transparent;
+    border: 2px solid #EEEEEE;
+    border-radius: 20lvh;
+    padding: 0.8lvh 1.5lvh;
+    color: #EEEEEE;
+    font-size: 1.5lvh;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 4px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 18lvh;
+}
+#app #startText {
+    font-weight: bold;
+    margin: 1lvh;
+    letter-spacing: 0.02lvh;
+}
+
+#app button:hover {
+    background-color: #EEEEEE;
+    color: #F08000;
+}
+
+@media (max-width: 1200px) {
+    #app {
+        width: 47lvh;
+        height: 87lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 29lvh;
+        margin-bottom: 1.9lvh;
+    }
+
+    #app p {
+        font-size: 2.2lvh;
+        margin-bottom: 0.9lvh;
+    }
+
+    #app button {
+        padding: 0.8lvh 1.5lvh;
+        font-size: 1.45lvh;
+        margin-top: 17lvh;
+    }
+    #app #startText{
+        margin: 0.95lvh;
+    }
+}
+
+@media (max-width: 1024px) {
+     #app {
+        width: 47lvh;
+        height: 87lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 29lvh;
+        margin-bottom: 1.9lvh;
+    }
+
+    #app p {
+        font-size: 2.2lvh;
+        margin-bottom: 0.9lvh;
+    }
+
+    #app button {
+        padding: 0.8lvh 1.5lvh;
+        font-size: 1.45lvh;
+        margin-top: 17lvh;
+    }
+    #app #startText{
+        margin: 0.95lvh;
+    }
+}
+
+@media (max-width: 820px) {
+     #app {
+        width: 46.5lvh;
+        height: 86.5lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 28.7lvh;
+        margin-bottom: 1.8lvh;
+    }
+
+    #app p {
+        font-size: 2.1lvh;
+        margin-bottom: 0.9lvh;
+    }
+
+    #app button {
+        padding: 0.8lvh 1.5lvh;
+        font-size: 1.45lvh;
+        margin-top: 16.7lvh;
+    }
+    #app #startText{
+        margin: 0.95lvh;
+    }
+}
+@media (max-width: 800px) {
+     #app {
+        width: 46lvh;
+        height: 86lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 28.7lvh;
+        margin-bottom: 1.8lvh;
+    }
+
+    #app p {
+        font-size: 2.1lvh;
+        margin-bottom: 0.9lvh;
+    }
+
+    #app button {
+        padding: 0.8lvh 1.5lvh;
+        font-size: 1.45lvh;
+        margin-top: 16.7lvh;
+    }
+    #app #startText{
+        margin: 0.95lvh;
+    }
+}
+@media (max-width: 780px) {
+     #app {
+        width: 45.5lvh;
+        height: 85.5lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 28.2lvh;
+        margin-bottom: 1.7lvh;
+    }
+
+    #app p {
+        font-size: 2lvh;
+        margin-bottom: 0.85lvh;
+    }
+
+    #app button {
+        padding: 0.8lvh 1.5lvh;
+        font-size: 1.45lvh;
+        margin-top: 16.2lvh;
+    }
+    #app #startText{
+        margin: 0.9lvh;
+    }
+}
+@media (max-width: 760px) {
+    #app {
+        width: 44.5lvh;
+        height: 84.5lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 28lvh;
+        margin-bottom: 1.6lvh;
+    }
+
+    #app p {
+        font-size: 1.95lvh;
+        margin-bottom: 0.8lvh;
+    }
+
+    #app button {
+        padding: 0.75lvh 1.45lvh;
+        font-size: 1.4lvh;
+        margin-top: 16lvh;
+    }
+    #app #startText{
+        margin: 0.85lvh;
+    }
+}
+
+@media (max-width: 740px) {
+    #app {
+        width: 43.5lvh;
+        height: 83.5lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 27.7lvh;
+        margin-bottom: 1.5lvh;
+    }
+
+    #app p {
+        font-size: 1.9lvh;
+        margin-bottom: 0.75lvh;
+    }
+
+    #app button {
+        padding: 0.7lvh 1.4lvh;
+        font-size: 1.35lvh;
+        margin-top: 15.8lvh;
+    }
+    #app #startText{
+        margin: 0.8lvh;
+    }
+}
+
+@media (max-width: 720px) {
+    #app {
+        width: 41.5lvh;
+        height: 81.5lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 27.5lvh;
+        margin-bottom: 1.4lvh;
+    }
+
+    #app p {
+        font-size: 1.85lvh;
+        margin-bottom: 0.7lvh;
+    }
+
+    #app button {
+        padding: 0.65lvh 1.35lvh;
+        font-size: 1.3lvh;
+        margin-top: 15.6lvh;
+    }
+    #app #startText{
+        margin: 0.75lvh;
+    }
+}
+
+@media (max-width: 700px) {
+    #app {
+        width: 40.5lvh;
+        height: 80.5lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 27.2lvh;
+        margin-bottom: 1.3lvh;
+    }
+
+    #app p {
+        font-size: 1.8lvh;
+        margin-bottom: 0.65lvh;
+    }
+
+    #app button {
+        padding: 0.6lvh 1.3lvh;
+        font-size: 1.25lvh;
+        margin-top: 15.4lvh;
+    }
+    #app #startText{
+        margin: 0.7lvh;
+    }
+}
+
+@media (max-width: 680px) {
+    #app {
+        width: 39.5lvh;
+        height: 79.5lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 27lvh;
+        margin-bottom: 1.2lvh;
+    }
+
+    #app p {
+        font-size: 1.75lvh;
+        margin-bottom: 0.6lvh;
+    }
+
+    #app button {
+        padding: 0.55lvh 1.25lvh;
+        font-size: 1.2lvh;
+        margin-top: 15.2lvh;
+    }
+    #app #startText{
+        margin: 0.65lvh;
+    }
+}
+
+@media (max-width: 660px) {
+    #app {
+       width: 38.9lvh;
+        height: 78.5lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 26.7lvh;
+        margin-bottom: 1.1lvh;
+    }
+
+    #app p {
+        font-size: 1.7lvh;
+        margin-bottom: 0.55lvh;
+    }
+
+    #app button {
+        padding: 0.5lvh 1.2lvh;
+        font-size: 1.15lvh;
+        margin-top: 15lvh;
+    }
+    #app #startText{
+        margin: 0.6lvh;
+    }
+}
+
+@media (max-width: 620px) {
+    #app {
+        width: 45lvh;
+        height: 87lvh;
+        border-radius: 1vh 15vh 1vh 1vh;
+    }
+
+    #app img {
+        width: 26.2lvh;
+        margin-bottom: 0.9lvh;
+    }
+
+    #app p {
+        font-size: 2.5lvh;
+        margin-bottom: 0.45lvh;
+    }
+
+    #app button {
+        padding: 0.9lvh 1.9lvh;
+        font-size: 1.8lvh;
+        margin-top: 14.6lvh;
+    }
+    #app #startText{
+        margin: 1.2lvh;
+    }
+}
+
