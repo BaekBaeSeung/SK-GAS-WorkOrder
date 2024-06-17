@@ -94,6 +94,7 @@ async function createViteMiddleware(server) {
                 // "@babylonjs/viewer",
                 // "@tweenjs/tween.js",
                 // "uuid"
+                "xlsx"
             ]
         },
         "clearScreen": false,
@@ -174,5 +175,37 @@ function startServer() {
         });
     }
 }
+
+//=================================================================
+// Test Database Connection
+//=================================================================
+
+async function testDatabaseConnection() {
+    try {
+        const connection = await conn;
+        const rows = await connection.query("SELECT * FROM test02");
+        console.log("Database connection successful. Data from test02 table:");
+        console.log(rows);
+    } catch (err) {
+        console.error("Database connection failed:", err);
+    }
+}
+
+// Call the test function
+testDatabaseConnection();
+
+//=================================================================
+// API Endpoint to Get Data from Database
+//=================================================================
+app.get('/api/notice-data', async (req, res) => {
+    try {
+        const connection = await conn;
+        const rows = await connection.query("SELECT * FROM test02");
+        res.json(rows);
+    } catch (err) {
+        console.error("Failed to fetch data:", err);
+        res.status(500).send("Failed to fetch data");
+    }
+});
 
 startServer();

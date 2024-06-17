@@ -16,6 +16,7 @@ export function renderLoginPage(container) {
                     <input type="text" id="username" placeholder="아이디" required />
                     <input type="password" id="password" placeholder="비밀번호" required />
                     <button type="submit" class="login-button"><span>></span></button>
+                    
                 </form>
             </div>
         </div>
