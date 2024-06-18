@@ -12,6 +12,7 @@
 // 필요한 패키지 추가하는 코드 
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser"); // 추가
 const { createServer, build } = require("vite");
 const ws = require("ws");
 const fs = require("fs");
@@ -33,6 +34,7 @@ const SSL_KEY_PATH = "./ssl/_wildcard_.tsp-xr.com_key.pem";
 const SSL_CERT_PATH = "./ssl/_wildcard_.tsp-xr.com_crt.pem";
 
 const app = express();
+app.use(bodyParser.json()); // 추가
 
 const options = {
     key: fs.readFileSync(SSL_KEY_PATH),
@@ -195,16 +197,24 @@ async function testDatabaseConnection() {
 testDatabaseConnection();
 
 //=================================================================
-// API Endpoint to Get Data from Database
+// Login Endpoint
 //=================================================================
-app.get('/api/notice-data', async (req, res) => {
+
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
     try {
         const connection = await conn;
-        const rows = await connection.query("SELECT * FROM user");
-        res.json(rows);
+        const rows = await connection.query("SELECT * FROM user WHERE email = ? AND pw = ?", [username, password]);
+
+        if (rows.length > 0) {
+            res.json({ success: true });
+        } else {
+            res.json({ success: false, message: 'Invalid username or password' });
+        }
     } catch (err) {
-        console.error("Failed to fetch data:", err);
-        res.status(500).send("Failed to fetch data");
+        console.error("Error during login:", err);
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
 
