@@ -93,7 +93,7 @@ async function createViteMiddleware(server) {
                 // "@babylonjs/shared-ui-components",
                 // "@babylonjs/viewer",
                 // "@tweenjs/tween.js",
-                // "uuid"
+                "uuid",
                 "xlsx"
             ]
         },
@@ -183,8 +183,8 @@ function startServer() {
 async function testDatabaseConnection() {
     try {
         const connection = await conn;
-        const rows = await connection.query("SELECT * FROM test02");
-        console.log("Database connection successful. Data from test02 table:");
+        const rows = await connection.query("SELECT * FROM user");
+        console.log("Database connection successful. Data from user table:");
         console.log(rows);
     } catch (err) {
         console.error("Database connection failed:", err);
@@ -200,7 +200,7 @@ testDatabaseConnection();
 app.get('/api/notice-data', async (req, res) => {
     try {
         const connection = await conn;
-        const rows = await connection.query("SELECT * FROM test02");
+        const rows = await connection.query("SELECT * FROM user");
         res.json(rows);
     } catch (err) {
         console.error("Failed to fetch data:", err);

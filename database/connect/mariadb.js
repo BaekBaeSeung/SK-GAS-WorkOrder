@@ -5,7 +5,7 @@ const conn = mariadb.createConnection({
     port: 3406,
     user: 'root',
     password: 'mariadb',
-    database: 'test_db',
+    database: 'test03',
     connectionLimit: 5
 });
 
