@@ -48,6 +48,8 @@ export function renderLoginPage(container) {
         const result = await response.json();
         if (result.success) {
             alert('로그인 성공');
+            console.log('Access Token:', result.accessToken);
+            console.log('Refresh Token:', result.refreshToken);
             // 로그인 성공 시 필요한 추가 작업
         } else {
             alert('로그인 실패: ' + result.message);

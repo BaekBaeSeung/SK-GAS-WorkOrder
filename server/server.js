@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 /**
  *  @author XHI-NM <jeong.chiseo@tsp-xr.com>
  *  @description
@@ -18,7 +20,7 @@ const ws = require("ws");
 const fs = require("fs");
 const mariadb = require('../database/connect/mariadb');
 const conn = mariadb.conn;
-
+const jwt = require('jsonwebtoken');
 
 //=================================================================
 // Set Server Configuration
@@ -32,6 +34,12 @@ const HOST = process.env.HOST || '0.0.0.0';
 const HTTPS_REDIRECT = true;
 const SSL_KEY_PATH = "./ssl/_wildcard_.tsp-xr.com_key.pem";
 const SSL_CERT_PATH = "./ssl/_wildcard_.tsp-xr.com_crt.pem";
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
+
+console.log("JWT_SECRET:", JWT_SECRET);
+console.log("REFRESH_SECRET:", REFRESH_SECRET);
 
 const app = express();
 app.use(bodyParser.json()); // 추가
@@ -70,33 +78,17 @@ async function createViteMiddleware(server) {
             "https": options,
             "strictPort": true,
             "appType": "custom",
-            "cors": true, //주석
+            "cors": true, 
             "hmr": {
                 "port": 20001
             }
         },
         "optimizeDeps": {
             "exclude": [
-                // "three",
-                // "@babylonjs/accessibility",
-                // "@babylonjs/core",
-                // "@babylonjs/gui",
-                // "@babylonjs/gui-editor",
-                // "@babylonjs/havok",
-                // "@babylonjs/inspector",
-                // "@babylonjs/ktx2decoder",
-                // "@babylonjs/loaders",
-                // "@babylonjs/materials",
-                // "@babylonjs/node-editor",
-                // "@babylonjs/node-geometry-editor",
-                // "@babylonjs/post-processes",
-                // "@babylonjs/procedural-textures",
-                // "@babylonjs/serializers",
-                // "@babylonjs/shared-ui-components",
-                // "@babylonjs/viewer",
-                // "@tweenjs/tween.js",
                 "uuid",
-                "xlsx"
+                "xlsx",
+                "jsonwebtoken",
+                "jws"
             ]
         },
         "clearScreen": false,
@@ -200,6 +192,36 @@ testDatabaseConnection();
 // Login Endpoint
 //=================================================================
 
+function generateAccessToken(user) {
+    if (!user) return null;
+
+    const u = {
+        userId: user.user_id,
+        name: user.name,
+        username: user.team_name,
+        isAdmin: user.role === 'ADMIN'
+    };
+
+    return jwt.sign(u, JWT_SECRET, {
+        expiresIn: '1h'
+    });
+}
+
+function generateRefreshToken(user) {
+    if (!user) return null;
+
+    const u = {
+        userId: user.user_id,
+        name: user.name,
+        username: user.team_name,
+        isAdmin: user.role === 'ADMIN'
+    };
+
+    return jwt.sign(u, REFRESH_SECRET, {
+        expiresIn: '7d'
+    });
+}
+
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -208,7 +230,11 @@ app.post('/login', async (req, res) => {
         const rows = await connection.query("SELECT * FROM user WHERE email = ? AND pw = ?", [username, password]);
 
         if (rows.length > 0) {
-            res.json({ success: true });
+            const user = rows[0];
+            const accessToken = generateAccessToken(user);
+            const refreshToken = generateRefreshToken(user);
+
+            res.json({ success: true, accessToken, refreshToken });
         } else {
             res.json({ success: false, message: 'Invalid username or password' });
         }
@@ -216,6 +242,27 @@ app.post('/login', async (req, res) => {
         console.error("Error during login:", err);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
+});
+
+app.post('/refreshToken', function (req, res) {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+        return res.status(400).json({
+            error: true,
+            message: "Refresh Token is required."
+        });
+    }
+
+    jwt.verify(refreshToken, REFRESH_SECRET, function (err, user) {
+        if (err) return res.status(401).json({
+            error: true,
+            message: "Invalid Refresh Token."
+        });
+
+        // generate new access token
+        const accessToken = generateAccessToken(user);
+        return res.json({ accessToken });
+    });
 });
 
 startServer();
