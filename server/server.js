@@ -236,7 +236,7 @@ app.post('/login', async (req, res) => {
 
             // 회원 상태 확인
             if (user.state !== '정상') {
-                return res.json({ success: false, message: '접근 거부. 관리자에게 문의하세요.' });
+                return res.json({ success: false, message: '접근 거부. 관리자에게 문��하세요.' });
             }
 
             const accessToken = generateAccessToken(user);
@@ -273,7 +273,9 @@ app.post('/refreshToken', function (req, res) {
     });
 });
 
-// 사용자 프로필 정보를 반환하는 엔드포인트 추가
+//=================================================================
+// User Profile Endpoint
+//=================================================================
 app.get('/api/user-profile', async (req, res) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -331,6 +333,60 @@ app.get('/api/notice-data', async (req, res) => {
 fetchNoticeData();
 
 
-startServer();
+//=================================================================
+// Notice Count Endpoint
+//=================================================================
 
+app.get('/api/notice-count', async (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 없습니다.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
+        console.log('Decoded Token:', decoded); // 디버깅용 로그
+
+        const connection = await conn;
+        const [result] = await connection.query("SELECT COUNT(*) as count FROM notice");
+        console.log('Notice Count Result:', result); // 디버깅용 로그
+
+        // BigInt 값을 문자열로 변환
+        const count = result.count.toString();
+        res.json({ count });
+    } catch (err) {
+        console.error("Error fetching notice count:", err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+//=================================================================
+// Schedule Data Endpoint
+//=================================================================
+app.get('/api/schedule', async (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 없습니다.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
+        console.log('Decoded Token:', decoded); // 디버깅용 로그
+
+        const connection = await conn;
+        const [results] = await connection.query("SELECT * FROM schedule");
+        console.log('Schedule Data:', results); // 디버깅용 로그
+
+        res.json(results);
+    } catch (err) {
+        console.error("Error fetching schedule data:", err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+startServer();
 

@@ -60,4 +60,24 @@ export async function fetchUserProfile() {
     return await response.json();
 }
 
+// 공지사항 개수를 서버에서 가져오는 함수
+export async function fetchNoticeCount() {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+        throw new Error('로그인 토큰이 없습니다.');
+    }
 
+    const response = await fetch('/api/notice-count', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error('공지사항 개수를 가져오는데 실패했습니다.');
+    }
+
+    const data = await response.json();
+    return parseInt(data.count, 10); // 문자열을 숫자로 변환
+}

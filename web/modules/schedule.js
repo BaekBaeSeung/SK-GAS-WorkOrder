@@ -1,12 +1,14 @@
 import { renderNoticePage } from './notice.js';
 import { renderPreviousPage } from './previous.js';
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount } from './utils.js'; // 유틸 함수 임포트
 
 export async function renderSchedulePage(container) {
     try {
         const userProfile = await fetchUserProfile();
+        const noticeCount = await fetchNoticeCount();
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
+        console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
         container.innerHTML = `
             <div class="schedule-container">
@@ -23,7 +25,7 @@ export async function renderSchedulePage(container) {
                     </div>
                 </div>
                 <div class="notice" id="notice">
-                    <p>공지사항 [03]<span class="dash">●</span></p>
+                    <p>공지사항 [${noticeCount}]<span class="dash">●</span></p>
                 </div>
                 <div class="schedule">
                     <div class="schedule-item" data-shift="Morning" data-time="12:00">
@@ -110,7 +112,7 @@ export async function renderSchedulePage(container) {
             modal.style.display = 'none';
         });
     } catch (error) {
-        console.error('Error fetching user profile:', error);
-        alert('사용자 정보를 가져오는데 실패했습니다.');
+        console.error('Error fetching user profile or notice count:', error);
+        alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
     }
 }
