@@ -22,6 +22,7 @@ html, body {
 
 body {
     background-color: #EEEEEE;
+    overflow-y: auto; /* 스크롤 가능하도록 설정 */
 }
 
 .notice-container {
@@ -32,6 +33,8 @@ body {
     /* background-color: #FFFFFF;
     border-radius: 1lvh;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15); */
+    max-height: 100vh; /* 최대 높이를 설정하여 스크롤이 생기도록 함 */
+    
 }
 
 .logo {

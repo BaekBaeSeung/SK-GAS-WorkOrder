@@ -69,6 +69,13 @@ function loadPage(path) {
         existingLink.remove();
     }
 
+    // 로그인 페이지와 로딩 페이지를 제외한 모든 페이지에 대해 엑세스 토큰 확인
+    if (path !== '/' && path !== '/login' && !localStorage.getItem('accessToken')) {
+        alert('로그인이 필요합니다.');
+        navigateTo('/login');
+        return;
+    }
+
     switch(path) {
         case '/':
             loadCSS('./styles/loading.css'); // 로딩 페이지 스타일 로드

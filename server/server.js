@@ -188,6 +188,8 @@ async function testDatabaseConnection() {
 // Call the test function
 testDatabaseConnection();
 
+
+
 //=================================================================
 // Login Endpoint
 //=================================================================
@@ -199,7 +201,7 @@ function generateAccessToken(user) {
         userId: user.user_id,
         name: user.name,
         username: user.team_name,
-        isAdmin: user.role === 'ADMIN'
+        isAdmin: user.role 
     };
 
     return jwt.sign(u, JWT_SECRET, {
@@ -214,7 +216,7 @@ function generateRefreshToken(user) {
         userId: user.user_id,
         name: user.name,
         username: user.team_name,
-        isAdmin: user.role === 'ADMIN'
+        isAdmin: user.role 
     };
 
     return jwt.sign(u, REFRESH_SECRET, {
@@ -231,10 +233,16 @@ app.post('/login', async (req, res) => {
 
         if (rows.length > 0) {
             const user = rows[0];
+
+            // 회원 상태 확인
+            if (user.state !== '정상') {
+                return res.json({ success: false, message: '접근 거부. 관리자에게 문의하세요.' });
+            }
+
             const accessToken = generateAccessToken(user);
             const refreshToken = generateRefreshToken(user);
 
-            res.json({ success: true, accessToken, refreshToken });
+            res.json({ success: true, accessToken, refreshToken, userRole: user.role });
         } else {
             res.json({ success: false, message: 'Invalid username or password' });
         }
@@ -265,4 +273,64 @@ app.post('/refreshToken', function (req, res) {
     });
 });
 
+// 사용자 프로필 정보를 반환하는 엔드포인트 추가
+app.get('/api/user-profile', async (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 없습니다.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const connection = await conn;
+        const rows = await connection.query("SELECT * FROM user WHERE user_id = ?", [decoded.userId]);
+
+        if (rows.length > 0) {
+            const user = rows[0];
+            res.json({
+                userId: user.user_id,
+                name: user.name,
+                username: user.team_name,
+                isAdmin: user.role,
+                profile_pic: user.profile_pic,
+            });
+        } else {
+            res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
+    } catch (err) {
+        console.error("Error fetching user profile:", err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+//=================================================================
+// Notice Data Endpoint
+//=================================================================
+async function fetchNoticeData() {
+    try {
+        const connection = await conn;
+        const rows = await connection.query("SELECT * FROM notice");
+        console.log("Fetched notice data:\n", rows); // 데이터 출력
+        return rows;
+    } catch (err) {
+        console.error("Failed to fetch data:", err);
+        throw err;
+    }
+}
+
+app.get('/api/notice-data', async (req, res) => {
+    try {
+        const data = await fetchNoticeData();
+        res.json(data);
+    } catch (err) {
+        res.status(500).send("Failed to fetch data");
+    }
+});
+fetchNoticeData();
+
+
 startServer();
+
+

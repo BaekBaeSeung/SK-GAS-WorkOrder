@@ -1,6 +1,11 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay } from './utils.js';
+import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus } from './utils.js';
 
 export function renderLoginPage(container) {
+    // 로그인 상태 확인
+    if (!checkLoginStatus()) {
+        return;
+    }
+
     container.innerHTML = `
         <div class="login-container">
             <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
@@ -24,9 +29,20 @@ export function renderLoginPage(container) {
     `;
 
     function updateTime() {
-        document.getElementById('current-time').textContent = getCurrentTime();
-        document.getElementById('current-date').textContent = getCurrentDate();
-        document.getElementById('current-day').textContent = getCurrentDay();
+        const currentTimeElem = document.getElementById('current-time');
+        const currentDateElem = document.getElementById('current-date');
+        const currentDayElem = document.getElementById('current-day');
+
+        if (currentTimeElem) {
+            currentTimeElem.textContent = getCurrentTime();
+        }
+        if (currentDateElem) {
+            currentDateElem.textContent = getCurrentDate();
+        }
+        if (currentDayElem) {
+            currentDayElem.textContent = getCurrentDay();
+        }
+
         requestAnimationFrame(updateTime);
     }
 
@@ -48,9 +64,15 @@ export function renderLoginPage(container) {
         const result = await response.json();
         if (result.success) {
             alert('로그인 성공');
-            console.log('Access Token:', result.accessToken);
-            console.log('Refresh Token:', result.refreshToken);
-            // 로그인 성공 시 필요한 추가 작업
+            localStorage.setItem('accessToken', result.accessToken);
+            localStorage.setItem('refreshToken', result.refreshToken);
+            localStorage.setItem('userRole', result.userRole); // 사용자 역할 저장
+
+            // console.log("userRole:"+localStorage.getItem('userRole'));
+            // console.log("localStorage:"+localStorage.getItem('accessToken'));                    테스트용
+            // console.log('Access Token:', result.accessToken);
+            // console.log('Refresh Token:', result.refreshToken);
+            window.navigateTo('/schedule'); // 로그인 성공 시 스케줄 페이지로 이동
         } else {
             alert('로그인 실패: ' + result.message);
         }

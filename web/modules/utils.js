@@ -22,4 +22,42 @@ export function getCurrentDay() {
     return days[now.getDay()];
 }
 
-// 다른 유틸리티 함수들 추가 가능
+// 로그인 상태 확인 함수
+export function checkLoginStatus() {
+    if (localStorage.getItem('accessToken')) {
+        const confirmLogout = confirm('이미 로그인된 상태입니다. 로그아웃하시겠습니까?');
+        if (confirmLogout) {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            alert('로그아웃 되었습니다.');
+        } else {
+            window.navigateTo('/schedule'); // 로그인 유지 시 스케줄 페이지로 이동
+            return false;
+        }
+    }
+    return true;
+}
+
+// 사용자 프로필 정보를 서버에서 가져오는 함수
+export async function fetchUserProfile() {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+        throw new Error('로그인 토큰이 없습니다.');
+    }
+
+    const response = await fetch('/api/user-profile', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
+    console.log(response);
+
+    if (!response.ok) {
+        throw new Error('사용자 프로필 정보를 가져오는데 실패했습니다.');
+    }
+
+    return await response.json();
+}
+
+
