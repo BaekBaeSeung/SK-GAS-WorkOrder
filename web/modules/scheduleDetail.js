@@ -8,6 +8,9 @@ export async function renderScheduleDetailPage(container) {
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
         container.innerHTML = `
+            <head>
+                <link rel="stylesheet" href="styles/scheduleDetail.css">
+            </head>
             <div class="schedule-detail-container">
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
                 <div class="header">

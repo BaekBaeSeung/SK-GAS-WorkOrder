@@ -113,15 +113,15 @@ function loadPage(path) {
             renderScheduleDetailPage(app);
             break;
         case '/scheduleDetailDetail': // 추가
-            loadCSS('./styles/scheduleDetailDetail.css');
+        loadCSS('./styles/scheduleDetailDetail.css');
             renderScheduleDetailDetailPage(app);
             break;
         case '/scheduleDetailadmin': // 추가
-            loadCSS('./styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
+        loadCSS('./styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
             renderScheduleDetailAdminPage(app);
             break;
         case '/noticeAdmin': // 추가
-            loadCSS('./styles/noticeAdmin.css'); // 공지 작성 페이지 스타일 로드
+        loadCSS('./styles/noticeAdmin.css'); // 공지 작성 페이지 스타일 로드
             renderNoticeAdminPage(app);
             break;
         default:

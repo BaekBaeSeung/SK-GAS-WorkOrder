@@ -7,6 +7,9 @@ export function renderLoginPage(container) {
     }
 
     container.innerHTML = `
+        <head>
+            <link rel="stylesheet" href="styles/login.css">
+        </head>
         <div class="login-container">
             <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
             <p class="title">시설관리 DX</p>

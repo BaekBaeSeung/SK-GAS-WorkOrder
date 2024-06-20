@@ -31,6 +31,9 @@ export async function renderSchedulePage(container) {
         });
 
         container.innerHTML = `
+            <head>
+                <link rel="stylesheet" href="styles/schedule.css">
+            </head>
             <div class="schedule-container">
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
                 <div class="header">

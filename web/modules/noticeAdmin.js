@@ -6,6 +6,9 @@ export async function renderNoticeAdminPage(container) {
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
 
         container.innerHTML = `
+            <head>
+                <link rel="stylesheet" href="styles/noticeAdmin.css">
+            </head>
             <div class="notice-admin-container">
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
                 <div class="header">

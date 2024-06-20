@@ -34,7 +34,6 @@ body {
     border-radius: 1lvh;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15); */
     max-height: 100vh; /* 최대 높이를 설정하여 스크롤이 생기도록 함 */
-    
 }
 
 .logo {
@@ -90,6 +89,7 @@ body {
     color: #454545;
     margin-left: 0.2lvh;
 }
+
 .time {
     font-size: 4lvh;
     font-weight: 900;
@@ -113,6 +113,7 @@ body {
     justify-content: space-between;
     align-items: center;
 }
+
 .notice span {
     font-size: 3lvh;
     font-weight: 900;
@@ -163,7 +164,6 @@ body {
     color: #6A6A6A; /* 기본 색상 */
     text-align: right;
 }
-
 
 .notice-item ul {
     margin: 0;
@@ -239,7 +239,7 @@ body {
     color: #fefefe; /* 흰색 텍스트 */
     border: none;
     border-radius: 50%; /* 둥근 모양 */
-    width:  5lvh; /* 버튼 크기 */
+    width: 5lvh; /* 버튼 크기 */
     height: 5lvh; /* 버튼 크기 */
     font-size: 4lvh; /* 텍스트 크기 */
     display: flex;
@@ -251,4 +251,28 @@ body {
 
 #add-notice:hover {
     background-color: #e07000; /* 어두운 주황색 배경 */
+}
+
+/* 엑셀 다운로드 버튼 스타일 */
+#download-excel {
+    position: fixed;
+    bottom: 1lvh;
+    left: 2.4lvh;
+    background-color: #F08000; /* 주황색 배경 */
+    color: #fefefe; /* 흰색 텍스트 */
+    border: none;
+    border-radius: 50%; /* 둥근 모양 */
+    width: 5lvh; /* 버튼 크기 */
+    height: 5lvh; /* 버튼 크기 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+#download-excel img {
+    width: 100%; /* 이미지 크기 조정 */
+    height: 100%; /* 이미지 크기 조정 */
+    border-radius: 50%; /* 이미지도 둥글게 */
 }

@@ -23,6 +23,9 @@ export async function renderNoticePage(container) {
         notices.sort((a, b) => (a.importance === 'HIGH' ? -1 : 1));
 
         container.innerHTML = `
+            <head>
+                <link rel="stylesheet" href="styles/notice.css">
+            </head>
             <div class="notice-container">
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
                 <div class="header">
@@ -52,7 +55,7 @@ export async function renderNoticePage(container) {
                         </div>
                     `).join('')}
                 </div>
-                ${userRole === 'ADMIN' ? '<button id="download-excel">엑셀 다운로드</button>' : ''}
+                ${userRole === 'ADMIN' ? '<button id="download-excel"><img src="./assets/img/common/xls_pic.png" alt="엑셀 다운로드"></button>' : ''}
                 ${userRole === 'ADMIN' ? '<button id="add-notice">+</button>' : ''}
             </div>
             <div id="modal" class="modal">
