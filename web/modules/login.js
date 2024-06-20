@@ -1,17 +1,17 @@
 import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus } from './utils.js';
 
 export function renderLoginPage(container) {
-    // 로그인 상태 확인
-    if (!checkLoginStatus()) {
-        return;
-    }
+    // // 로그인 상태 확인
+    // if (!checkLoginStatus()) {
+    //     return;
+    // }
 
     container.innerHTML = `
         <head>
             <link rel="stylesheet" href="styles/login.css">
         </head>
         <div class="login-container">
-            <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
+            <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" onclick="navigateTo('/')">
             <p class="title">시설관리 DX</p>
             <div class="time-container">
                 <div class="time-date">

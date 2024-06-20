@@ -35,7 +35,7 @@ export async function renderSchedulePage(container) {
                 <link rel="stylesheet" href="styles/schedule.css">
             </head>
             <div class="schedule-container">
-                <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
+                <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                 <div class="header">
                     <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar">
                     <span class="initial">M</span>
@@ -120,6 +120,11 @@ export async function renderSchedulePage(container) {
         logoutButton.addEventListener('click', () => {
             logout(); // 로그아웃 요청
             modal.style.display = 'none';
+        });
+
+        // 로고 클릭 시 스케줄 페이지로 이동
+        document.getElementById('logo').addEventListener('click', () => {
+            navigateTo('/schedule');
         });
     } catch (error) {
         console.error('Error fetching user profile, notice count, or schedules:', error);

@@ -99,4 +99,8 @@ export async function renderNoticeAdminPage(container) {
         console.error('Error fetching user profile:', error);
         alert('사용자 정보를 가져오는데 실패했습니다.');
     }
+
+    document.querySelector('.logo').addEventListener('click', () => {
+    navigateTo('/schedule');
+});
 }

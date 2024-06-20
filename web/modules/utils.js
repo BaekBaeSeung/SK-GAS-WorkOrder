@@ -33,6 +33,7 @@ export async function logout() {
 
     if (response.ok) {
         alert('로그아웃 되었습니다.');
+        
         window.navigateTo('/login');
     } else {
         alert('로그아웃에 실패했습니다.');
@@ -41,7 +42,8 @@ export async function logout() {
 
 // 로그인 상태 확인 함수
 export function checkLoginStatus() {
-    if (getCookie('accessToken')) {
+    const accessToken = getCookie('accessToken');
+    if (accessToken) {
         const confirmLogout = confirm('이미 로그인된 상태입니다. 로그아웃하시겠습니까?');
         if (confirmLogout) {
             logout();
@@ -52,6 +54,7 @@ export function checkLoginStatus() {
     }
     return true;
 }
+
 
 // 쿠키를 읽어오는 함수
 export function getCookie(name) {

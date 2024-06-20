@@ -78,7 +78,7 @@ export async function renderPreviousPage(container) {
         });
 
         document.getElementById('previous-records').addEventListener('click', () => {
-            navigateTo('/previous');
+            navigateTo('/schedule'); // 이전 점검 기록 클릭 시 스케줄 페이지로 이동
         });
 
         document.querySelectorAll('.schedule-item').forEach(el => {
@@ -110,6 +110,11 @@ export async function renderPreviousPage(container) {
         logoutButton.addEventListener('click', () => {
             logout(); // 로그아웃 요청
             modal.style.display = 'none';
+        });
+
+        // 로고 이미지를 클릭하면 스케줄 페이지로 이동
+        document.querySelector('.logo').addEventListener('click', () => {
+            navigateTo('/schedule');
         });
     } catch (error) {
         console.error('Error fetching user profile or notice count:', error);

@@ -121,6 +121,11 @@ body {
     margin-right: 1lvh;
 }
 
+.notice p .dash {
+    font-size: 1.8lvh; /* 폰트 크기를 줄여서 높이를 줄임 */
+    font-weight: 900;
+}
+
 .notices {
     display: flex;
     flex-direction: column;

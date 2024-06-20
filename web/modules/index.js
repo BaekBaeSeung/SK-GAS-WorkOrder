@@ -72,6 +72,78 @@ function getCookie(name) {
 // 브라우저 콘솔에서 실행
 console.log(getCookie('accessToken'));
 
+function showModal(message) {
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>${message}</p>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+        document.body.removeChild(modal);
+    };
+
+    modal.querySelector('.close').addEventListener('click', closeModal);
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    modal.style.display = 'block';
+}
+
+// 모달 스타일 추가
+const style = document.createElement('style');
+style.innerHTML = `
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.3s;
+    }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+`;
+document.head.appendChild(style);
+
 function loadPage(path) {
     const app = document.getElementById('app');
     // 기존 스타일 제거
@@ -80,10 +152,19 @@ function loadPage(path) {
         existingLink.remove();
     }
 
+    const accessToken = getCookie('accessToken');
+
     // 로그인 페이지와 로딩 페이지를 제외한 모든 페이지에 대해 엑세스 토큰 확인
-    if (path !== '/' && path !== '/login' && !getCookie('accessToken')) {
-        alert('로그인이 필요합니다.');
+    if (path !== '/' && path !== '/login' && !accessToken) {
+        showModal('로그인이 필요합니다.');
         navigateTo('/login');
+        return;
+    }
+
+    // 로그인 상태에서 로그인 페이지로 접근 시도 시
+    if (path === '/login' && accessToken) {
+        showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.');
+        navigateTo('/schedule'); // 로그인 상태라면 스케줄 페이지로 리다이렉트
         return;
     }
 
@@ -110,7 +191,7 @@ function loadPage(path) {
             break;
         case '/scheduleDetail':
             renderScheduleDetailPage(app);
-            loadCSS('./styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
+            loadCSS('./styles/scheduleDetail.css'); // ���케줄 상세 페이지 스타일 로드
             break;
         case '/scheduleDetailDetail': // 추가
             renderScheduleDetailDetailPage(app);

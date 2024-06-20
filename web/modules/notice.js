@@ -27,7 +27,7 @@ export async function renderNoticePage(container) {
                 <link rel="stylesheet" href="styles/notice.css">
             </head>
             <div class="notice-container">
-                <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
+                <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                 <div class="header">
                     <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar">
                     <span class="initial">M</span>
@@ -120,6 +120,11 @@ export async function renderNoticePage(container) {
                 navigateTo('/noticeAdmin');
             });
         }
+
+        // 로고 클릭 시 스케줄 페이지로 이동
+        document.getElementById('logo').addEventListener('click', () => {
+            navigateTo('/schedule');
+        });
     } catch (error) {
         console.error('Error fetching user profile or notice count:', error);
         alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
