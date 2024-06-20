@@ -89,40 +89,40 @@ function loadPage(path) {
 
     switch(path) {
         case '/':
-            loadCSS('./styles/loading.css'); // 로딩 페이지 스타일 로드
             renderLoadingPage(app);
+            // loadCSS('./styles/loading.css'); // 로딩 페이지 스타일 로드
             break;
         case '/login':
-            loadCSS('./styles/login.css'); // 로그인 페이지 스타일 로드
             renderLoginPage(app);
+            loadCSS('./styles/login.css'); // 로그인 페이지 스타일 로드
             break;
         case '/schedule':
-            loadCSS('./styles/schedule.css'); // 스케줄 페이지 스타일 로드
             renderSchedulePage(app);
+            loadCSS('./styles/schedule.css'); // 스케줄 페이지 스타일 로드
             break;
         case '/notice':
-            loadCSS('./styles/notice.css'); // 공지사항 페이지 스타일 로드
             renderNoticePage(app);
+            loadCSS('./styles/notice.css'); // 공지사항 페이지 스타일 로드
             break;
         case '/previous':
-            loadCSS('./styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
             renderPreviousPage(app);
+            loadCSS('./styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
             break;
         case '/scheduleDetail':
-            loadCSS('./styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
             renderScheduleDetailPage(app);
+            loadCSS('./styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
             break;
         case '/scheduleDetailDetail': // 추가
-        loadCSS('./styles/scheduleDetailDetail.css');
             renderScheduleDetailDetailPage(app);
+            loadCSS('./styles/scheduleDetailDetail.css');
             break;
         case '/scheduleDetailadmin': // 추가
-        loadCSS('./styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
             renderScheduleDetailAdminPage(app);
+            loadCSS('./styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
             break;
         case '/noticeAdmin': // 추가
-        loadCSS('./styles/noticeAdmin.css'); // 공지 작성 페이지 스타일 로드
             renderNoticeAdminPage(app);
+            loadCSS('./styles/noticeAdmin.css'); // 공지 작 페이지 스타일 로드
             break;
         default:
             app.innerHTML = `<h1>404 - Page Not Found</h1>`;
