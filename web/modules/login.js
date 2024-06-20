@@ -64,14 +64,10 @@ export function renderLoginPage(container) {
         const result = await response.json();
         if (result.success) {
             alert('로그인 성공');
-            localStorage.setItem('accessToken', result.accessToken);
-            localStorage.setItem('refreshToken', result.refreshToken);
-            localStorage.setItem('userRole', result.userRole); // 사용자 역할 저장
+            document.cookie = `accessToken=${result.accessToken}; path=/; secure; HttpOnly`;
+            document.cookie = `refreshToken=${result.refreshToken}; path=/; secure; HttpOnly`;
+            document.cookie = `userRole=${result.userRole}; path=/; secure; HttpOnly`;
 
-            // console.log("userRole:"+localStorage.getItem('userRole'));
-            // console.log("localStorage:"+localStorage.getItem('accessToken'));                    테스트용
-            // console.log('Access Token:', result.accessToken);
-            // console.log('Refresh Token:', result.refreshToken);
             window.navigateTo('/schedule'); // 로그인 성공 시 스케줄 페이지로 이동
         } else {
             alert('로그인 실패: ' + result.message);

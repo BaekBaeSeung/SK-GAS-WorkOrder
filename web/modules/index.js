@@ -61,6 +61,16 @@ function loadCSS(filename) {
     document.head.appendChild(link);
 }
 
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`); // 쿠키 값을 기준으로 분할
+    if (parts.length === 2) return parts.pop().split(';').shift(); // 마지막 부분만 반환
+    return null; // 쿠키가 없으면 null 반환
+}
+
+// 브라우저 콘솔에서 실행
+console.log(getCookie('accessToken'));
+
 function loadPage(path) {
     const app = document.getElementById('app');
     // 기존 스타일 제거
@@ -70,7 +80,7 @@ function loadPage(path) {
     }
 
     // 로그인 페이지와 로딩 페이지를 제외한 모든 페이지에 대해 엑세스 토큰 확인
-    if (path !== '/' && path !== '/login' && !localStorage.getItem('accessToken')) {
+    if (path !== '/' && path !== '/login' && !getCookie('accessToken')) {
         alert('로그인이 필요합니다.');
         navigateTo('/login');
         return;

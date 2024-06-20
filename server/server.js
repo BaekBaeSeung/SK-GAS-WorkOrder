@@ -21,6 +21,7 @@ const fs = require("fs");
 const mariadb = require('../database/connect/mariadb');
 const conn = mariadb.conn;
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser'); // 추가
 
 //=================================================================
 // Set Server Configuration
@@ -43,6 +44,7 @@ console.log("REFRESH_SECRET:", REFRESH_SECRET);
 
 const app = express();
 app.use(bodyParser.json()); // 추가
+app.use(cookieParser()); // 추가
 
 const options = {
     key: fs.readFileSync(SSL_KEY_PATH),
@@ -194,7 +196,7 @@ testDatabaseConnection();
 // Login Endpoint
 //=================================================================
 
-function generateAccessToken(user) {
+function generateAccessToken(user) { // 엑세스 토큰 생성
     if (!user) return null;
 
     const u = {
@@ -209,7 +211,7 @@ function generateAccessToken(user) {
     });
 }
 
-function generateRefreshToken(user) {
+function generateRefreshToken(user) { // 리프레시 토큰 생성
     if (!user) return null;
 
     const u = {
@@ -224,7 +226,7 @@ function generateRefreshToken(user) {
     });
 }
 
-app.post('/login', async (req, res) => {
+app.post('/login', async (req, res) => { // 로그인 요청 처리
     const { username, password } = req.body;
 
     try {
@@ -234,15 +236,20 @@ app.post('/login', async (req, res) => {
         if (rows.length > 0) {
             const user = rows[0];
 
-            // 회원 상태 확인
+            // 회원 상태 확인 
             if (user.state !== '정상') {
-                return res.json({ success: false, message: '접근 거부. 관리자에게 문��하세요.' });
+                return res.json({ success: false, message: '접근 거부. 관리자에게 문의하세요.' });
             }
 
             const accessToken = generateAccessToken(user);
             const refreshToken = generateRefreshToken(user);
 
-            res.json({ success: true, accessToken, refreshToken, userRole: user.role });
+            // HttpOnly 속성을 제거하여 클라이언트 측에서 접근 가능하게 설정
+            res.cookie('accessToken', accessToken, { secure: true });
+            res.cookie('refreshToken', refreshToken, { secure: true });
+            res.cookie('userRole', user.role, { secure: true });
+
+            res.json({ success: true, userRole: user.role });
         } else {
             res.json({ success: false, message: 'Invalid username or password' });
         }
@@ -253,7 +260,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.post('/refreshToken', function (req, res) {
-    const { refreshToken } = req.body;
+    const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.status(400).json({
             error: true,
@@ -269,6 +276,7 @@ app.post('/refreshToken', function (req, res) {
 
         // generate new access token
         const accessToken = generateAccessToken(user);
+        res.cookie('accessToken', accessToken, { httpOnly: true, secure: true });
         return res.json({ accessToken });
     });
 });
@@ -277,8 +285,7 @@ app.post('/refreshToken', function (req, res) {
 // User Profile Endpoint
 //=================================================================
 app.get('/api/user-profile', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = req.cookies.accessToken;
 
     if (!token) {
         return res.status(401).json({ message: '토큰이 없습니다.' });
@@ -332,14 +339,12 @@ app.get('/api/notice-data', async (req, res) => {
 });
 fetchNoticeData();
 
-
 //=================================================================
 // Notice Count Endpoint
 //=================================================================
 
 app.get('/api/notice-count', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = req.cookies.accessToken;
 
     if (!token) {
         return res.status(401).json({ message: '토큰이 없습니다.' });
@@ -366,8 +371,7 @@ app.get('/api/notice-count', async (req, res) => {
 // Schedule Data Endpoint
 //=================================================================
 app.get('/api/schedule', async (req, res) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = req.cookies.accessToken;
 
     if (!token) {
         return res.status(401).json({ message: '토큰이 없습니다.' });
@@ -388,5 +392,15 @@ app.get('/api/schedule', async (req, res) => {
     }
 });
 
-startServer();
+//=================================================================
+// Logout Endpoint
+//=================================================================
 
+app.post('/logout', (req, res) => {
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    res.clearCookie('userRole');
+    res.json({ success: true, message: '로그아웃 되었습니다.' });
+});
+
+startServer();

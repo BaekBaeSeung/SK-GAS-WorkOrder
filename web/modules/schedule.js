@@ -1,7 +1,7 @@
 import { renderNoticePage } from './notice.js';
 import { renderPreviousPage } from './previous.js';
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout } from './utils.js'; // 유틸 함수 임포트
 
 export async function renderSchedulePage(container) {
     try {
@@ -107,8 +107,7 @@ export async function renderSchedulePage(container) {
         });
 
         logoutButton.addEventListener('click', () => {
-            // 로그아웃 로직 추가
-            console.log('로그아웃');
+            logout(); // 로그아웃 요청
             modal.style.display = 'none';
         });
     } catch (error) {
