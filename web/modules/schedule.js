@@ -10,6 +10,26 @@ export async function renderSchedulePage(container) {
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
+        // 서버에서 스케줄 데이터 가져오기
+        const response = await fetch('/api/schedule');
+        const schedules = await response.json();
+        console.log('Schedules:', schedules); // 스케줄 데이터 출력 (디버깅용)
+
+        const today = new Date();
+        const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        const todaySchedules = schedules.filter(schedule => {
+            const scheduleDate = new Date(schedule.create_at);
+            const scheduleDateString = `${scheduleDate.getFullYear()}-${String(scheduleDate.getMonth() + 1).padStart(2, '0')}-${String(scheduleDate.getDate()).padStart(2, '0')}`;
+            return scheduleDateString === todayDateString;
+        });
+
+        const previousSchedules = schedules.filter(schedule => {
+            const scheduleDate = new Date(schedule.create_at);
+            const scheduleDateString = `${scheduleDate.getFullYear()}-${String(scheduleDate.getMonth() + 1).padStart(2, '0')}-${String(scheduleDate.getDate()).padStart(2, '0')}`;
+            return scheduleDateString !== todayDateString;
+        });
+
         container.innerHTML = `
             <div class="schedule-container">
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
@@ -28,37 +48,25 @@ export async function renderSchedulePage(container) {
                     <p>공지사항 [${noticeCount}]<span class="dash">●</span></p>
                 </div>
                 <div class="schedule">
-                    <div class="schedule-item" data-shift="Morning" data-time="12:00">
-                        <p class="location">C3/C4/부두</p>
-                        <div class="shift-time">
-                            <p class="shift">Morning</p>
-                            <p class="time">12:00</p>
+                    ${todaySchedules.map(schedule => `
+                        <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
+                            <p class="location">${schedule.area_name}/${schedule.section}</p>
+                            <div class="shift-time">
+                                <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
+                                <p class="time">${schedule.time}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="schedule-item" data-shift="Swing" data-time="16:00">
-                        <p class="location">C3/C4/부두</p>
-                        <div class="shift-time">
-                            <p class="shift">Swing</p>
-                            <p class="time">16:00</p>
-                        </div>
-                    </div>
-                    <div class="schedule-item" data-shift="Swing" data-time="20:00">
-                        <p class="location">C3/C4/부두</p>
-                        <div class="shift-time">
-                            <p class="shift">Swing</p>
-                            <p class="time">20:00</p>
-                        </div>
-                    </div>
+                    `).join('')}
                 </div>
                 <div class="previous-records-container">
                     <div class="previous-records" id="previous-records-1">
-                        <p>이전 점검 기록 [10]</p>
+                        <p>이전 점검 기록 [${previousSchedules.length}]</p>
                     </div>
                     <div class="previous-records" id="previous-records-2">
-                        <p>이전 점검 기록 [10]</p>
+                        <p>이전 점검 기록 [${previousSchedules.length}]</p>
                     </div>
                     <div class="previous-records" id="previous-records-3">
-                        <p>이전 점검 기록 [10]</p>
+                        <p>이전 점검 기록 [${previousSchedules.length}]</p>
                     </div>
                 </div>
             </div>
@@ -111,7 +119,7 @@ export async function renderSchedulePage(container) {
             modal.style.display = 'none';
         });
     } catch (error) {
-        console.error('Error fetching user profile or notice count:', error);
-        alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
+        console.error('Error fetching user profile, notice count, or schedules:', error);
+        alert('사용자 정보, 공지사항 개수 또는 스케줄을 가져오는데 실패했습니다.');
     }
 }

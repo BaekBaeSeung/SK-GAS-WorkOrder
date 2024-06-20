@@ -64,9 +64,16 @@ export async function renderNoticePage(container) {
 
         // 시간, 날짜, 요일 업데이트 함수
         function updateTime() {
-            document.getElementById('current-time').textContent = getCurrentTime();
-            document.getElementById('current-date').textContent = getCurrentDate();
-            document.getElementById('current-day').textContent = getCurrentDay();
+            const currentTimeElement = document.getElementById('current-time');
+            const currentDateElement = document.getElementById('current-date');
+            const currentDayElement = document.getElementById('current-day');
+
+            if (currentTimeElement && currentDateElement && currentDayElement) {
+                currentTimeElement.textContent = getCurrentTime();
+                currentDateElement.textContent = getCurrentDate();
+                currentDayElement.textContent = getCurrentDay();
+            }
+
             requestAnimationFrame(updateTime);
         }
         updateTime();

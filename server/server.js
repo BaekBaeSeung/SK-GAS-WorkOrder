@@ -382,7 +382,11 @@ app.get('/api/schedule', async (req, res) => {
         console.log('Decoded Token:', decoded); // 디버깅용 로그
 
         const connection = await conn;
-        const [results] = await connection.query("SELECT * FROM schedule");
+        const query = `
+            SELECT * FROM schedule 
+            WHERE user_id = ?
+        `;
+        const results = await connection.query(query, [decoded.userId]);
         console.log('Schedule Data:', results); // 디버깅용 로그
 
         res.json(results);
