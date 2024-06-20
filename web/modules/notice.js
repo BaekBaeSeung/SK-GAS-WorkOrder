@@ -53,6 +53,7 @@ export async function renderNoticePage(container) {
                     `).join('')}
                 </div>
                 ${userRole === 'ADMIN' ? '<button id="download-excel">엑셀 다운로드</button>' : ''}
+                ${userRole === 'ADMIN' ? '<button id="add-notice">+</button>' : ''}
             </div>
             <div id="modal" class="modal">
                 <div class="modal-content">
@@ -110,6 +111,10 @@ export async function renderNoticePage(container) {
         if (userRole === 'ADMIN') {
             document.getElementById('download-excel').addEventListener('click', async () => {
                 await downloadExcel();
+            });
+
+            document.getElementById('add-notice').addEventListener('click', () => {
+                navigateTo('/noticeAdmin');
             });
         }
     } catch (error) {

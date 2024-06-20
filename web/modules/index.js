@@ -18,6 +18,7 @@ import { renderPreviousPage } from './previous.js'; // previous.js 파일에서 
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
 import { renderScheduleDetailDetailPage } from './scheduleDetailDetail.js'; // 추가
 import { renderScheduleDetailAdminPage } from './scheduleDetailadmin.js'; // 추가
+import { renderNoticeAdminPage } from './noticeAdmin.js'; // noticeAdmin.js 파일에서 공지 작성 페이지 정의
 
 //=================================================================
 // Element List
@@ -118,6 +119,10 @@ function loadPage(path) {
         case '/scheduleDetailadmin': // 추가
             loadCSS('./styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
             renderScheduleDetailAdminPage(app);
+            break;
+        case '/noticeAdmin': // 추가
+            loadCSS('./styles/noticeAdmin.css'); // 공지 작성 페이지 스타일 로드
+            renderNoticeAdminPage(app);
             break;
         default:
             app.innerHTML = `<h1>404 - Page Not Found</h1>`;
