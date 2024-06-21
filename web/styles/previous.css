@@ -15,13 +15,14 @@ html, body {
 
     font-family: "NanumSquareAc";
     display: flex;
-    flex-direction: column; /* Changed from row to column */
+    flex-direction: row; /* Changed from row to column */
     justify-content: center;
     align-items: center;
 }
 
 body {
     background-color: #EEEEEE;
+    overflow-y: auto; /* 스크롤 가능하도록 설정 */
 }
 
 .previous-container {
@@ -32,7 +33,8 @@ body {
     /* background-color: #FFFFFF;
     border-radius: 1lvh;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15); */
-    overflow-y: auto; /* Added scroll */
+    max-height: 100vh; 
+    margin-top: 10vh;
 }
 
 .logo {
@@ -53,10 +55,11 @@ body {
     height: 8lvh;
     border-radius: 50%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    object-fit: cover; /* Added to maintain aspect ratio */
 }
 
 .initial {
-    font-size: 7.5lvh;
+    font-size: 7lvh;
     font-weight: 900;
     color: #813DD9;
     margin-left: 3lvh;
@@ -113,12 +116,17 @@ body {
     align-items: center;
 }
 
+.notice .dash, .previous-records .dash {
+    font-size: 1.8lvh; 
+}
+
 .notice span, .previous-records span {
     font-size: 3lvh;
     font-weight: 900;
     color: #7B7B7B;
     margin-right: 1lvh;
 }
+
 
 .schedule {
     display: flex;
@@ -135,6 +143,7 @@ body {
     flex-direction: column; /* Vertical */
     align-items: flex-start; /* Left-aligned */
     margin-bottom: 2lvh; /* Wider gap between time items */
+    color: #6A6A6A;
 }
 
 .schedule-item p {
@@ -149,10 +158,22 @@ body {
     
 }
 
+.location-date-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
 .location {
     font-size: 1.5lvh;
     font-weight: 600;
-    color: #888888;
+    color: #6A6A6A;
+}
+
+.location-date-container .date {
+    font-size: 1.5lvh;
+    font-weight: 600;
+    color: #6A6A6A;
 }
 
 .shift {

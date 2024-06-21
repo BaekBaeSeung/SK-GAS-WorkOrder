@@ -1,6 +1,6 @@
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
 
-export async function renderScheduleDetailPage(container) {
+export async function renderScheduleDetailPage(container, sections = []) {
     try {
         const userProfile = await fetchUserProfile();
         const noticeCount = await fetchNoticeCount();
@@ -25,29 +25,17 @@ export async function renderScheduleDetailPage(container) {
                     </div>
                 </div>
                 <div class="notice" id="notice">
-                    <p>공지사항 [${noticeCount}] <span class="dash">●</span></p>
+                    <p>공지사항 [${noticeCount}] <span class="dash" style="font-size: 1.5vh; margin-right: 0.5lvh;">●</span></p>
                 </div>
                 <div class="schedule-detail">
-                    <div class="schedule-item">
-                        <div class="location-time">
-                            <p class="location">C3/C4/부두</p>
-                            <p class="time">Morning 12:00</p>
-                        </div>
-                        <div class="task">
-                            <div class="task-item" data-task-id="1">
-                                <span class="task-number">01</span>
-                                <p class="task-name">UAC C3 loading</p>
-                            </div>
-                            <div class="task-item" data-task-id="2">
-                                <span class="task-number">02</span>
-                                <p class="task-name">석화사 출하 펌프</p>
-                            </div>
-                            <div class="task-item" data-task-id="3">
-                                <span class="task-number">03</span>
-                                <p class="task-name"></p>
+                    ${sections.map(section => `
+                        <div class="schedule-item">
+                            <div class="location-time">
+                                <p class="location">${section.section}</p>
+                                <p class="time">${section.section_Info}</p>
                             </div>
                         </div>
-                    </div>
+                    `).join('')}
                 </div>
             </div>
             <div id="modal" class="modal">

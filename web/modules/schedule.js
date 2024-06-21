@@ -53,7 +53,7 @@ export async function renderSchedulePage(container) {
                 <div class="schedule">
                     ${todaySchedules.map(schedule => `
                         <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
-                            <p class="location">${schedule.area_name}/${schedule.section}</p>
+                            <p class="location">${schedule.area_name}</p>
                             <div class="shift-time">
                                 <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
                                 <p class="time">${schedule.time}</p>
@@ -92,8 +92,23 @@ export async function renderSchedulePage(container) {
         });
 
         document.querySelectorAll('.schedule-item').forEach(el => {
-            el.addEventListener('click', () => {
-                navigateTo('/scheduleDetail');
+            el.addEventListener('click', async () => {
+                const areaName = el.querySelector('.location').textContent;
+                try {
+                    const response = await fetch(`/api/sections-by-area/${encodeURIComponent(areaName)}`);
+                    console.log('response:', response);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const sections = await response.json();
+                    console.log('Sections:', sections); // 디버깅용 로그
+
+                    // scheduleDetail 페이지로 이동하면서 sections 데이터를 전달
+                    navigateTo('/scheduleDetail', { sections: Array.isArray(sections) ? sections : [] });
+                } catch (error) {
+                    console.error('Error fetching sections:', error);
+                    alert('섹션 데이터를 가져오는데 실패했습니다.');
+                }
             });
         });
 
@@ -151,3 +166,4 @@ function updateTime() {
 }
 
 updateTime();
+

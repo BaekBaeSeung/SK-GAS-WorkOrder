@@ -18,7 +18,7 @@ import { renderPreviousPage } from './previous.js'; // previous.js 파일에서 
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
 import { renderScheduleDetailDetailPage } from './scheduleDetailDetail.js'; // 추가
 import { renderScheduleDetailAdminPage } from './scheduleDetailadmin.js'; // 추가
-import { renderNoticeAdminPage } from './noticeAdmin.js'; // noticeAdmin.js 파일���서 공지 작성 페이지 정의
+import { renderNoticeAdminPage } from './noticeAdmin.js'; // noticeAdmin.js 파일에서 공지 작성 페이지 정의
 import { renderNoticeDetailPage } from './noticeDetail.js'; // noticeDetail.js 파일에서 공지사항 상세 페이지 정의
 
 //=================================================================
@@ -46,9 +46,9 @@ window.addEventListener('popstate', () => {
     loadPage(window.location.pathname);
 });
 
-function navigateTo(path) {
-    history.pushState({}, '', path);
-    loadPage(path);
+function navigateTo(path, state = {}) {
+    history.pushState(state, '', path);
+    loadPage(path, state);
 }
 
 // navigateTo 함수를 전역으로 사용 가능하게 설정
@@ -145,7 +145,7 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-function loadPage(path) {
+function loadPage(path, state = {}) {
     const app = document.getElementById('app');
     // 기존 스타일 제거
     const existingLink = document.querySelector('link[data-page-style]');
@@ -191,7 +191,7 @@ function loadPage(path) {
             loadCSS('./styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
             break;
         case path === '/scheduleDetail':
-            renderScheduleDetailPage(app);
+            renderScheduleDetailPage(app, state.sections);
             loadCSS('./styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
             break;
         case path === '/scheduleDetailDetail': // 추가

@@ -7,6 +7,22 @@ export async function renderPreviousPage(container) {
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
+        // 서버에서 스케줄 데이터 가져오기
+        const response = await fetch('/api/schedule');
+        const schedules = await response.json();
+        console.log('Schedules:', schedules); // 스케줄 데이터 출력 (디버깅용)
+
+        const today = new Date();
+        const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        const previousSchedules = schedules.filter(schedule => {
+            const scheduleDate = new Date(schedule.create_at);
+            const scheduleDateString = `${scheduleDate.getFullYear()}-${String(scheduleDate.getMonth() + 1).padStart(2, '0')}-${String(scheduleDate.getDate()).padStart(2, '0')}`;
+            return scheduleDateString < todayDateString;
+        });
+
+        const previousSchedulesCount = previousSchedules.length < 10 ? `0${previousSchedules.length}` : previousSchedules.length;
+
         container.innerHTML = `
             <head>
                 <link rel="stylesheet" href="styles/previous.css">
@@ -28,41 +44,21 @@ export async function renderPreviousPage(container) {
                     <p>공지사항 [${noticeCount}] <span class="dash" style="font-size: 1.5vh;">●</span></p>
                 </div>
                 <div class="previous-records" id="previous-records">
-                    <p>이전 점검 기록 [03] <span class="dash">-</span></p>
+                    <p>이전 점검 기록 [${previousSchedulesCount}] <span style="margin-right: 1.25lvh;" class="dash">-</span></p>
                 </div>
                 <div class="schedule">
-                    <div class="schedule-item" data-shift="Morning" data-time="08:00">
-                        <p class="location">C3/C4/부두</p>
-                        <div class="shift-time">
-                            <p class="shift">Morning</p>
-                            <p class="time">08:00</p>
+                    ${previousSchedules.map(schedule => `
+                        <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
+                            <div class="location-date-container">
+                                <p class="location">${schedule.area_name}</p>
+                                <p class="date">${new Date(schedule.create_at).toLocaleDateString()}</p>
+                            </div>
+                            <div class="shift-time">
+                                <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
+                                <p class="time">${schedule.time}</p>
+                            </div>
                         </div>
-                        <p class="date">2024.06.11</p>
-                    </div>
-                    <div class="schedule-item" data-shift="Swing" data-time="20:00">
-                        <p class="location">C3/C4/부두</p>
-                        <div class="shift-time">
-                            <p class="shift">Swing</p>
-                            <p class="time">20:00</p>
-                        </div>
-                        <p class="date">2024.06.10</p>
-                    </div>
-                    <div class="schedule-item" data-shift="Swing" data-time="16:00">
-                        <p class="location">C3/C4/부두</p>
-                        <div class="shift-time">
-                            <p class="shift">Swing</p>
-                            <p class="time">16:00</p>
-                        </div>
-                        <p class="date">2024.06.10</p>
-                    </div>
-                    <div class="schedule-item" data-shift="Morning" data-time="12:00">
-                        <p class="location">C3/C4/부두</p>
-                        <div class="shift-time">
-                            <p class="shift">Morning</p>
-                            <p class="time">12:00</p>
-                        </div>
-                        <p class="date">2024.06.10</p>
-                    </div>
+                    `).join('')}
                 </div>
             </div>
             <div id="modal" class="modal">
@@ -117,7 +113,7 @@ export async function renderPreviousPage(container) {
             navigateTo('/schedule');
         });
     } catch (error) {
-        console.error('Error fetching user profile or notice count:', error);
+        console.error('Error fetching user profile, notice count, or schedules:', error);
         alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
     }
 }

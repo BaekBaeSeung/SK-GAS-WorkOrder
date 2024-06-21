@@ -436,4 +436,47 @@ app.get('/api/notice-data/:noticeId', async (req, res) => {
     }
 });
 
+//=================================================================
+// Section Data by Area Name Endpoint
+//=================================================================
+app.get('/api/sections-by-area/:areaName', async (req, res) => {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 없습니다.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
+        console.log('Decoded Token:', decoded); // 디버깅용 로그
+
+        const areaName = req.params.areaName;
+        const connection = await conn;
+
+        // WorkingArea 테이블에서 area_name으로 area_id 조회
+        const workingArea = await connection.query("SELECT area_id FROM WorkingArea WHERE area_name = ?", areaName);
+        console.log('workingArea:', workingArea);
+
+        if (!workingArea || workingArea.length === 0) {
+            return res.status(404).json({ message: '해당 지역을 찾을 수 없습니다.' });
+        }
+
+        const areaId = workingArea[0].area_id;
+        console.log('areaId:', areaId);
+
+        // Section 테이블에서 area_id가 일치하는 모든 행 조회
+
+        // const all = await connection.query("SELECT * FROM Section");
+        // console.log('all:', all);
+
+        const sections = await connection.query("SELECT * FROM Section WHERE area_id = ?", [areaId]);
+        console.log('sections:', sections);
+
+        res.json(sections);
+    } catch (err) {
+        console.error("Error fetching sections by area name:", err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
 startServer();
