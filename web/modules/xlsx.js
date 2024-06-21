@@ -1,8 +1,9 @@
 import ExcelJS from 'exceljs';
+import { getCookie } from './utils.js';
 
 export async function downloadExcel() {
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
+    const accessToken = getCookie('accessToken');
+    const refreshToken = getCookie('refreshToken');
 
     if (!accessToken || !refreshToken) {
         console.error("Access token or refresh token is missing.");
@@ -30,7 +31,7 @@ export async function downloadExcel() {
 
                 const refreshResult = await refreshResponse.json();
                 if (refreshResult.accessToken) {
-                    localStorage.setItem('accessToken', refreshResult.accessToken);
+                    document.cookie = `accessToken=${refreshResult.accessToken}; path=/; secure; HttpOnly`;
 
                     const retryResponse = await fetch('/api/notice-data', {
                         method: 'GET',
@@ -427,6 +428,34 @@ async function generateExcel(data) {
                     };
                 });
             });
+
+            for (let i = 3; i <= 61; i++) {
+                // f~k 열에 데이터가 있는지 확인
+                const fCell = worksheet.getCell(`F${i}`);
+                const gCell = worksheet.getCell(`G${i}`);
+                const hCell = worksheet.getCell(`H${i}`);
+                const iCell = worksheet.getCell(`I${i}`);
+                const jCell = worksheet.getCell(`J${i}`);
+                const kCell = worksheet.getCell(`K${i}`);
+
+                // 데이터가 없더라도 테두리 설정
+                [fCell, gCell, hCell, iCell, jCell, kCell].forEach(cell => {
+                    if (!cell.value) {
+                        cell.value = '-';
+                        cell.alignment = { vertical: 'middle', horizontal: 'center' }; // 가운데 정렬
+                        cell.font = { name: '돋움', size: 10 }; // 데이터 폰트 설정
+                    }
+                    cell.border = {
+                        top: { style: 'thin', color: { argb: '000000' } },
+                        left: { style: 'thin', color: { argb: '000000' } },
+                        bottom: { style: 'thin', color: { argb: '000000' } },
+                        right: { style: 'thin', color: { argb: '000000' } }
+                    };
+                });
+            }
+
+            
+            
 
             // 엑셀 파일 다운로드
             const buffer = await workbook.xlsx.writeBuffer();
