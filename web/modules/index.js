@@ -18,7 +18,8 @@ import { renderPreviousPage } from './previous.js'; // previous.js 파일에서 
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
 import { renderScheduleDetailDetailPage } from './scheduleDetailDetail.js'; // 추가
 import { renderScheduleDetailAdminPage } from './scheduleDetailadmin.js'; // 추가
-import { renderNoticeAdminPage } from './noticeAdmin.js'; // noticeAdmin.js 파일에서 공지 작성 페이지 정의
+import { renderNoticeAdminPage } from './noticeAdmin.js'; // noticeAdmin.js 파일���서 공지 작성 페이지 정의
+import { renderNoticeDetailPage } from './noticeDetail.js'; // noticeDetail.js 파일에서 공지사항 상세 페이지 정의
 
 //=================================================================
 // Element List
@@ -168,42 +169,46 @@ function loadPage(path) {
         return;
     }
 
-    switch(path) {
-        case '/':
+    switch(true) {
+        case path === '/':
             renderLoadingPage(app);
             // loadCSS('./styles/loading.css'); // 로딩 페이지 스타일 로드
             break;
-        case '/login':
+        case path === '/login':
             renderLoginPage(app);
             loadCSS('./styles/login.css'); // 로그인 페이지 스타일 로드
             break;
-        case '/schedule':
+        case path === '/schedule':
             renderSchedulePage(app);
             loadCSS('./styles/schedule.css'); // 스케줄 페이지 스타일 로드
             break;
-        case '/notice':
+        case path === '/notice':
             renderNoticePage(app);
             loadCSS('./styles/notice.css'); // 공지사항 페이지 스타일 로드
             break;
-        case '/previous':
+        case path === '/previous':
             renderPreviousPage(app);
             loadCSS('./styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
             break;
-        case '/scheduleDetail':
+        case path === '/scheduleDetail':
             renderScheduleDetailPage(app);
-            loadCSS('./styles/scheduleDetail.css'); // ���케줄 상세 페이지 스타일 로드
+            loadCSS('./styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
             break;
-        case '/scheduleDetailDetail': // 추가
+        case path === '/scheduleDetailDetail': // 추가
             renderScheduleDetailDetailPage(app);
             loadCSS('./styles/scheduleDetailDetail.css');
             break;
-        case '/scheduleDetailadmin': // 추가
+        case path === '/scheduleDetailadmin': // 추가
             renderScheduleDetailAdminPage(app);
             loadCSS('./styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
             break;
-        case '/noticeAdmin': // 추가
+        case path === '/noticeAdmin': // 추가
             renderNoticeAdminPage(app);
-            loadCSS('./styles/noticeAdmin.css'); // 공지 작 페이지 스타일 로드
+            loadCSS('./styles/noticeAdmin.css');
+            break;
+        case path.startsWith('/noticeDetail/'): // 추가
+            const noticeId = path.split('/')[2];
+            renderNoticeDetailPage(app, noticeId);
             break;
         default:
             app.innerHTML = `<h1>404 - Page Not Found</h1>`;

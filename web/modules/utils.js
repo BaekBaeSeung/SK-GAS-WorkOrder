@@ -105,7 +105,8 @@ export async function fetchNoticeCount() {
     }
 
     const data = await response.json();
-    return parseInt(data.count, 10); // 문자열을 숫자로 변환
+    const count = parseInt(data.count, 10); // 문자열을 숫자로 변환
+    return count < 10 ? `0${count}` : String(count); // 숫자가 10보다 작으면 앞에 0을 붙여서 반환
 }
 
 export function formatTime(time) {

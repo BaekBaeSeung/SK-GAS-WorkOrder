@@ -1,5 +1,6 @@
 import { downloadExcel } from './xlsx.js';
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
+import { renderNoticeDetailPage } from './noticeDetail.js'; // noticeDetail 임포트
 
 export async function renderNoticePage(container) {
     try {
@@ -40,11 +41,11 @@ export async function renderNoticePage(container) {
                     </div>
                 </div>
                 <div class="notice" id="notice">
-                    <p>공지사항 [${notices.length}] <span class="dash">-</span></p>
+                    <p>공지사항 [${noticeCount}] <span class="dash">-</span></p>
                 </div>
                 <div class="notices" id="notices">
                     ${notices.map(notice => `
-                        <div class="notice-item ${notice.importance === 'HIGH' ? 'urgent' : ''}">
+                        <div class="notice-item ${notice.importance === 'HIGH' ? 'urgent' : ''}" data-notice-id="${notice.notice_id}">
                             <div class="title-date-container">
                                 <p class="title" style="color: ${notice.importance === 'HIGH' ? '#F08000' : 'inherit'};">${notice.importance === 'HIGH' ? '긴급' : '일반'}</p>
                                 <p class="date">${new Date(notice.create_at).toLocaleDateString()}</p>
@@ -127,6 +128,14 @@ export async function renderNoticePage(container) {
         // 로고 클릭 시 스케줄 페이지로 이동
         document.getElementById('logo').addEventListener('click', () => {
             navigateTo('/schedule');
+        });
+
+        // 공지사항 항목 클릭 시 상세 페이지로 이동
+        document.querySelectorAll('.notice-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const noticeId = item.getAttribute('data-notice-id');
+                navigateTo(`/noticeDetail/${noticeId}`);
+            });
         });
     } catch (error) {
         console.error('Error fetching user profile or notice count:', error);

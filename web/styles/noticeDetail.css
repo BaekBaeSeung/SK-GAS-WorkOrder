@@ -1,0 +1,283 @@
+html, body {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -o-text-size-adjust: none;
+    touch-action: pan-y;
+
+    font-family: "NanumSquareAc";
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background-color: #EEEEEE;
+    overflow-y: auto; /* 스크롤 가능하도록 설정 */
+}
+
+.notice-container {
+    width: 50lvh;
+    height: 90lvh;
+    padding: 2lvh;
+    text-align: center;
+    /* background-color: #FFFFFF;
+    border-radius: 1lvh;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15); */
+    max-height: 100vh; /* 최대 높이를 설정하여 스크롤이 생기도록 함 */
+}
+
+.logo {
+    width: 11lvh;
+    margin-bottom: 1.6lvh;
+    margin-left: -29lvh; 
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2lvh;
+}
+
+.avatar {
+    width: 8lvh;
+    height: 8lvh;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.initial {
+    font-size: 7lvh;
+    font-weight: 900;
+    color: #813DD9;
+    margin-left: 3lvh;
+    margin-right: 1lvh;
+}
+
+.time-container {
+    display: flex;
+    align-items: center;
+    margin-left: 1lvh; /* 요소 간 간격 조정 */
+}
+
+.time-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 0.5lvh;
+    gap: -1lvh; /* 시간과 날짜의 위아래 간격 조정 */
+}
+
+.date {
+    font-size: 3lvh;
+    font-weight: 500;
+}
+
+.day {
+    font-size: 6lvh;
+    font-weight: 800;
+    color: #454545;
+    margin-left: 0.2lvh;
+}
+
+.time {
+    font-size: 4lvh;
+    font-weight: 900;
+}
+
+.notice {
+    background-color: #F4F4F4;
+    padding: 1lvh;
+    border-radius: 1lvh;
+    margin-bottom: 2lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.notice p {
+    margin: 0;
+    font-size: 1.5lvh;
+    font-weight: 700;
+    margin-left: 1.5lvh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notice span {
+    font-size: 3lvh;
+    font-weight: 900;
+    color: #7B7B7B;
+    margin-right: 1lvh;
+}
+
+.notice p .dash {
+    font-size: 1.8lvh; /* 폰트 크기를 줄여서 높이를 줄임 */
+    font-weight: 900;
+}
+
+.notices {
+    display: flex;
+    flex-direction: column;
+    gap: 1lvh;
+}
+
+.notice-item {
+    background-color: #F4F4F4;
+    padding: 1.5lvh;
+    border-radius: 1lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    display: flex;
+    flex-direction: column; /* 수정 */
+    gap: 0.5lvh; /* 추가 */
+    margin-top: 1lvh;
+}
+
+.notice-item.urgent {
+    border-left: 1lvh solid #F08000;
+}
+
+.notice-item p {
+    margin: 0;
+}
+
+.notice-item .title-date-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notice-item .title {
+    font-size: 2lvh;
+    font-weight: 700;
+}
+
+.notice-item .date {
+    font-size: 1.5lvh;
+    font-weight: 700;
+    color: #6A6A6A; /* 기본 색상 */
+    text-align: right;
+}
+
+.notice-item ul {
+    margin: 0;
+    padding-left: 1.5lvh;
+    list-style-type: disc;
+}
+
+.notice-item ul li {
+    font-size: 1.5lvh;
+    font-weight: 400;
+    margin-top: 0.5lvh;
+    color: #6A6A6A;
+}
+
+/* 모달 창 스타일 */
+.modal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed; /* 화면에 고정 */
+    z-index: 1; /* 다른 요소들 위에 표시 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* 스크롤 가능 */
+    background-color: rgb(0, 0, 0); /* 배경색 */
+    background-color: rgba(0, 0, 0, 0.4); /* 투명 배경색 */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 화면 중앙에 위치 */
+    padding: 1.5lvh;
+    border: 1px solid #888;
+    width: 15%; /* 너비 */
+    max-width: 400px; /* 최대 너비 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 4lvh;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#logout-button {
+    background-color: #f44336; /* 빨간색 배경 */
+    color: white; /* 흰색 텍스트 */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#logout-button:hover {
+    background-color: #d32f2f; /* 어두운 빨간색 배경 */
+}
+
+/* + 버튼 스타일 */
+#add-notice {
+    position: fixed;
+    bottom: 1lvh;
+    right: 2.4lvh;
+    background-color: #F08000; /* 주황색 배경 */
+    color: #fefefe; /* 흰색 텍스트 */
+    border: none;
+    border-radius: 50%; /* 둥근 모양 */
+    width: 5lvh; /* 버튼 크기 */
+    height: 5lvh; /* 버튼 크기 */
+    font-size: 4lvh; /* 텍스트 크기 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+#add-notice:hover {
+    background-color: #e07000; /* 어두운 주황색 배경 */
+}
+
+/* 엑셀 다운로드 버튼 스타일 */
+#download-excel {
+    position: fixed;
+    bottom: 1lvh;
+    left: 2.4lvh;
+    background-color: #F08000; /* 주황색 배경 */
+    color: #fefefe; /* 흰색 텍스트 */
+    border: none;
+    border-radius: 50%; /* 둥근 모양 */
+    width: 5lvh; /* 버튼 크기 */
+    height: 5lvh; /* 버튼 크기 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+#download-excel img {
+    width: 100%; /* 이미지 크기 조정 */
+    height: 100%; /* 이미지 크기 조정 */
+    border-radius: 50%; /* 이미지도 둥글게 */
+}

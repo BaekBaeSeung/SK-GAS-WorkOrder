@@ -407,5 +407,33 @@ app.post('/logout', (req, res) => {
     res.json({ success: true, message: '로그아웃 되었습니다.' });
 });
 
-startServer();
+//=================================================================
+// Notice Detail Endpoint
+//=================================================================
+app.get('/api/notice-data/:noticeId', async (req, res) => {
+    const token = req.cookies.accessToken;
 
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 없습니다.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
+        console.log('Decoded Token:', decoded); // 디버깅용 로그
+
+        const noticeId = req.params.noticeId;
+        const connection = await conn;
+        const [notice] = await connection.query("SELECT * FROM notice WHERE notice_id = ?", [noticeId]);
+
+        if (notice) {
+            res.json(notice);
+        } else {
+            res.status(404).json({ message: '공지사항을 찾을 수 없습니다.' });
+        }
+    } catch (err) {
+        console.error("Error fetching notice detail:", err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+startServer();
