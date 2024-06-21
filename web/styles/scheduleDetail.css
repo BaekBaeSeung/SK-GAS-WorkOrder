@@ -15,13 +15,14 @@ html, body {
 
     font-family: "NanumSquareAc";
     display: flex;
-    flex-direction: column; /* Changed from row to column */
+    flex-direction: row; /* Changed from row to column */
     justify-content: center;
     align-items: center;
 }
 
 body {
     background-color: #EEEEEE;
+     overflow-y: auto;
 }
 
 .schedule-detail-container {
@@ -29,8 +30,9 @@ body {
     min-height: 90lvh; /* Changed from height to min-height */
     padding: 2lvh;
     text-align: center;
+    max-height: 100vh; 
+    margin-top: 10vh;
 
-    overflow-y: auto;
 }
 
 .logo {
@@ -181,6 +183,7 @@ body {
     flex-direction: column; /* 세로 정렬 */
     align-items: flex-start; /* 좌측 정렬 */
     width: 96%; /* 요소를 부모 요소의 너비로 설정 */
+    margin-bottom: 2lvh;
 }
 
 .task-number {

@@ -25,17 +25,23 @@ export async function renderScheduleDetailPage(container, sections = []) {
                     </div>
                 </div>
                 <div class="notice" id="notice">
-                    <p>공지사항 [${noticeCount}] <span class="dash" style="font-size: 1.5vh; margin-right: 0.5lvh;">●</span></p>
+                    <p>공지사항 [${noticeCount}] <span class="dash" >●</span></p>
                 </div>
                 <div class="schedule-detail">
-                    ${sections.map(section => `
-                        <div class="schedule-item">
-                            <div class="location-time">
-                                <p class="location">${section.section}</p>
-                                <p class="time">${section.section_Info}</p>
+                    <div class="schedule-item">
+                        <div class="location-time">
+                            <p class="location">C3/C4/부두</p>
+                            <p class="time">Morning 12:00</p>
+                        </div>
+                        ${sections.map((section, index) => `
+                        <div class="task">
+                            <div class="task-item" data-task-id="1">
+                                <span class="task-number">${String(index + 1).padStart(2, '0')}</span>
+                                <p class="task-name">${section.section_Info}</p>
                             </div>
                         </div>
-                    `).join('')}
+                        `).join('')}
+                    </div>
                 </div>
             </div>
             <div id="modal" class="modal">
