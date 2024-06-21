@@ -37,7 +37,7 @@ export async function renderSchedulePage(container) {
             <div class="schedule-container">
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                 <div class="header">
-                    <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar">
+                    <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
                     <span class="initial">M</span>
                     <div class="time-container">
                         <div class="time-date">
