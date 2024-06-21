@@ -142,10 +142,14 @@ body {
     flex-direction: column; /* 수정 */
     gap: 0.5lvh; /* 추가 */
     margin-top: 1lvh;
+    margin-bottom: 1lvh;
 }
 
 .notice-item.urgent {
-    border-left: 1lvh solid #F08000;
+    border-left: 8px solid #F08000;
+}
+.notice-item.normal {
+    border-left: 8px solid #F4F4F4;
 }
 
 .notice-item p {
@@ -172,8 +176,9 @@ body {
 
 .notice-item ul {
     margin: 0;
-    padding-left: 1.5lvh;
+    padding-left: lvh;
     list-style-type: disc;
+    
 }
 
 .notice-item ul li {
@@ -281,3 +286,4 @@ body {
     height: 100%; /* 이미지 크기 조정 */
     border-radius: 50%; /* 이미지도 둥글게 */
 }
+

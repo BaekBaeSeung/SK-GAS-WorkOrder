@@ -27,9 +27,11 @@ export async function renderNoticeDetailPage(container, noticeId) {
                     </div>
                 </div>
                 <div class="notice-detail" id="notice-detail">
-                    <div class="notice-item urgent">
+                    <div class="notice-item ${notice.importance === 'HIGH' ? 'urgent' : 'normal'}">
                         <div class="title-date-container">
-                            <p class="title" style="color: #F08000;">긴급</p>
+                            <p class="title" style="color: ${notice.importance === 'HIGH' ? '#F08000' : 'inherit'};">
+                                ${notice.importance === 'HIGH' ? '긴급' : '일반'}
+                            </p>
                             <p class="date">${new Date(notice.create_at).toLocaleDateString()}</p>
                         </div>
                         <ul>
