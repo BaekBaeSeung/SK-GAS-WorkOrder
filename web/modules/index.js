@@ -48,6 +48,7 @@ window.addEventListener('popstate', () => {
 
 function navigateTo(path, state = {}) {
     history.pushState(state, '', path);
+    localStorage.setItem('pageState', JSON.stringify(state)); // 상태를 localStorage에 저장
     loadPage(path, state);
 }
 
@@ -169,6 +170,9 @@ function loadPage(path, state = {}) {
         return;
     }
 
+    // localStorage에서 상태 복원
+    const savedState = JSON.parse(localStorage.getItem('pageState')) || {};
+
     switch(true) {
         case path === '/':
             renderLoadingPage(app);
@@ -191,7 +195,12 @@ function loadPage(path, state = {}) {
             loadCSS('./styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
             break;
         case path === '/scheduleDetail':
-            renderScheduleDetailPage(app, state.sections);
+            if (!state.sections && !savedState.sections) {
+                showModal('잘못된 접근입니다.');
+                navigateTo('/schedule');
+                return;
+            }
+            renderScheduleDetailPage(app, state.sections || savedState.sections);
             loadCSS('./styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
             break;
         case path === '/scheduleDetailDetail': // 추가
