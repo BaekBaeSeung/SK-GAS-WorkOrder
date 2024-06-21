@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus } from './utils.js';
+import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus, formatTime } from './utils.js';
 
 export function renderLoginPage(container) {
     // // 로그인 상태 확인
@@ -15,7 +15,7 @@ export function renderLoginPage(container) {
             <p class="title">시설관리 DX</p>
             <div class="time-container">
                 <div class="time-date">
-                    <span class="time" id="current-time">${getCurrentTime()}</span>
+                    <span class="time" id="current-time">${formatTime(getCurrentTime())}</span>
                     <span class="date" id="current-date">${getCurrentDate()}</span>
                 </div>
                 <span class="day" id="current-day">${getCurrentDay()}</span>
@@ -37,7 +37,7 @@ export function renderLoginPage(container) {
         const currentDayElem = document.getElementById('current-day');
 
         if (currentTimeElem) {
-            currentTimeElem.textContent = getCurrentTime();
+            currentTimeElem.innerHTML = formatTime(getCurrentTime());
         }
         if (currentDateElem) {
             currentDateElem.textContent = getCurrentDate();

@@ -1,5 +1,5 @@
 import { downloadExcel } from './xlsx.js';
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
 
 export async function renderNoticePage(container) {
     try {
@@ -33,7 +33,7 @@ export async function renderNoticePage(container) {
                     <span class="initial">M</span>
                     <div class="time-container">
                         <div class="time-date">
-                            <span class="time" id="current-time">${getCurrentTime()}</span>
+                            <span class="time" id="current-time">${formatTime(getCurrentTime())}</span>
                             <span class="date" id="current-date">${getCurrentDate()}</span>
                         </div>
                         <span class="day" id="current-day">${getCurrentDay()}</span>
@@ -66,15 +66,18 @@ export async function renderNoticePage(container) {
             </div>
         `;
 
-        // 시간, 날짜, 요일 업데이트 함수
         function updateTime() {
             const currentTimeElement = document.getElementById('current-time');
             const currentDateElement = document.getElementById('current-date');
-            const currentDayElement = document.getElementById('current-day');
+            const currentDayElement = document.querySelector('.day');
 
-            if (currentTimeElement && currentDateElement && currentDayElement) {
-                currentTimeElement.textContent = getCurrentTime();
+            if (currentTimeElement) {
+                currentTimeElement.innerHTML = formatTime(getCurrentTime());
+            }
+            if (currentDateElement) {
                 currentDateElement.textContent = getCurrentDate();
+            }
+            if (currentDayElement) {
                 currentDayElement.textContent = getCurrentDay();
             }
 

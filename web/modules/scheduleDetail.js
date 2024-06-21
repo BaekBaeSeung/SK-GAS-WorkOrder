@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
 
 export async function renderScheduleDetailPage(container) {
     try {
@@ -18,7 +18,7 @@ export async function renderScheduleDetailPage(container) {
                     <span class="initial">M</span>
                     <div class="time-container">
                         <div class="time-date">
-                            <span class="time">${getCurrentTime()}</span>
+                            <span class="time">${formatTime(getCurrentTime())}</span>
                             <span class="date">${getCurrentDate()}</span>
                         </div>
                         <span class="day">${getCurrentDay()}</span>
@@ -102,3 +102,23 @@ export async function renderScheduleDetailPage(container) {
         alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
     }
 }
+
+function updateTime() {
+    const currentTimeElem = document.querySelector('.time');
+    const currentDateElem = document.querySelector('.date');
+    const currentDayElem = document.querySelector('.day');
+
+    if (currentTimeElem) {
+        currentTimeElem.innerHTML = formatTime(getCurrentTime());
+    }
+    if (currentDateElem) {
+        currentDateElem.textContent = getCurrentDate();
+    }
+    if (currentDayElem) {
+        currentDayElem.textContent = getCurrentDay();
+    }
+
+    requestAnimationFrame(updateTime);
+}
+
+updateTime();

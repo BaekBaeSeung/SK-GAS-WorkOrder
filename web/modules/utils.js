@@ -108,3 +108,8 @@ export async function fetchNoticeCount() {
     return parseInt(data.count, 10); // 문자열을 숫자로 변환
 }
 
+export function formatTime(time) {
+    const [hours, minutes] = time.split(':');
+    const separator = new Date().getSeconds() % 2 === 0 ? ':' : '<span style="visibility:hidden">:</span>';
+    return `${hours}${separator}${minutes}`;
+}
