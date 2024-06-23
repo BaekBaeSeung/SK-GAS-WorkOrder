@@ -1,7 +1,18 @@
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
 
-export async function renderScheduleDetailPage(container, sections = []) {
+export async function renderScheduleDetailPage(container, scheduleData = {}, sections = []) {
     try {
+        // 로컬 스토리지에서 섹션 데이터와 스케줄 데이터 불러오기
+        const storedData = JSON.parse(localStorage.getItem('scheduleData')) || {};
+        const storedSections = JSON.parse(localStorage.getItem('scheduleSections')) || [];
+        
+        scheduleData = Object.keys(scheduleData).length > 0 ? scheduleData : storedData;
+        sections = sections.length > 0 ? sections : storedSections;
+
+        // 데이터를 로컬 스토리지에 저장
+        localStorage.setItem('scheduleData', JSON.stringify(scheduleData));
+        localStorage.setItem('scheduleSections', JSON.stringify(sections));
+
         const userProfile = await fetchUserProfile();
         const noticeCount = await fetchNoticeCount();
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
@@ -30,14 +41,14 @@ export async function renderScheduleDetailPage(container, sections = []) {
                 <div class="schedule-detail">
                     <div class="schedule-item">
                         <div class="location-time">
-                            <p class="location">C3/C4/부두</p>
-                            <p class="time">Morning 12:00</p>
+                            <p class="location">${scheduleData.area_name || 'N/A'}</p>
+                            <p class="time">${scheduleData.schedule_type === 'm' ? 'Morning' : scheduleData.schedule_type === 's' ? 'Swing' : 'Night'} ${scheduleData.time || 'N/A'}</p>
                         </div>
                         ${sections.map((section, index) => `
                         <div class="task">
-                            <div class="task-item" data-task-id="1">
+                            <div class="task-item" data-task-id="${section.section_id}">
                                 <span class="task-number">${String(index + 1).padStart(2, '0')}</span>
-                                <p class="task-name">${section.section_Info}</p>
+                                <p class="task-name">${section.section}</p>
                             </div>
                         </div>
                         `).join('')}
@@ -58,7 +69,8 @@ export async function renderScheduleDetailPage(container, sections = []) {
 
         document.querySelectorAll('.task-item').forEach(item => {
             item.addEventListener('click', () => {
-                navigateTo('/scheduleDetailDetail');
+                const sectionId = item.dataset.taskId;
+                navigateTo(`/scheduleDetailDetail/${sectionId}`);
             });
         });
 

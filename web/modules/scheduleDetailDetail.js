@@ -1,11 +1,17 @@
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
 
-export async function renderScheduleDetailDetailPage(container) {
+export async function renderScheduleDetailDetailPage(container, sectionId) {
     try {
         const userProfile = await fetchUserProfile();
         const noticeCount = await fetchNoticeCount();
-        console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
-        console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
+
+        // 로컬 스토리지에서 섹션 데이터 불러오기
+        const sections = JSON.parse(localStorage.getItem('scheduleSections')) || [];
+        const currentSection = sections.find(section => section.section_id === sectionId);
+
+        if (!currentSection) {
+            throw new Error('섹션을 찾을 수 없습니다.');
+        }
 
         container.innerHTML = `
             <head>
@@ -40,8 +46,8 @@ export async function renderScheduleDetailDetailPage(container) {
                             <div class="task-item">
                                 <div class="task-header">
                                     <span class="task-number">01</span>
-                                    <p class="task-name">Loading Temp.</p>
-                                    <span class="task-code">[TI-776]</span>
+                                    <p class="task-name">${currentSection.section_Info}</p>
+                                    <span class="task-code">[${currentSection.section_id}]</span>
                                 </div>
                                 <div class="task-body">
                                     <img src="./assets/img/common/MPa.png" alt="Gauge" class="gauge">
@@ -110,6 +116,14 @@ export async function renderScheduleDetailDetailPage(container) {
         document.querySelector('.logo').addEventListener('click', () => {
             navigateTo('/schedule');
         });
+
+        // 뒤로 가기 버튼 추가
+        const backButton = document.createElement('button');
+        backButton.textContent = '뒤로 가기';
+        backButton.addEventListener('click', () => {
+            history.back();
+        });
+        container.appendChild(backButton);
     } catch (error) {
         console.error('Error fetching user profile or notice count:', error);
         alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');

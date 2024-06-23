@@ -195,16 +195,23 @@ function loadPage(path, state = {}) {
             loadCSS('./styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
             break;
         case path === '/scheduleDetail':
-            if (!state.sections && !savedState.sections) {
-                showModal('잘못된 접근입니다.');
-                navigateTo('/schedule');
-                return;
+            if ((!state.sections && !savedState.sections) || (!state.scheduleData && !savedState.scheduleData)) {
+                const storedSections = JSON.parse(localStorage.getItem('scheduleSections'));
+                const storedScheduleData = JSON.parse(localStorage.getItem('scheduleData'));
+                if (!storedSections || storedSections.length === 0 || !storedScheduleData) {
+                    showModal('잘못된 접근입니다.');
+                    navigateTo('/schedule');
+                    return;
+                }
+                renderScheduleDetailPage(app, storedScheduleData, storedSections);
+            } else {
+                renderScheduleDetailPage(app, state.scheduleData || savedState.scheduleData, state.sections || savedState.sections);
             }
-            renderScheduleDetailPage(app, state.sections || savedState.sections);
             loadCSS('./styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
             break;
         case path === '/scheduleDetailDetail': // 추가
-            renderScheduleDetailDetailPage(app);
+            const sectionId = path.split('/')[2];
+            renderScheduleDetailDetailPage(app, sectionId);
             loadCSS('./styles/scheduleDetailDetail.css');
             break;
         case path === '/scheduleDetailadmin': // 추가

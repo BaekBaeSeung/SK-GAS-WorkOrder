@@ -94,17 +94,24 @@ export async function renderSchedulePage(container) {
         document.querySelectorAll('.schedule-item').forEach(el => {
             el.addEventListener('click', async () => {
                 const areaName = el.querySelector('.location').textContent;
+                const scheduleType = el.dataset.shift;
+                const time = el.querySelector('.time').textContent;
                 try {
                     const response = await fetch(`/api/sections-by-area/${encodeURIComponent(areaName)}`);
-                    console.log('response:', response);
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
                     const sections = await response.json();
                     console.log('Sections:', sections); // 디버깅용 로그
 
-                    // scheduleDetail 페이지로 이동하면서 sections 데이터를 전달
-                    navigateTo('/scheduleDetail', { sections: Array.isArray(sections) ? sections : [] });
+                    const scheduleData = {
+                        area_name: areaName,
+                        schedule_type: scheduleType,
+                        time: time
+                    };
+
+                    // scheduleDetail 페이지로 이동하면서 scheduleData와 sections 데이터를 전달
+                    navigateTo('/scheduleDetail', { scheduleData, sections: Array.isArray(sections) ? sections : [] });
                 } catch (error) {
                     console.error('Error fetching sections:', error);
                     alert('섹션 데이터를 가져오는데 실패했습니다.');
