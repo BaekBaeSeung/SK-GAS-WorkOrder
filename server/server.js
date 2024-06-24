@@ -208,7 +208,7 @@ function generateAccessToken(user) { // 엑세스 토큰 생성
     };
 
     return jwt.sign(u, JWT_SECRET, {
-        expiresIn: '1h'
+        expiresIn: '7d'
     });
 }
 
@@ -223,7 +223,7 @@ function generateRefreshToken(user) { // 리프레시 토큰 생성
     };
 
     return jwt.sign(u, REFRESH_SECRET, {
-        expiresIn: '7d'
+        expiresIn: '30d'
     });
 }
 

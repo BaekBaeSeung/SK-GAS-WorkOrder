@@ -143,7 +143,15 @@ body {
     gap: 0.5lvh; /* 추가 */
     margin-top: 1lvh;
     margin-bottom: 1lvh;
+    
 }
+.notice-item li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative; /* 추가 */
+}
+
 
 .notice-item.urgent {
     border-left: 8px solid #F08000;
@@ -187,6 +195,7 @@ body {
     margin-top: 0.5lvh;
     color: #6A6A6A;
 }
+
 
 /* 모달 창 스타일 */
 .modal {

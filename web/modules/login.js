@@ -66,14 +66,49 @@ export function renderLoginPage(container) {
 
         const result = await response.json();
         if (result.success) {
-            alert('로그인 성공');
+            showModal('로그인 성공, 3초뒤에 이동합니다.', () => {
+                window.navigateTo('/schedule'); // 로그인 성공 시 스케줄 페이지로 이동
+            });
             document.cookie = `accessToken=${result.accessToken}; path=/; secure; HttpOnly`;
             document.cookie = `refreshToken=${result.refreshToken}; path=/; secure; HttpOnly`;
             document.cookie = `userRole=${result.userRole}; path=/; secure; HttpOnly`;
-
-            window.navigateTo('/schedule'); // 로그인 성공 시 스케줄 페이지로 이동
         } else {
-            alert('로그인 실패: ' + result.message);
+            showModal('로그인 실패, 계정을 확인해주세요.');
         }
     });
+}
+
+function showModal(message, onConfirm) {
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    modal.innerHTML = `
+        <div class="modal-content">
+            <p>${message}</p>
+            <button class="confirm-button">확인</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    const closeModal = () => {
+        if (modal.parentNode) {
+            modal.style.display = 'none';
+            document.body.removeChild(modal);
+            if (onConfirm) onConfirm();
+        }
+    };
+
+    modal.querySelector('.confirm-button').addEventListener('click', closeModal);
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+
+    if (onConfirm) {
+        setTimeout(closeModal, 10000); // 3초 후에 자동으로 닫힘
+    }
 }

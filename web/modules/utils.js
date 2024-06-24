@@ -22,6 +22,8 @@ export function getCurrentDay() {
     return days[now.getDay()];
 }
 
+import { showModal } from './index.js'; // showModal 함수 가져오기
+
 // 로그아웃 요청 함수
 export async function logout() {
     const response = await fetch('/logout', {
@@ -32,11 +34,10 @@ export async function logout() {
     });
 
     if (response.ok) {
-        alert('로그아웃 되었습니다.');
-        
+        showModal('로그아웃 되었습니다.'); // 모달로 변경
         window.navigateTo('/login');
     } else {
-        alert('로그아웃에 실패했습니다.');
+        showModal('로그아웃에 실패했습니다.'); // 모달로 변경
     }
 }
 

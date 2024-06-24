@@ -74,7 +74,7 @@ function getCookie(name) {
 // 브라우저 콘솔에서 실행
 console.log(getCookie('accessToken'));
 
-function showModal(message) {
+export function showModal(message) {
     const modal = document.createElement('div');
     modal.classList.add('modal');
     modal.innerHTML = `
@@ -115,17 +115,18 @@ style.innerHTML = `
         background-color: rgba(0, 0, 0, 0.5);
         justify-content: center;
         align-items: center;
+        animation: fadeIn 0.3s;
     }
     .modal-content {
-        background-color: #fefefe;
+        background-color: #fff;
         margin: auto;
         padding: 20px;
         border: 1px solid #888;
-        width: 80%;
+        width: 100%;
         max-width: 500px;
         border-radius: 10px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        animation: fadeIn 0.3s;
+        animation: slideIn 0.3s;
     }
     .close {
         color: #aaa;
@@ -142,6 +143,10 @@ style.innerHTML = `
     @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
+    }
+    @keyframes slideIn {
+        from { transform: translateY(-50px); }
+        to { transform: translateY(0); }
     }
 `;
 document.head.appendChild(style);
