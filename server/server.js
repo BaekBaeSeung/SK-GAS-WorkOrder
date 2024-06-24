@@ -250,7 +250,7 @@ app.post('/login', async (req, res) => { // 로그인 요청 처리
             res.cookie('refreshToken', refreshToken, { secure: true });
             res.cookie('userRole', user.role, { secure: true });
 
-            res.json({ success: true, userRole: user.role });
+            res.json({ success: true, userRole: user.role, name: user.name});
         } else {
             res.json({ success: false, message: 'Invalid username or password' });
         }
