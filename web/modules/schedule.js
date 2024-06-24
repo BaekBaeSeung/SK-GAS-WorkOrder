@@ -30,6 +30,17 @@ export async function renderSchedulePage(container) {
             return scheduleDateString !== todayDateString;
         });
 
+        // 이전 점검 기록 카드 스택 생성
+        let previousRecordsHTML = '';
+        for (let i = 0; i < Math.min(previousSchedules.length, 3); i++) {
+            const recordCount = previousSchedules.length < 10 ? `0${previousSchedules.length}` : previousSchedules.length;
+            previousRecordsHTML += `
+                <div class="previous-records" id="previous-records-${i + 1}">
+                    <p>이전 점검 기록 [${recordCount}]</p>
+                </div>
+            `;
+        }
+
         container.innerHTML = `
             <head>
                 <link rel="stylesheet" href="styles/schedule.css">
@@ -62,15 +73,7 @@ export async function renderSchedulePage(container) {
                     `).join('')}
                 </div>
                 <div class="previous-records-container">
-                    <div class="previous-records" id="previous-records-1">
-                        <p>이전 점검 기록 [${previousSchedules.length}]</p>
-                    </div>
-                    <div class="previous-records" id="previous-records-2">
-                        <p>이전 점검 기록 [${previousSchedules.length}]</p>
-                    </div>
-                    <div class="previous-records" id="previous-records-3">
-                        <p>이전 점검 기록 [${previousSchedules.length}]</p>
-                    </div>
+                    ${previousRecordsHTML}
                 </div>
             </div>
             <div id="modal" class="modal">
@@ -173,4 +176,3 @@ function updateTime() {
 }
 
 updateTime();
-
