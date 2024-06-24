@@ -51,7 +51,6 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                                         <span class="task-number">${taskNumber}</span>
                                         <p class="task-name">${subSection.subSection_name}</p>
                                         <span class="task-code">[${subSection.item_no}]</span>
-                                        <p class="task-name">${subSection.section_unit}</p>
                                     </div>
                                     <div class="task-body">
                                         <img src="/assets/img/common/${subSection.item_pic}" alt="Gauge" class="gauge">
@@ -73,7 +72,6 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                     <button id="logout-button">로그아웃</button>
                 </div>
             </div>
-            <button id="back-button">뒤로 가기</button>
         `;
 
         // 이벤트 리스너 추가
@@ -85,9 +83,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
             navigateTo('/schedule');
         });
 
-        document.getElementById('back-button').addEventListener('click', () => {
-            navigateTo('/scheduleDetail');
-        });
+
 
         // 모달 관련 이벤트 리스너 추가
         const modal = document.getElementById('modal');
