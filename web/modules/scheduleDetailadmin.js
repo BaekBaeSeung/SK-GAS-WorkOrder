@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, getScheduleTypeByTime } from './utils.js'; // 유틸 함수 임포트
 
 export async function renderScheduleDetailAdminPage(container) {
     try {
@@ -16,7 +16,7 @@ export async function renderScheduleDetailAdminPage(container) {
                     <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                     <div class="user-info">
                         <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                        <span class="initial">M</span>
+                        <span class="initial">${getScheduleTypeByTime()}</span>
                         <div class="time-container">
                             <div class="time-date">
                                 <span class="time">${formatTime(getCurrentTime())}</span>

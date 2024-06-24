@@ -115,3 +115,16 @@ export function formatTime(time) {
     const separator = new Date().getSeconds() % 2 === 0 ? ':' : '<span style="visibility:hidden">:</span>';
     return `${hours}${separator}${minutes}`;
 }
+
+// 현재 시간을 기반으로 스케줄 타입을 반환하는 함수
+export function getScheduleTypeByTime() {
+    const time = getCurrentTime();
+    const [hours, minutes] = time.split(':').map(Number);
+    if (hours >= 8 && hours < 12) {
+        return 'M';
+    } else if (hours >= 12 && hours < 20) {
+        return 'S';
+    } else {
+        return 'N';
+    }
+}
