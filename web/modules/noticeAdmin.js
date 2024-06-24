@@ -5,6 +5,12 @@ export async function renderNoticeAdminPage(container) {
         const userProfile = await fetchUserProfile();
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
 
+        if (userProfile.isAdmin !== 'ADMIN') {
+            alert('권한을 확인하세요.');
+            navigateTo('/schedule');
+            return;
+        }
+
         container.innerHTML = `
             <head>
                 <link rel="stylesheet" href="styles/noticeAdmin.css">
@@ -28,7 +34,7 @@ export async function renderNoticeAdminPage(container) {
                         <label for="importance">중요도:</label>
                         <select id="importance" name="importance">
                             <option value="HIGH">긴급</option>
-                            <option value="NORMAL">일반</option>
+                            <option value="MEDIUM">일반</option>
                         </select>
                         <label for="content">내용:</label>
                         <textarea id="content" name="content" rows="4" cols="50"></textarea>
@@ -101,6 +107,6 @@ export async function renderNoticeAdminPage(container) {
     }
 
     document.querySelector('.logo').addEventListener('click', () => {
-    navigateTo('/schedule');
-});
+        navigateTo('/schedule');
+    });
 }
