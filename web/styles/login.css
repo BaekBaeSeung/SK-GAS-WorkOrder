@@ -24,7 +24,7 @@
     font-family: "NanumSquare";
     font-weight: 700;
     src: url("../assets/font/NanumSquare/NanumSquareB.eot");
-    src: local("���"),
+    src: local(""),
         url("../assets/font/NanumSquare/NanumSquareB.eot?#iefix") format("embedded-opentype"),
         url("../assets/font/NanumSquare/NanumSquareB.woff2") format("woff2"),
         url("../assets/font/NanumSquare/NanumSquareB.woff") format("woff"),
@@ -161,6 +161,12 @@ body {
   color: #454545;
 }
 
+.login-form-container button span{
+    font-family: "NanumSquareAc";
+    font-weight: 900;
+    font-size: 3lvh;
+
+}
 .time, .day {
     font-weight: bold;
 }
@@ -218,8 +224,14 @@ body {
     cursor: pointer;
     transition: background-color 0.3s;
     margin-top: 1.5lvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+.login-button i {
+    font-size: 2lvh;
+}
 
 .login-button:hover {
     background-color: #D06A00;

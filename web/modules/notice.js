@@ -6,8 +6,8 @@ export async function renderNoticePage(container) {
     try {
         const userProfile = await fetchUserProfile();
         const noticeCount = await fetchNoticeCount();
-        console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
-        console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
+        console.count('User ProfileUser ProfileUser ProfileUser ProfileUser Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
+        // console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
         const userRole = localStorage.getItem('userRole'); // 사용자 역할 가져오기
 
@@ -168,5 +168,6 @@ function updateTime() {
 }
 
 updateTime();
+
 
 

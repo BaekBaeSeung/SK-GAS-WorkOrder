@@ -9,6 +9,7 @@ export function renderLoginPage(container) {
     container.innerHTML = `
         <head>
             <link rel="stylesheet" href="styles/login.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         </head>
         <div class="login-container">
             <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" onclick="navigateTo('/')">
@@ -25,7 +26,7 @@ export function renderLoginPage(container) {
                 <form id="loginForm">
                     <input type="text" id="username" placeholder="아이디" required />
                     <input type="password" id="password" placeholder="비밀번호" required />
-                    <button type="submit" class="login-button"><span>></span></button>
+                    <button type="submit" class="login-button"><i class="fas fa-arrow-right"></i></button>
                 </form>
             </div>
         </div>
