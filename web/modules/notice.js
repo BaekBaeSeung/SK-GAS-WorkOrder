@@ -6,10 +6,6 @@ export async function renderNoticePage(container) {
     try {
         const userProfile = await fetchUserProfile();
         const noticeCount = await fetchNoticeCount();
-        console.count('User ProfileUser ProfileUser ProfileUser ProfileUser Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
-        // console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
-
-        const userRole = localStorage.getItem('userRole'); // 사용자 역할 가져오기
 
         // 서버에서 공지사항 데이터 가져오기
         const response = await fetch('/api/notice-data');
@@ -59,8 +55,8 @@ export async function renderNoticePage(container) {
                         </div>
                     `).join('')}
                 </div>
-                ${userRole === 'ADMIN' ? '<button id="download-excel"><img src="./assets/img/common/xls_pic.png" alt="엑셀 다운로드" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></button>' : ''}
-                ${userRole === 'ADMIN' ? '<button id="add-notice">+</button>' : ''}
+                ${userProfile.isAdmin === 'ADMIN' ? '<button id="download-excel"><img src="./assets/img/common/xls_pic.png" alt="엑셀 다운로드" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></button>' : ''}
+                ${userProfile.isAdmin === 'ADMIN' ? '<button id="add-notice">+</button>' : ''}
             </div>
             <div id="modal" class="modal">
                 <div class="modal-content">
@@ -118,7 +114,7 @@ export async function renderNoticePage(container) {
             modal.style.display = 'none';
         });
 
-        if (userRole === 'ADMIN') {
+        if (userProfile.isAdmin === 'ADMIN') {
             document.getElementById('download-excel').addEventListener('click', async () => {
                 await downloadExcel();
             });
@@ -145,6 +141,7 @@ export async function renderNoticePage(container) {
         alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
     }
 }
+
 function updateTime() {
     const currentTimeElem = document.querySelector('.time');
     const currentDateElem = document.querySelector('.date');
@@ -168,6 +165,3 @@ function updateTime() {
 }
 
 updateTime();
-
-
-

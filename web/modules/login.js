@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus, formatTime } from './utils.js';
+import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus, formatTime, getScheduleTypeByTime } from './utils.js';
 
 export function renderLoginPage(container) {
     // // 로그인 상태 확인
