@@ -9,6 +9,15 @@ export async function renderNoticeDetailPage(container, noticeId) {
         const response = await fetch(`/api/notice-data/${noticeId}`);
         const notice = await response.json();
 
+        // NoticeRead 테이블에 데이터 삽입 요청
+        await fetch('/api/notice-read', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ noticeId })
+        });
+
         container.innerHTML = `
             <head>
                 <link rel="stylesheet" href="/styles/noticeDetail.css">

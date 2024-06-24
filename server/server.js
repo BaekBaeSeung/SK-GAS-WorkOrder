@@ -331,11 +331,32 @@ async function fetchNoticeData() {
 }
 
 app.get('/api/notice-data', async (req, res) => {
+const token = req.cookies.accessToken;
+
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 없습니다.' });
+    }
+
     try {
-        const data = await fetchNoticeData();
-        res.json(data);
+        const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
+        console.log('Decoded Token:', decoded); // 디버깅용 로그
+
+        const connection = await conn;
+        const notices = await connection.query("SELECT * FROM notice");
+
+        // 각 공지사항에 대해 사용자가 읽었는지 여부를 확인
+        for (let notice of notices) {
+            const [readRecord] = await connection.query(
+                "SELECT * FROM NoticeRead WHERE notice_id = ? AND user_id = ?",
+                [notice.notice_id, decoded.userId]
+            );
+            notice.isNew = !readRecord; // 읽은 기록이 없으면 새로운 공지사항
+        }
+
+        res.json(notices);
     } catch (err) {
-        res.status(500).send("Failed to fetch data");
+        console.error("Error fetching notice data:", err);
+        res.status(500).json({ message: '서버 오류' });
     }
 });
 fetchNoticeData();
@@ -467,6 +488,39 @@ app.post('/api/notice', async (req, res) => {
         res.json({ success: true, message: '공지사항이 성공적으로 저장되었습니다.' });
     } catch (err) {
         console.error("Error saving notice:", err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+//=================================================================
+// Notice Read Endpoint
+//=================================================================
+app.post('/api/notice-read', async (req, res) => {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 없습니다.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
+        console.log('Decoded Tokennoticenoticenoticenotice:', decoded); // 디버깅용 로그
+
+        const { noticeId } = req.body;
+        const noticeReadId = uuidv4(); // UUID 생성
+        const userId = decoded.userId;
+        const readAt = new Date();
+
+        const connection = await conn;
+        const query = `
+            INSERT INTO NoticeRead (notice_read_id, user_id, notice_id, read_at)
+            VALUES (?, ?, ?, ?)
+        `;
+        await connection.query(query, [noticeReadId, userId, noticeId, readAt]);
+
+        res.json({ success: true, message: 'Notice read record successfully inserted.' });
+    } catch (err) {
+        console.error("Error inserting notice read record:", err);
         res.status(500).json({ message: '서버 오류' });
     }
 });

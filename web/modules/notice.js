@@ -47,7 +47,10 @@ export async function renderNoticePage(container) {
                     ${notices.map(notice => `
                         <div class="notice-item ${notice.importance === 'HIGH' ? 'urgent' : 'normal'}" data-notice-id="${notice.notice_id}">
                             <div class="title-date-container">
-                                <p class="title" style="color: ${notice.importance === 'HIGH' ? '#F08000' : 'inherit'};">${notice.importance === 'HIGH' ? '긴급' : '일반'}</p>
+                                <p class="title" style="color: ${notice.importance === 'HIGH' ? '#F08000' : 'inherit'};">
+                                    ${notice.importance === 'HIGH' ? '긴급' : '일반'}
+                                    ${notice.isNew ? '<span class="new">NEW!</span>' : ''}
+                                </p>
                                 <p class="date">${new Date(notice.create_at).toLocaleDateString()}</p>
                             </div>
                             <ul>
@@ -165,3 +168,5 @@ function updateTime() {
 }
 
 updateTime();
+
+
