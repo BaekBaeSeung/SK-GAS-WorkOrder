@@ -31,25 +31,29 @@ export function renderLoginPage(container) {
         </div>
     `;
 
-    function updateTime() {
-        const currentTimeElem = document.getElementById('current-time');
-        const currentDateElem = document.getElementById('current-date');
-        const currentDayElem = document.getElementById('current-day');
+function updateTime() {
+    const currentTimeElem = document.querySelector('.time');
+    const currentDateElem = document.querySelector('.date');
+    const currentDayElem = document.querySelector('.day');
+    const initialElem = document.querySelector('.initial');
 
-        if (currentTimeElem) {
-            currentTimeElem.innerHTML = formatTime(getCurrentTime());
-        }
-        if (currentDateElem) {
-            currentDateElem.textContent = getCurrentDate();
-        }
-        if (currentDayElem) {
-            currentDayElem.textContent = getCurrentDay();
-        }
-
-        requestAnimationFrame(updateTime);
+    if (currentTimeElem) {
+        currentTimeElem.innerHTML = formatTime(getCurrentTime());
+    }
+    if (currentDateElem) {
+        currentDateElem.textContent = getCurrentDate();
+    }
+    if (currentDayElem) {
+        currentDayElem.textContent = getCurrentDay();
+    }
+    if (initialElem) {
+        initialElem.textContent = getScheduleTypeByTime();
     }
 
-    updateTime();
+    requestAnimationFrame(updateTime);
+}
+
+updateTime();
 
     document.getElementById('loginForm').addEventListener('submit', async (event) => {
         event.preventDefault();

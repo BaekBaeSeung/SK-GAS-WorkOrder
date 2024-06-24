@@ -49,23 +49,28 @@ export async function renderNoticeDetailPage(container, noticeId) {
         `;
 
         function updateTime() {
-            const currentTimeElement = document.getElementById('current-time');
-            const currentDateElement = document.getElementById('current-date');
-            const currentDayElement = document.querySelector('.day');
+            const currentTimeElem = document.querySelector('.time');
+            const currentDateElem = document.querySelector('.date');
+            const currentDayElem = document.querySelector('.day');
+            const initialElem = document.querySelector('.initial');
 
-            if (currentTimeElement) {
-                currentTimeElement.innerHTML = formatTime(getCurrentTime());
+            if (currentTimeElem) {
+                currentTimeElem.innerHTML = formatTime(getCurrentTime());
             }
-            if (currentDateElement) {
-                currentDateElement.textContent = getCurrentDate();
+            if (currentDateElem) {
+                currentDateElem.textContent = getCurrentDate();
             }
-            if (currentDayElement) {
-                currentDayElement.textContent = getCurrentDay();
+            if (currentDayElem) {
+                currentDayElem.textContent = getCurrentDay();
+            }
+            if (initialElem) {
+                initialElem.textContent = getScheduleTypeByTime();
             }
 
             requestAnimationFrame(updateTime);
         }
-        updateTime();
+
+            updateTime();
 
         // 모달 관련 이벤트 리스너 추가
         const modal = document.getElementById('modal');

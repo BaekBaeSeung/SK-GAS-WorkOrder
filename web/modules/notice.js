@@ -142,3 +142,26 @@ export async function renderNoticePage(container) {
         alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
     }
 }
+function updateTime() {
+    const currentTimeElem = document.querySelector('.time');
+    const currentDateElem = document.querySelector('.date');
+    const currentDayElem = document.querySelector('.day');
+    const initialElem = document.querySelector('.initial');
+
+    if (currentTimeElem) {
+        currentTimeElem.innerHTML = formatTime(getCurrentTime());
+    }
+    if (currentDateElem) {
+        currentDateElem.textContent = getCurrentDate();
+    }
+    if (currentDayElem) {
+        currentDayElem.textContent = getCurrentDay();
+    }
+    if (initialElem) {
+        initialElem.textContent = getScheduleTypeByTime();
+    }
+
+    requestAnimationFrame(updateTime);
+}
+
+updateTime();
