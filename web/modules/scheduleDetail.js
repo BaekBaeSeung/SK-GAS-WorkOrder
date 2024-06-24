@@ -68,9 +68,32 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
         });
 
         document.querySelectorAll('.task-item').forEach(item => {
-            item.addEventListener('click', () => {
+            item.addEventListener('click', async () => {
                 const sectionId = item.dataset.taskId;
-                navigateTo(`/scheduleDetailDetail/${sectionId}`);
+                const sectionName = item.querySelector('.task-name').textContent;
+                
+                try {
+                    // SubSection 데이터 가져오기
+                    const response = await fetch(`/api/subsections/${sectionId}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch subsections');
+                    }
+                    const subSections = await response.json();
+
+                    // 현재 스케줄 데이터와 섹션 정보를 로컬 스토리지에 저장
+                    localStorage.setItem('currentScheduleData', JSON.stringify(scheduleData));
+                    localStorage.setItem('currentSectionData', JSON.stringify({
+                        sectionId,
+                        sectionName,
+                        subSections
+                    }));
+
+                    // 스케줄 디테일 디테일 페이지로 이동
+                    navigateTo(`/scheduleDetailDetail/${sectionId}`);
+                } catch (error) {
+                    console.error('Error fetching subsections:', error);
+                    alert('서브섹션 데이터를 가져오는데 실패했습니다.');
+                }
             });
         });
 

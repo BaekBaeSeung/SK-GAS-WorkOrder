@@ -479,4 +479,21 @@ app.get('/api/sections-by-area/:areaName', async (req, res) => {
     }
 });
 
+app.get('/api/subsections/:sectionId', async (req, res) => {
+    const { sectionId } = req.params;
+    try {
+        const connection = await conn;
+        const rows = await connection.query('SELECT * FROM SubSection WHERE section_id = ?', [sectionId]);
+        
+        // 섹션 아이디가 같은 두 개의 항목을 반환하는지 확인하기 위해 콘솔 로그 추가
+        console.log('Fetched SubSections:', rows);
+
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching subsections:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
 startServer();

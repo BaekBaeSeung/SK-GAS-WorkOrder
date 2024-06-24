@@ -5,22 +5,22 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         const userProfile = await fetchUserProfile();
         const noticeCount = await fetchNoticeCount();
 
-        // 로컬 스토리지에서 섹션 데이터 불러오기
-        const sections = JSON.parse(localStorage.getItem('scheduleSections')) || [];
-        const currentSection = sections.find(section => section.section_id === sectionId);
+        // 로컬 스토리지에서 스케줄 데이터와 섹션 데이터 불러오기
+        const scheduleData = JSON.parse(localStorage.getItem('currentScheduleData')) || {};
+        const sectionData = JSON.parse(localStorage.getItem('currentSectionData')) || {};
 
-        if (!currentSection) {
-            throw new Error('섹션을 찾을 수 없습니다.'); 
-        }
+        // sectionData.subSections가 배열인지 확인하고, 배열이 아닌 경우 빈 배열로 초기화
+        const subSections = Array.isArray(sectionData.subSections) ? sectionData.subSections : [];
+        console.table("subSections:"+subSections);
 
         container.innerHTML = `
             <head>
-                <link rel="stylesheet" href="styles/scheduleDetailDetail.css">
+                <link rel="stylesheet" href="/styles/scheduleDetailDetail.css">
             </head>
             <div class="schedule-detail-detail-container">
-                <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
+                <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                 <div class="header">
-                    <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
+                    <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
                     <span class="initial">M</span>
                     <div class="time-container">
                         <div class="time-date">
@@ -36,41 +36,33 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                 <div class="schedule-detail">
                     <div class="schedule-item">
                         <div class="location-time">
-                            <p class="location">C3/C4/부두</p>
-                            <p class="time">Morning 12:00</p>
+                            <p class="location">${scheduleData.area_name || 'N/A'}</p>
+                            <p class="time">${scheduleData.schedule_type === 'm' ? 'Morning' : scheduleData.schedule_type === 's' ? 'Swing' : 'Night'} ${scheduleData.time || 'N/A'}</p>
                         </div>
                         <div class="task-item">
-                            <p class="task-name task-name-header">UAC C3 loading</p>
+                            <p class="task-name task-name-header">${sectionData.sectionName}</p>
                         </div>
                         <div class="task">
-                            <div class="task-item">
-                                <div class="task-header">
-                                    <span class="task-number">01</span>
-                                    <p class="task-name">${currentSection.section_Info}</p>
-                                    <span class="task-code">[${currentSection.section_id}]</span>
-                                </div>
-                                <div class="task-body">
-                                    <img src="./assets/img/common/MPa.png" alt="Gauge" class="gauge">
-                                    <div class="input-container">
-                                        <input type="text" class="input-field">
-                                        <span class="unit">℃</span>
+                            ${subSections.map((subSection, index) => {
+                                const taskNumber = (index + 1).toString().padStart(2, '0'); // 2자리 숫자로 만들기
+                                return `
+                                <div class="task-item">
+                                    <div class="task-header">
+                                        <span class="task-number">${taskNumber}</span>
+                                        <p class="task-name">${subSection.subSection_name}</p>
+                                        <span class="task-code">[${subSection.item_no}]</span>
+                                        <p class="task-name">${subSection.section_unit}</p>
+                                    </div>
+                                    <div class="task-body">
+                                        <img src="/assets/img/common/${subSection.item_pic}" alt="Gauge" class="gauge">
+                                        <div class="input-container">
+                                            <input type="text" class="input-field">
+                                            <span class="unit">${subSection.section_unit}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="task-item">
-                                <div class="task-header">
-                                    <span class="task-number">02</span>
-                                    <p class="task-name">P-707A/B Dis.</p>
-                                    <span class="task-code">[PI-771A/B]</span>
-                                </div>
-                                <div class="task-body">
-                                    <img src="./assets/img/common/MPa.png" alt="Gauge" class="gauge">
-                                    <div class="input-container">
-                                        <input type="text" class="input-field">
-                                        <span class="unit">kg/cm²/amp</span>
-                                    </div>
-                                </div>
-                            </div>
+                            `;
+                            }).join('')}
                         </div>
                     </div>
                 </div>
@@ -81,10 +73,20 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                     <button id="logout-button">로그아웃</button>
                 </div>
             </div>
+            <button id="back-button">뒤로 가기</button>
         `;
 
+        // 이벤트 리스너 추가
         document.getElementById('notice').addEventListener('click', () => {
             navigateTo('/notice');
+        });
+
+        document.getElementById('logo').addEventListener('click', () => {
+            navigateTo('/schedule');
+        });
+
+        document.getElementById('back-button').addEventListener('click', () => {
+            navigateTo('/scheduleDetail');
         });
 
         // 모달 관련 이벤트 리스너 추가
@@ -93,37 +95,33 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         const closeModal = document.querySelector('.close');
         const logoutButton = document.getElementById('logout-button');
 
-        avatar.addEventListener('click', () => {
-            modal.style.display = 'block';
-        });
+        if (avatar) {
+            avatar.addEventListener('click', () => {
+                if (modal) modal.style.display = 'block';
+            });
+        }
 
-        closeModal.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                if (modal) modal.style.display = 'none';
+            });
+        }
 
-        window.addEventListener('click', (event) => {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        });
+        if (window) {
+            window.addEventListener('click', (event) => {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
 
-        logoutButton.addEventListener('click', () => {
-            logout(); // 로그아웃 요청
-            modal.style.display = 'none';
-        });
+        if (logoutButton) {
+            logoutButton.addEventListener('click', () => {
+                logout(); // 로그아웃 요청
+                if (modal) modal.style.display = 'none';
+            });
+        }
 
-        // 로고 클릭 시 스케줄 페이지로 이동
-        document.querySelector('.logo').addEventListener('click', () => {
-            navigateTo('/schedule');
-        });
-
-        // 뒤로 가기 버튼 추가
-        const backButton = document.createElement('button');
-        backButton.textContent = '뒤로 가기';
-        backButton.addEventListener('click', () => {
-            history.back();
-        });
-        container.appendChild(backButton);
     } catch (error) {
         console.error('Error fetching user profile or notice count:', error);
         alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
@@ -149,3 +147,4 @@ function updateTime() {
 }
 
 updateTime();
+

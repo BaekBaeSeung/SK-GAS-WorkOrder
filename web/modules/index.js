@@ -209,7 +209,7 @@ function loadPage(path, state = {}) {
             }
             loadCSS('./styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
             break;
-        case path === '/scheduleDetailDetail': // 추가
+        case path.startsWith('/scheduleDetailDetail/'): // 수정된 부분
             const sectionId = path.split('/')[2];
             renderScheduleDetailDetailPage(app, sectionId);
             loadCSS('./styles/scheduleDetailDetail.css');
