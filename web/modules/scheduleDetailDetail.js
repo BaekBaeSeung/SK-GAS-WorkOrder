@@ -10,7 +10,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         const currentSection = sections.find(section => section.section_id === sectionId);
 
         if (!currentSection) {
-            throw new Error('섹션을 찾을 수 없습니다.');
+            throw new Error('섹션을 찾을 수 없습니다.'); 
         }
 
         container.innerHTML = `

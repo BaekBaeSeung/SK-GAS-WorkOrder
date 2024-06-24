@@ -199,7 +199,7 @@ function loadPage(path, state = {}) {
                 const storedSections = JSON.parse(localStorage.getItem('scheduleSections'));
                 const storedScheduleData = JSON.parse(localStorage.getItem('scheduleData'));
                 if (!storedSections || storedSections.length === 0 || !storedScheduleData) {
-                    showModal('잘못된 접근입니다.');
+                    showModal('잘못된 접근입니다.'); 
                     navigateTo('/schedule');
                     return;
                 }

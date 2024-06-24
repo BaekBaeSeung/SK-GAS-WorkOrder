@@ -30,7 +30,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
                     <div class="time-container">
                         <div class="time-date">
                             <span class="time">${formatTime(getCurrentTime())}</span>
-                            <span class="date">${getCurrentDate()}</span>
+                            <span class="date">${getCurrentDate()}</span> 
                         </div>
                         <span class="day">${getCurrentDay()}</span>
                     </div>

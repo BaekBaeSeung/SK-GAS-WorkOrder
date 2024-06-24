@@ -166,7 +166,7 @@ function updateTime() {
         currentDateElem.textContent = getCurrentDate();
     }
     if (currentDayElem) {
-        currentDayElem.textContent = getCurrentDay();
+        currentDayElem.textContent = getCurrentDay(); 
     }
 
     requestAnimationFrame(updateTime);
