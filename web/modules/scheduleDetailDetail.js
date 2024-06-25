@@ -53,8 +53,9 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                                         <span class="task-code">[${subSection.item_no}]</span>
                                     </div>
                                     <div class="task-body">
-                                        <img src="/assets/img/common/${subSection.item_pic}" alt="Gauge" class="gauge">
-                                        <div class="input-container">
+                                    <img src="/assets/img/common/p771.png" alt="Gauge" class="gauge">
+                                    <!-- <img src="/assets/img/common/${subSection.item_pic}" alt="Gauge" class="gauge"> -->
+                                    <div class="input-container">
                                             <input type="text" class="input-field">
                                             <span class="unit">${subSection.section_unit}</span>
                                         </div>

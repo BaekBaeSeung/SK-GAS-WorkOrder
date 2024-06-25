@@ -239,6 +239,7 @@ body {
 .gauge {
     width: 100%;
     max-width: 20lvh;
+    clip-path: inset(0 0.2px 0 0);
 }
 
 .input-container {
@@ -246,6 +247,7 @@ body {
     align-items: center;
     gap: 0.5lvh;
     margin-left: 1.5lvh;
+
 }
 
 .input-field {
