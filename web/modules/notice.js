@@ -1,5 +1,5 @@
 import { downloadExcel } from './xlsx.js';
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, getScheduleTypeByTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
 import { renderNoticeDetailPage } from './noticeDetail.js'; // noticeDetail 임포트
 
 export async function renderNoticePage(container) {
@@ -11,13 +11,20 @@ export async function renderNoticePage(container) {
         const response = await fetch('/api/notice-data');
         let notices = await response.json();
 
+        const scheduleData = JSON.parse(localStorage.getItem('currentScheduleData')) || {};
+
         // notices가 배열이 아닌 경우 빈 배열로 초기화
         if (!Array.isArray(notices)) {
             notices = [];
         }
 
         // notices 배열을 importance 필드를 기준으로 정렬 (HIGH가 먼저 오도록)
-        notices.sort((a, b) => (a.importance === 'HIGH' ? -1 : 1));
+        notices.sort((a, b) => {
+            if (a.importance === b.importance) {
+                return new Date(b.create_at) - new Date(a.create_at); // 최신 순으로 정렬
+            }
+            return a.importance === 'HIGH' ? -1 : 1; // HIGH가 먼저 오도록 정렬
+        });
 
         container.innerHTML = `
             <head>
@@ -27,7 +34,7 @@ export async function renderNoticePage(container) {
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                 <div class="header">
                     <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial">${getScheduleTypeByTime()}</span>
+                    <span class="initial">${scheduleData.initial}</span>
                     <div class="time-container">
                         <div class="time-date">
                             <span class="time" id="current-time">${formatTime(getCurrentTime())}</span>
@@ -141,27 +148,3 @@ export async function renderNoticePage(container) {
         alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
     }
 }
-
-function updateTime() {
-    const currentTimeElem = document.querySelector('.time');
-    const currentDateElem = document.querySelector('.date');
-    const currentDayElem = document.querySelector('.day');
-    const initialElem = document.querySelector('.initial');
-
-    if (currentTimeElem) {
-        currentTimeElem.innerHTML = formatTime(getCurrentTime());
-    }
-    if (currentDateElem) {
-        currentDateElem.textContent = getCurrentDate();
-    }
-    if (currentDayElem) {
-        currentDayElem.textContent = getCurrentDay();
-    }
-    if (initialElem) {
-        initialElem.textContent = getScheduleTypeByTime();
-    }
-
-    requestAnimationFrame(updateTime);
-}
-
-updateTime();

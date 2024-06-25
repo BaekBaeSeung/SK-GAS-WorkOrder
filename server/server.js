@@ -419,6 +419,32 @@ app.get('/api/schedule', async (req, res) => {
 });
 
 //=================================================================
+// Schedule Data Endpoint for Admin
+//=================================================================
+app.get('/api/schedule/all', async (req, res) => {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 없습니다.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
+        console.log('Decoded Token:', decoded); // 디버깅용 로그
+
+        const connection = await conn;
+        const query = `SELECT * FROM schedule`;
+        const results = await connection.query(query);
+        console.log('All Schedule Data:', results); // 디버깅용 로그
+
+        res.json(results);
+    } catch (err) {
+        console.error("Error fetching all schedule data:", err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+//=================================================================
 // Logout Endpoint
 //=================================================================
 

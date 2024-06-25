@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, getScheduleTypeByTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
 
 export async function renderScheduleDetailAdminPage(container) {
     try {
@@ -129,7 +129,7 @@ function updateTime() {
     const currentTimeElem = document.querySelector('.time');
     const currentDateElem = document.querySelector('.date');
     const currentDayElem = document.querySelector('.day');
-    const initialElem = document.querySelector('.initial');
+
 
     if (currentTimeElem) {
         currentTimeElem.innerHTML = formatTime(getCurrentTime());
@@ -140,9 +140,7 @@ function updateTime() {
     if (currentDayElem) {
         currentDayElem.textContent = getCurrentDay();
     }
-    if (initialElem) {
-        initialElem.textContent = getScheduleTypeByTime();
-    }
+
 
     requestAnimationFrame(updateTime);
 }

@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, getScheduleTypeByTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
 
 export async function renderPreviousPage(container) {
     try {
@@ -7,8 +7,15 @@ export async function renderPreviousPage(container) {
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
+        const storedData = JSON.parse(localStorage.getItem('scheduleData')) || {};
+
         // 서버에서 스케줄 데이터 가져오기
-        const response = await fetch('/api/schedule');
+        let response;
+        if (userProfile.isAdmin === 'ADMIN') {
+            response = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+        } else {
+            response = await fetch('/api/schedule');
+        }
         const schedules = await response.json();
         console.log('Schedules:', schedules); // 스케줄 데이터 출력 (디버깅용)
 
@@ -31,7 +38,7 @@ export async function renderPreviousPage(container) {
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
                 <div class="header">
                     <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial">${getScheduleTypeByTime()}</span>
+                    <span class="initial">${storedData.initial}</span>
                     <div class="time-container">
                         <div class="time-date">
                             <span class="time">${formatTime(getCurrentTime())}</span>
@@ -93,7 +100,8 @@ export async function renderPreviousPage(container) {
                     const scheduleData = {
                         area_name: areaName,
                         schedule_type: scheduleType,
-                        time: time
+                        time: time,
+                        initial: schedules[0].schedule_type.toUpperCase()
                     };
 
                     // scheduleDetail 페이지로 이동하면서 scheduleData와 sections 데이터를 전달
@@ -155,10 +163,6 @@ function updateTime() {
     if (currentDayElem) {
         currentDayElem.textContent = getCurrentDay();
     }
-    if (initialElem) {
-        initialElem.textContent = getScheduleTypeByTime();
-    }
-
     requestAnimationFrame(updateTime);
 }
 

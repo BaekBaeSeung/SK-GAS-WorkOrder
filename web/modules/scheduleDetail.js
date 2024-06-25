@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, getScheduleTypeByTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
 
 export async function renderScheduleDetailPage(container, scheduleData = {}, sections = []) {
     try {
@@ -26,7 +26,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                 <div class="header">
                     <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial">${getScheduleTypeByTime()}</span>
+                    <span class="initial">${storedData.initial}</span>
                     <div class="time-container">
                         <div class="time-date">
                             <span class="time">${formatTime(getCurrentTime())}</span>
@@ -88,8 +88,11 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
                         subSections
                     }));
 
+
                     // 스케줄 디테일 디테일 페이지로 이동
-                    navigateTo(`/scheduleDetailDetail/${sectionId}`);
+                    navigateTo(`/scheduleDetailDetail/${sectionId}`,{
+                        initial: scheduleData.initial
+                    });
                 } catch (error) {
                     console.error('Error fetching subsections:', error);
                     alert('서브섹션 데이터를 가져오는데 실패했습니다.');
@@ -136,7 +139,6 @@ function updateTime() {
     const currentTimeElem = document.querySelector('.time');
     const currentDateElem = document.querySelector('.date');
     const currentDayElem = document.querySelector('.day');
-    const initialElem = document.querySelector('.initial');
 
     if (currentTimeElem) {
         currentTimeElem.innerHTML = formatTime(getCurrentTime());
@@ -147,9 +149,7 @@ function updateTime() {
     if (currentDayElem) {
         currentDayElem.textContent = getCurrentDay();
     }
-    if (initialElem) {
-        initialElem.textContent = getScheduleTypeByTime();
-    }
+ 
 
     requestAnimationFrame(updateTime);
 }

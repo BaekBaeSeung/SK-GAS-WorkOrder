@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, logout, formatTime, getScheduleTypeByTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
 
 export async function renderNoticeDetailPage(container, noticeId) {
     try {
@@ -8,6 +8,8 @@ export async function renderNoticeDetailPage(container, noticeId) {
         // 서버에서 공지사항 데이터 가져오기
         const response = await fetch(`/api/notice-data/${noticeId}`);
         const notice = await response.json();
+
+        const storedData = JSON.parse(localStorage.getItem('scheduleData')) || {};
 
         // NoticeRead 테이블에 데이터 삽입 요청
         await fetch('/api/notice-read', {
@@ -26,7 +28,7 @@ export async function renderNoticeDetailPage(container, noticeId) {
                 <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                 <div class="header">
                     <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial">${getScheduleTypeByTime()}</span>
+                    <span class="initial">${storedData.initial}</span>
                     <div class="time-container">
                         <div class="time-date">
                             <span class="time" id="current-time">${formatTime(getCurrentTime())}</span>
@@ -71,9 +73,6 @@ export async function renderNoticeDetailPage(container, noticeId) {
             }
             if (currentDayElem) {
                 currentDayElem.textContent = getCurrentDay();
-            }
-            if (initialElem) {
-                initialElem.textContent = getScheduleTypeByTime();
             }
 
             requestAnimationFrame(updateTime);

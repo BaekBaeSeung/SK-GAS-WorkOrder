@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, getScheduleTypeByTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
 
 export async function renderScheduleDetailDetailPage(container, sectionId) {
     try {
@@ -21,7 +21,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                 <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                 <div class="header">
                     <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial">${getScheduleTypeByTime()}</span>
+                    <span class="initial">${scheduleData.initial}</span>
                     <div class="time-container">
                         <div class="time-date">
                             <span class="time">${formatTime(getCurrentTime())}</span>
@@ -140,10 +140,6 @@ function updateTime() {
     if (currentDayElem) {
         currentDayElem.textContent = getCurrentDay();
     }
-    if (initialElem) {
-        initialElem.textContent = getScheduleTypeByTime();
-    }
-
     requestAnimationFrame(updateTime);
 }
 

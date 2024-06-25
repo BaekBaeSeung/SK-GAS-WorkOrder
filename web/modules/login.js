@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus, formatTime, getScheduleTypeByTime } from './utils.js';
+import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus, formatTime} from './utils.js';
 
 export function renderLoginPage(container) {
     // // 로그인 상태 확인
@@ -36,7 +36,7 @@ function updateTime() {
     const currentTimeElem = document.querySelector('.time');
     const currentDateElem = document.querySelector('.date');
     const currentDayElem = document.querySelector('.day');
-    const initialElem = document.querySelector('.initial');
+
 
     if (currentTimeElem) {
         currentTimeElem.innerHTML = formatTime(getCurrentTime());
@@ -47,10 +47,6 @@ function updateTime() {
     if (currentDayElem) {
         currentDayElem.textContent = getCurrentDay();
     }
-    if (initialElem) {
-        initialElem.textContent = getScheduleTypeByTime();
-    }
-
     requestAnimationFrame(updateTime);
 }
 
