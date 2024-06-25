@@ -22,6 +22,7 @@ export async function renderSchedulePage(container) {
 
         const today = new Date();
         const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        console.log();
 
         const todaySchedules = schedules.filter(schedule => {
             const scheduleDate = new Date(schedule.create_at);
@@ -46,6 +47,13 @@ export async function renderSchedulePage(container) {
             `;
         }
 
+        const uniqueSchedules = todaySchedules.reduce((acc, schedule) => {
+            if (!acc.some(item => item.time === schedule.time)) {
+                acc.push(schedule);
+            }
+            return acc;
+        }, []);
+
         // 어드민 사용자와 일반 사용자에 따라 다른 HTML 렌더링
         if (userProfile.isAdmin === 'ADMIN') {
             container.innerHTML = `
@@ -53,38 +61,48 @@ export async function renderSchedulePage(container) {
                     <link rel="stylesheet" href="styles/schedule.css">
                 </head>
                 <div class="schedule-container">
-                    <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
-                    <div class="header">
-                        <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${schedules[0].schedule_type.toUpperCase()}</span>
-                        <div class="time-container">
-                            <div class="time-date">
-                                <span class="time">${formatTime(getCurrentTime())}</span>
-                                <span class="date">${getCurrentDate()}</span>
+                    <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
+                        <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
+                        <div class="header">
+                            <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
+                            <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${schedules[0].schedule_type.toUpperCase()}</span>
+                            <div class="time-container">
+                                <div class="time-date">
+                                    <span class="time">${formatTime(getCurrentTime())}</span>
+                                    <span class="date">${getCurrentDate()}</span>
+                                </div>
+                                <span class="day">${getCurrentDay()}</span>
                             </div>
-                            <span class="day">${getCurrentDay()}</span>
+                        </div>
+                        <div class="notice" id="notice">
+                            <p>공지사항 [${noticeCount}]<span class="dash">●</span></p>
                         </div>
                     </div>
-                    <div class="notice" id="notice">
-                        <p>공지사항 [${noticeCount}]<span class="dash">●</span></p>
-                    </div>
-                  
-                    
-                    <div class="schedule">
-                        ${todaySchedules.map(schedule => `
-                            <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
-                                <p class="location">${schedule.area_name}</p>
-                                <div class="shift-time">
-                                    <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
-                                    <p class="time">${schedule.time}</p>
-                                </div>
+                    <div class="schedule-detail">
+                        <div class="schedule-item-container">
+                            <div class="location-time">
+                                <p class="location">${schedules[0].area_name || 'N/A'}</p>
+                                <p class="global-time">${new Date(schedules[0].create_at).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\.$/, '') || 'N/A'}</p>
                             </div>
-                        `).join('')}
-                      
+                            ${uniqueSchedules.map(schedule => `
+                                <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
+                                    <p class="location" style="display: none;">${schedule.area_name}</p>
+                                    <div class="shift-time">
+                                        <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
+                                        <p class="time">${schedule.time}</p>
+                                    </div>
+                                    <ul class="worker-info" style="text-align: left;">
+                                        <li>교대 반장: ${schedule.foremanName}</li>
+                                        <li>작업자: ${schedule.workerName}</li>
+                                    </ul>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
-                    <div class="previous-records-container">
+                    <div class="previous-records-container"">
                         ${previousRecordsHTML}
                     </div>
+                    <div class="margin-bottom"></div>
                 </div>
                 <div id="modal" class="modal">
                     <div class="modal-content">
@@ -99,20 +117,22 @@ export async function renderSchedulePage(container) {
                     <link rel="stylesheet" href="styles/schedule.css">
                 </head>
                 <div class="schedule-container">
-                    <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
-                    <div class="header">
-                        <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                        <span class="initial">${schedules[0].schedule_type.toUpperCase()}</span>
-                        <div class="time-container">
-                            <div class="time-date">
-                                <span class="time">${formatTime(getCurrentTime())}</span>
-                                <span class="date">${getCurrentDate()}</span>
+                    <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
+                        <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
+                        <div class="header">
+                            <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
+                            <span class="initial">${schedules[0].schedule_type.toUpperCase()}</span>
+                            <div class="time-container">
+                                <div class="time-date">
+                                    <span class="time">${formatTime(getCurrentTime())}</span>
+                                    <span class="date">${getCurrentDate()}</span>
+                                </div>
+                                <span class="day">${getCurrentDay()}</span>
                             </div>
-                            <span class="day">${getCurrentDay()}</span>
                         </div>
-                    </div>
-                    <div class="notice" id="notice">
-                        <p>공지사항 [${noticeCount}]<span class="dash">●</span></p>
+                        <div class="notice" id="notice">
+                            <p>공지사항 [${noticeCount}]<span class="dash">●</span></p>
+                        </div>
                     </div>
                     <div class="schedule">
                         ${todaySchedules.map(schedule => `
@@ -230,4 +250,3 @@ function updateTime() {
 }
 
 updateTime();
-

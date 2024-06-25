@@ -18,20 +18,22 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                 <link rel="stylesheet" href="/styles/scheduleDetailDetail.css">
             </head>
             <div class="schedule-detail-detail-container">
-                <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
-                <div class="header">
-                    <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${scheduleData.initial}</span>
-                    <div class="time-container">
-                        <div class="time-date">
-                            <span class="time">${formatTime(getCurrentTime())}</span>
-                            <span class="date">${getCurrentDate()}</span>
+                <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
+                    <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
+                    <div class="header">
+                        <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
+                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${scheduleData.initial}</span>
+                        <div class="time-container">
+                            <div class="time-date">
+                                <span class="time">${formatTime(getCurrentTime())}</span>
+                                <span class="date">${getCurrentDate()}</span>
+                            </div>
+                            <span class="day">${getCurrentDay()}</span>
                         </div>
-                        <span class="day">${getCurrentDay()}</span>
                     </div>
-                </div>
-                <div class="notice" id="notice">
-                    <p>공지사항 [${noticeCount}] <span class="dash">●</span></p>
+                    <div class="notice" id="notice">
+                        <p>공지사항 [${noticeCount}] <span class="dash">●</span></p>
+                    </div>
                 </div>
                 <div class="schedule-detail">
                     <div class="schedule-item">
@@ -83,8 +85,6 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         document.getElementById('logo').addEventListener('click', () => {
             navigateTo('/schedule');
         });
-
-
 
         // 모달 관련 이벤트 리스너 추가
         const modal = document.getElementById('modal');
@@ -144,4 +144,3 @@ function updateTime() {
 }
 
 updateTime();
-

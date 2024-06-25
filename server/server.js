@@ -437,6 +437,15 @@ app.get('/api/schedule/all', async (req, res) => {
         const results = await connection.query(query);
         console.log('All Schedule Data:', results); // 디버깅용 로그
 
+        // 각 스케줄의 foreman과 worker 컬럼을 사용하여 User 테이블에서 이름 조회
+        for (let schedule of results) {
+            const [foreman] = await connection.query("SELECT name FROM user WHERE user_id = ?", [schedule.foreman]);
+            const [worker] = await connection.query("SELECT name FROM user WHERE user_id = ?", [schedule.worker]);
+            schedule.foremanName = foreman ? foreman.name : 'Unknown';
+            schedule.workerName = worker ? worker.name : 'Unknown';
+        }
+        console.log('All Schedule Data with Names:', results); // 디버깅용 로그
+
         res.json(results);
     } catch (err) {
         console.error("Error fetching all schedule data:", err);
