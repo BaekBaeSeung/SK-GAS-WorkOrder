@@ -7,6 +7,8 @@ export async function renderScheduleDetailAdminPage(container) {
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
+        const storedData = JSON.parse(localStorage.getItem('scheduleData')) || {};
+
         container.innerHTML = `
             <head>
                 <link rel="stylesheet" href="styles/scheduleDetailadmin.css">
@@ -16,7 +18,7 @@ export async function renderScheduleDetailAdminPage(container) {
                     <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                     <div class="user-info">
                         <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                        <span class="initial">${getScheduleTypeByTime()}</span>
+                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span>
                         <div class="time-container">
                             <div class="time-date">
                                 <span class="time">${formatTime(getCurrentTime())}</span>

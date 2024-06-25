@@ -21,7 +21,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                 <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                 <div class="header">
                     <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial">${scheduleData.initial}</span>
+                    <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${scheduleData.initial}</span>
                     <div class="time-container">
                         <div class="time-date">
                             <span class="time">${formatTime(getCurrentTime())}</span>
