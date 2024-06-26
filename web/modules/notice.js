@@ -31,20 +31,22 @@ export async function renderNoticePage(container) {
                 <link rel="stylesheet" href="styles/notice.css">
             </head>
             <div class="notice-container">
-                <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
-                <div class="header">
-                    <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${scheduleData.initial}</span>
-                    <div class="time-container">
-                        <div class="time-date">
-                            <span class="time" id="current-time">${formatTime(getCurrentTime())}</span>
-                            <span class="date" id="current-date">${getCurrentDate()}</span>
+                <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
+                    <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
+                    <div class="header">
+                        <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
+                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${scheduleData.initial}</span>
+                        <div class="time-container">
+                            <div class="time-date">
+                                <span class="time" id="current-time">${formatTime(getCurrentTime())}</span>
+                                <span class="date" id="current-date">${getCurrentDate()}</span>
+                            </div>
+                            <span class="day" id="current-day">${getCurrentDay()}</span>
                         </div>
-                        <span class="day" id="current-day">${getCurrentDay()}</span>
                     </div>
-                </div>
-                <div class="notice" id="notice">
-                    <p>공지사항 [${noticeCount}] <span class="dash">-</span></p>
+                    <div class="notice" id="notice">
+                        <p>공지사항 [${noticeCount}] <span class="dash">-</span></p>
+                    </div>
                 </div>
                 <div class="notices" id="notices">
                     ${notices.map(notice => `
@@ -148,4 +150,3 @@ export async function renderNoticePage(container) {
         alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
     }
 }
-

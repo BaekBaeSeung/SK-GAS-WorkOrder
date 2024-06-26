@@ -35,20 +35,22 @@ export async function renderPreviousPage(container) {
                 <link rel="stylesheet" href="styles/previous.css">
             </head>
             <div class="previous-container">
-                <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
-                <div class="header">
-                    <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span>
-                    <div class="time-container">
-                        <div class="time-date">
-                            <span class="time">${formatTime(getCurrentTime())}</span>
-                            <span class="date">${getCurrentDate()}</span>
+                <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
+                    <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
+                    <div class="header">
+                        <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
+                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span>
+                        <div class="time-container">
+                            <div class="time-date">
+                                <span class="time">${formatTime(getCurrentTime())}</span>
+                                <span class="date">${getCurrentDate()}</span>
+                            </div>
+                            <span class="day">${getCurrentDay()}</span>
                         </div>
-                        <span class="day">${getCurrentDay()}</span>
                     </div>
-                </div>
-                <div class="notice" id="notice">
-                    <p>공지사항 [${noticeCount}] <span class="dash" style="font-size: 1.5vh;">●</span></p>
+                    <div class="notice" id="notice">
+                        <p>공지사항 [${noticeCount}] <span class="dash" style="font-size: 1.5vh;">●</span></p>
+                    </div>
                 </div>
                 <div class="previous-records" id="previous-records">
                     <p>이전 점검 기록 [${previousSchedulesCount}] <span style="margin-right: 1.25lvh;" class="dash">-</span></p>

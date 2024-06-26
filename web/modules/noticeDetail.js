@@ -25,16 +25,21 @@ export async function renderNoticeDetailPage(container, noticeId) {
                 <link rel="stylesheet" href="/styles/noticeDetail.css">
             </head>
             <div class="notice-container">
-                <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
-                <div class="header">
-                    <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span>
-                    <div class="time-container">
-                        <div class="time-date">
-                            <span class="time" id="current-time">${formatTime(getCurrentTime())}</span>
-                            <span class="date" id="current-date">${getCurrentDate()}</span>
+                <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
+                    <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
+                    <div class="header">
+                        <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
+                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span>
+                        <div class="time-container">
+                            <div class="time-date">
+                                <span class="time" id="current-time">${formatTime(getCurrentTime())}</span>
+                                <span class="date" id="current-date">${getCurrentDate()}</span>
+                            </div>
+                            <span class="day" id="current-day">${getCurrentDay()}</span>
                         </div>
-                        <span class="day" id="current-day">${getCurrentDay()}</span>
+                    </div>
+                    <div class="notice" id="notice">
+                        <p>공지사항 <span class="dash">-</span></p>
                     </div>
                 </div>
                 <div class="notice-detail" id="notice-detail">
@@ -78,7 +83,7 @@ export async function renderNoticeDetailPage(container, noticeId) {
             requestAnimationFrame(updateTime);
         }
 
-            updateTime();
+        updateTime();
 
         // 모달 관련 이벤트 리스너 추가
         const modal = document.getElementById('modal');
@@ -108,6 +113,11 @@ export async function renderNoticeDetailPage(container, noticeId) {
         // 로고 클릭 시 스케줄 페이지로 이동
         document.getElementById('logo').addEventListener('click', () => {
             navigateTo('/schedule');
+        });
+
+        // 공지사항 클릭 시 공지사항 페이지로 이동
+        document.getElementById('notice').addEventListener('click', () => {
+            navigateTo('/notice');
         });
     } catch (error) {
         console.error('Error fetching notice detail:', error);
