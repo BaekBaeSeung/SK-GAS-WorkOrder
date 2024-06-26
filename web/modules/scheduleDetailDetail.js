@@ -1,5 +1,21 @@
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
 
+function showModal(message) {
+    const modalContent = document.querySelector('.modal-content');
+    modalContent.innerHTML = `
+        <span class="close">&times;</span>
+        <p>${message}</p>
+    `;
+    const modal = document.getElementById('modal');
+    modal.style.display = 'block';
+
+    // 모달의 x 버튼 이벤트 리스너 추가
+    const closeModal = document.querySelector('.close');
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+}
+
 export async function renderScheduleDetailDetailPage(container, sectionId) {
     try {
         const userProfile = await fetchUserProfile();
@@ -65,7 +81,11 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                                     </div>
                                 </div>
                             `;
+                            
                             }).join('')}
+                            <div class="submit-container"> <!-- 제출 버튼 컨테이너 추가 -->
+                                <button id="submit-button" class="submit-button">제출</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -86,6 +106,76 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
 
         document.getElementById('logo').addEventListener('click', () => {
             navigateTo('/schedule');
+        });
+
+        // 제출 버튼 이벤트 리스너 추가
+        const submitButton = document.getElementById('submit-button');
+        if (submitButton) {
+            submitButton.addEventListener('click', async () => {
+                const inputFields = document.querySelectorAll('.input-field');
+                const emptyFields = [];
+                inputFields.forEach((inputField, index) => {
+                    if (inputField.value.trim() === '') {
+                        const taskItem = inputField.closest('.task-item');
+                        const taskName = taskItem.querySelector('.task-name').textContent;
+                        emptyFields.push(taskName);
+                    }
+                });
+
+                if (emptyFields.length > 0) {
+                    const modalContent = document.querySelector('.modal-content');
+                    modalContent.innerHTML = `
+                        <span class="close">&times;</span>
+                        <p>다음 항목이 입력되지 않았습니다 :</p>
+                        <ul>
+                            ${emptyFields.map(field => `<li>${field}</li>`).join('')}
+                        </ul>
+                    `;
+                    const modal = document.getElementById('modal');
+                    modal.style.display = 'block';
+
+                    // 모달의 x 버튼 이벤트 리스너 추가
+                    const closeModal = document.querySelector('.close');
+                    closeModal.addEventListener('click', () => {
+                        modal.style.display = 'none';
+                    });
+                } else {
+                    try {
+                        // 데이터 인서트 요청 보내기
+                        const response = await fetch('/api/insertData', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ scheduleData, sectionData, subSections }),
+                        });
+
+                        if (response.ok) {
+                            showModal('데이터가 성공적으로 제출되었습니다.');
+                        } else {
+                            showModal('데이터 제출에 실패했습니다.');
+                        }
+                    } catch (error) {
+                        console.error('Error submitting data:', error);
+                        showModal('데이터 제출 중 오류가 발생했습니다.');
+                    }
+                }
+            });
+        }
+
+        // input 박스 이벤트 리스너 추가
+        const inputFields = document.querySelectorAll('.input-field');
+        inputFields.forEach(inputField => {
+            inputField.addEventListener('input', (event) => {
+                const taskNumber = event.target.closest('.task-item').querySelector('.task-number');
+                if (taskNumber) {
+                    if (event.target.value.trim() === '') {
+                        taskNumber.classList.remove('input-active');
+                    } else {
+                        taskNumber.classList.add('input-active');
+                    }
+                }
+            });
         });
 
         // 모달 관련 이벤트 리스너 추가
@@ -146,3 +236,4 @@ function updateTime() {
 }
 
 updateTime();
+

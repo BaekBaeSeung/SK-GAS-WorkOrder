@@ -219,16 +219,22 @@ body {
 }
 
 .task-number {
-    background-color: #813CD9;
-    color: #FFFFFF;
+    background-color: #FFFFFF;
+    color: #813CD9;
     font-size: 1.5lvh;
     font-weight: 700;
     border-radius: 1lvh;
+    border: 0.15lvh solid #813CD9;
     width: 3.5lvh;
     height: 2lvh;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.task-number.input-active {
+    background-color: #813CD9;
+    color: #FFFFFF;
 }
 
 .task-name {
@@ -299,9 +305,19 @@ body {
     margin: 15% auto; /* 화면 중앙에 위치 */
     padding: 1.5lvh;
     border: 1px solid #888;
-    width: 15%; /* 너비 */
+    width: 35%; /* 너비 */
     max-width: 400px; /* 최대 너비 */
-    text-align: center; /* 텍스트 중앙 정렬 */
+    text-align: left; /* 텍스트 중앙 정렬 */
+}
+
+.modal-content ul {
+    padding-left: 0; /* 좌측 패딩을 0으로 설정 */
+    text-align: left; /* 텍스트 중앙 정렬 */
+}
+
+.modal-content li {
+    list-style-position: inside; /* 리스트 아이템의 마커를 내부로 설정 */
+    text-align: left; /* 텍스트 중앙 정렬 */
 }
 
 .close {
@@ -338,4 +354,20 @@ body {
     z-index: 1000;
 
     border-radius: 1lvh;
+}
+
+.submit-button {
+    background-color: #F08000; /* noticeAdmin.css의 버튼 배경색 */
+    width: 100%;
+    color: #EEEEEE; /* 흰색 텍스트 */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-button:hover {
+    background-color: #D96E00; /* noticeAdmin.css의 버튼 호버 배경색 */
+    color: white;
 }
