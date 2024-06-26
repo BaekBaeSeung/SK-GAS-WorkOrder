@@ -1,10 +1,11 @@
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
 
-function showModal(message) {
+function showModal(message, onConfirm) {
     const modalContent = document.querySelector('.modal-content');
     modalContent.innerHTML = `
         <span class="close">&times;</span>
         <p>${message}</p>
+        ${onConfirm ? '<button id="confirm-button" class="submit-button">확인</button>' : ''}
     `;
     const modal = document.getElementById('modal');
     modal.style.display = 'block';
@@ -14,15 +15,20 @@ function showModal(message) {
     closeModal.addEventListener('click', () => {
         modal.style.display = 'none';
     });
+
+    if (onConfirm) {
+        const confirmButton = document.getElementById('confirm-button');
+        confirmButton.addEventListener('click', () => {
+            modal.style.display = 'none';
+            onConfirm();
+        });
+    }
 }
 
 export async function renderScheduleDetailDetailPage(container, sectionId) {
+    try {
         const userProfile = await fetchUserProfile();
         const noticeCount = await fetchNoticeCount();
-    try {
-
-
-        console.log("userProfile : "+userProfile.userId);
 
         // 로컬 스토리지에서 스케줄 데이터와 섹션 데이터 불러오기
         const scheduleData = JSON.parse(localStorage.getItem('currentScheduleData')) || {};
@@ -31,6 +37,12 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         // sectionData.subSections가 배열인지 확인하고, 배열이 아닌 경우 빈 배열로 초기화
         const subSections = Array.isArray(sectionData.subSections) ? sectionData.subSections : [];
 
+        // WorkingDetail 데이터 조회
+        const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}`);
+        const workingDetailData = await workingDetailResponse.json();
+
+        // value 값을 구분자 ','로 분리하여 배열로 변환
+        const inputValues = workingDetailData.value ? workingDetailData.value.split(',') : [];
 
         container.innerHTML = `
             <head>
@@ -70,7 +82,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                                 return `
                                 <div class="task-item">
                                     <div class="task-header">
-                                        <span class="task-number">${taskNumber}</span>
+                                        <span class="task-number ${inputValues[index] ? 'input-active' : ''}">${taskNumber}</span>
                                         <p class="task-name">${subSection.subSection_name}</p>
                                         <span class="task-code">[${subSection.item_no}]</span>
                                     </div>
@@ -78,7 +90,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                                     <img src="/assets/img/common/p771.png" alt="Gauge" class="gauge">
                                     <!-- <img src="/assets/img/common/${subSection.item_pic}" alt="Gauge" class="gauge"> -->
                                     <div class="input-container">
-                                            <input type="text" class="input-field">
+                                            <input type="text" class="input-field" value="${inputValues[index] || ''}">
                                             <span class="unit">${subSection.section_unit}</span>
                                         </div>
                                     </div>
@@ -87,7 +99,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                             
                             }).join('')}
                             <div class="submit-container"> <!-- 제출 버튼 컨테이너 추가 -->
-                                <button id="submit-button" class="submit-button">제출</button>
+                                <button id="submit-button" class="submit-button">${workingDetailData ? '수정' : '제출'}</button>
                             </div>
                         </div>
                     </div>
@@ -147,38 +159,54 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                         modal.style.display = 'none';
                     });
                 } else {
-                    try {
-                        // WorkingTime 및 WorkingArea 테이블에서 필요한 데이터 조회
-                        const workTimeResponse = await fetch(`/api/working-time?time=${scheduleData.time}&area_name=${scheduleData.area_name}`);
-                        const workTimeData = await workTimeResponse.json();
+                    const value = inputValues.join(',');
+                    const section = sectionData.sectionName;
+                    const userId = userProfile.userId;
+                    const time = scheduleData.time.slice(0, 5); // HH:MM 형식으로 포맷팅
+                    const scheduleType = scheduleData.schedule_type;
 
-                        if (workTimeData.length === 0) {
-                            showModal('일치하는 작업 시간이 없습니다.');
-                            return;
-                        }
+                    if (workingDetailData) {
+                        showModal('정말로 수정하시겠습니까?', async () => {
+                            try {
+                                // WorkingDetail 테이블에 데이터 업데이트 요청 보내기
+                                const response = await fetch('/api/updateWorkingDetail', {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ work_time_id: workingDetailData.work_time_id, value, create_at: new Date(), section, user_id: userId, time, schedule_type: scheduleType }),
+                                });
 
-                        const workTimeId = workTimeData[0].work_time_id;
-                        const value = inputValues.join(',');
-                        const section = sectionData.sectionName;
-                        const userId = userProfile.userId;
-
-                        // WorkingDetail 테이블에 데이터 인서트 요청 보내기
-                        const response = await fetch('/api/insertWorkingDetail', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ work_time_id: workTimeId, value, create_at: new Date(), section, user_id: userId }),
+                                if (response.ok) {
+                                    showModal('데이터가 성공적으로 수정되었습니다.');
+                                } else {
+                                    showModal('데이터 수정에 실패했습니다.');
+                                }
+                            } catch (error) {
+                                console.error('Error updating data:', error);
+                                showModal('데이터 수정 중 오류가 발생했습니다.');
+                            }
                         });
+                    } else {
+                        try {
+                            // WorkingDetail 테이블에 데이터 인서트 요청 보내기
+                            const response = await fetch('/api/insertWorkingDetail', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ work_time_id: workTimeId, value, create_at: new Date(), section, user_id: userId, time, schedule_type: scheduleType }),
+                            });
 
-                        if (response.ok) {
-                            showModal('데이터가 성공적으로 제출되었습니다.');
-                        } else {
-                            showModal('데이터 제출에 실패했습니다.');
+                            if (response.ok) {
+                                showModal('데이터가 성공적으로 제출되었습니다.');
+                            } else {
+                                showModal('데이터 제출에 실패했습니다.');
+                            }
+                        } catch (error) {
+                            console.error('Error submitting data:', error);
+                            showModal('데이터 제출 중 오류가 발생했습니다.');
                         }
-                    } catch (error) {
-                        console.error('Error submitting data:', error);
-                        showModal('데이터 제출 중 오류가 발생했습니다.');
                     }
                 }
             });

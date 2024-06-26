@@ -187,11 +187,13 @@ body {
 }
 
 .task-number {
-    background-color: #813CD9;
-    color: #FFFFFF;
-    font-size: 1.5lvh;
+    /* background-color: #813CD9; */
+    /* color: #FFFFFF; */
+    background-color: #FFFFFF;
+    color: #813CD9;
     font-weight: 700;
     border-radius: 1lvh; /* 위아래로 납작한 모양 */
+    border: 0.15px solid #813CD9;
     width: 3.5lvh; /* 너비 조정 */
     height: 2lvh; /* 높이 조정 */
     display: flex;

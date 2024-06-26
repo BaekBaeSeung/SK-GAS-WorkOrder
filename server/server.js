@@ -645,7 +645,65 @@ app.get('/api/working-time', async (req, res) => {
 // WorkingDetail 데이터 인서트 엔드포인트
 //=================================================================
 app.post('/api/insertWorkingDetail', async (req, res) => {
-    const { work_time_id, value, create_at, section, user_id } = req.body;
+    const { work_time_id, value, create_at, section, user_id, time, schedule_type } = req.body;
+
+    try {
+        const connection = await conn;
+
+        // create_at 값을 MariaDB에서 인식할 수 있는 형식으로 변환
+        const formattedCreateAt = new Date(create_at).toISOString().slice(0, 19).replace('T', ' ');
+
+        // time 값을 HH:MM 형식으로 포맷팅
+        const formattedTime = time.slice(0, 5);
+
+        const query = `
+            INSERT INTO WorkingDetail (working_detail_id, work_time_id, value, create_at, section, user_id, time, schedule_type)
+            VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?)
+        `;
+        await connection.query(query, [work_time_id, value, formattedCreateAt, section, user_id, formattedTime, schedule_type]);
+
+        res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
+    } catch (err) {
+        console.error('Error inserting working detail:', err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+//=================================================================
+// WorkingDetail 데이터 조회 엔드포인트
+//=================================================================
+app.get('/api/working-detail', async (req, res) => {
+    const { section, user_id, time, schedule_type } = req.query;
+    const currentDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 현재 날짜
+
+    try {
+        const connection = await conn;
+        const query = `
+            SELECT * FROM WorkingDetail
+            WHERE DATE(create_at) = ?
+            AND section = ?
+            AND user_id = ?
+            AND time = ?
+            AND schedule_type = ?
+        `;
+        const results = await connection.query(query, [currentDate, section, user_id, time, schedule_type]);
+
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ message: '일치하는 데이터가 없습니다.' });
+        }
+    } catch (err) {
+        console.error('Error fetching working detail:', err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+//=================================================================
+// WorkingDetail 데이터 업데이트 엔드포인트
+//=================================================================
+app.put('/api/updateWorkingDetail', async (req, res) => {
+    const { work_time_id, value, create_at, section, user_id, time, schedule_type } = req.body;
 
     try {
         const connection = await conn;
@@ -654,14 +712,15 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
         const formattedCreateAt = new Date(create_at).toISOString().slice(0, 19).replace('T', ' ');
 
         const query = `
-            INSERT INTO WorkingDetail (working_detail_id, work_time_id, value, create_at, section, user_id)
-            VALUES (UUID(), ?, ?, ?, ?, ?)
+            UPDATE WorkingDetail
+            SET value = ?, create_at = ?, section = ?, user_id = ?, time = ?, schedule_type = ?
+            WHERE work_time_id = ? AND section = ? AND user_id = ? AND time = ? AND schedule_type = ?
         `;
-        await connection.query(query, [work_time_id, value, formattedCreateAt, section, user_id]);
+        await connection.query(query, [value, formattedCreateAt, section, user_id, time, schedule_type, work_time_id, section, user_id, time, schedule_type]);
 
-        res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
+        res.json({ success: true, message: '데이터가 성공적으로 업데이트되었습니다.' });
     } catch (err) {
-        console.error('Error inserting working detail:', err);
+        console.error('Error updating working detail:', err);
         res.status(500).json({ message: '서버 오류' });
     }
 });
