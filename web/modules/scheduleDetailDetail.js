@@ -11,12 +11,13 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
 
         // sectionData.subSections가 배열인지 확인하고, 배열이 아닌 경우 빈 배열로 초기화
         const subSections = Array.isArray(sectionData.subSections) ? sectionData.subSections : [];
-        console.table("subSections:"+subSections);
+
 
         container.innerHTML = `
             <head>
                 <link rel="stylesheet" href="/styles/scheduleDetailDetail.css">
             </head>
+            
             <div class="schedule-detail-detail-container">
                 <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
                     <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
@@ -75,6 +76,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                     <button id="logout-button">로그아웃</button>
                 </div>
             </div>
+
         `;
 
         // 이벤트 리스너 추가
