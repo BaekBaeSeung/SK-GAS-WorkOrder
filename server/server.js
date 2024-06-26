@@ -192,7 +192,6 @@ async function testDatabaseConnection() {
 testDatabaseConnection();
 
 
-
 //=================================================================
 // Login Endpoint
 //=================================================================
@@ -619,6 +618,52 @@ app.get('/api/subsections/:sectionId', async (req, res) => {
     }
 });
 
+//=================================================================
+// WorkingTime 데이터 조회 엔드포인트
+//=================================================================
+app.get('/api/working-time', async (req, res) => {
+    const { time, area_name } = req.query;
+
+    try {
+        const connection = await conn;
+        const query = `
+            SELECT wt.work_time_id
+            FROM WorkingTime wt
+            JOIN WorkingArea wa ON wt.area_id = wa.area_id
+            WHERE wt.time = ? AND wa.area_name = ?
+        `;
+        const results = await connection.query(query, [time, area_name]);
+
+        res.json(results);
+    } catch (err) {
+        console.error('Error fetching working time data:', err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+//=================================================================
+// WorkingDetail 데이터 인서트 엔드포인트
+//=================================================================
+app.post('/api/insertWorkingDetail', async (req, res) => {
+    const { work_time_id, value, create_at, section, user_id } = req.body;
+
+    try {
+        const connection = await conn;
+
+        // create_at 값을 MariaDB에서 인식할 수 있는 형식으로 변환
+        const formattedCreateAt = new Date(create_at).toISOString().slice(0, 19).replace('T', ' ');
+
+        const query = `
+            INSERT INTO WorkingDetail (working_detail_id, work_time_id, value, create_at, section, user_id)
+            VALUES (UUID(), ?, ?, ?, ?, ?)
+        `;
+        await connection.query(query, [work_time_id, value, formattedCreateAt, section, user_id]);
+
+        res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
+    } catch (err) {
+        console.error('Error inserting working detail:', err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
 
 startServer();
-

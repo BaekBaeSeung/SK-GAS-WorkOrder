@@ -17,9 +17,12 @@ function showModal(message) {
 }
 
 export async function renderScheduleDetailDetailPage(container, sectionId) {
-    try {
         const userProfile = await fetchUserProfile();
         const noticeCount = await fetchNoticeCount();
+    try {
+
+
+        console.log("userProfile : "+userProfile.userId);
 
         // 로컬 스토리지에서 스케줄 데이터와 섹션 데이터 불러오기
         const scheduleData = JSON.parse(localStorage.getItem('currentScheduleData')) || {};
@@ -114,11 +117,15 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
             submitButton.addEventListener('click', async () => {
                 const inputFields = document.querySelectorAll('.input-field');
                 const emptyFields = [];
+                const inputValues = [];
+
                 inputFields.forEach((inputField, index) => {
                     if (inputField.value.trim() === '') {
                         const taskItem = inputField.closest('.task-item');
                         const taskName = taskItem.querySelector('.task-name').textContent;
                         emptyFields.push(taskName);
+                    } else {
+                        inputValues.push(inputField.value.trim());
                     }
                 });
 
@@ -141,13 +148,27 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                     });
                 } else {
                     try {
-                        // 데이터 인서트 요청 보내기
-                        const response = await fetch('/api/insertData', {
+                        // WorkingTime 및 WorkingArea 테이블에서 필요한 데이터 조회
+                        const workTimeResponse = await fetch(`/api/working-time?time=${scheduleData.time}&area_name=${scheduleData.area_name}`);
+                        const workTimeData = await workTimeResponse.json();
+
+                        if (workTimeData.length === 0) {
+                            showModal('일치하는 작업 시간이 없습니다.');
+                            return;
+                        }
+
+                        const workTimeId = workTimeData[0].work_time_id;
+                        const value = inputValues.join(',');
+                        const section = sectionData.sectionName;
+                        const userId = userProfile.userId;
+
+                        // WorkingDetail 테이블에 데이터 인서트 요청 보내기
+                        const response = await fetch('/api/insertWorkingDetail', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ scheduleData, sectionData, subSections }),
+                            body: JSON.stringify({ work_time_id: workTimeId, value, create_at: new Date(), section, user_id: userId }),
                         });
 
                         if (response.ok) {
@@ -236,4 +257,3 @@ function updateTime() {
 }
 
 updateTime();
-
