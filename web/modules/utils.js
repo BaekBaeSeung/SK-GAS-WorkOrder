@@ -116,15 +116,13 @@ export function formatTime(time) {
     return `${hours}${separator}${minutes}`;
 }
 
-// 현재 시간을 기반으로 스케줄 타입을 반환하는 함수
-// export function getScheduleTypeByTime() {
-//     const time = getCurrentTime();
-//     const [hours, minutes] = time.split(':').map(Number);
-//     if (hours >= 8 && hours < 12) {
-//         return 'M';
-//     } else if (hours >= 12 && hours < 20) {
-//         return 'S';
-//     } else {
-//         return 'N';
-//     }
-// }
+export function formatDateTime(date) {
+    const pad = (num) => num.toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}

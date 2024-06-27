@@ -722,4 +722,57 @@ app.put('/api/updateWorkingDetail', async (req, res) => {
     }
 });
 
+//=================================================================
+// Schedule Details Endpoint
+//=================================================================
+app.get('/api/schedule-details', async (req, res) => {
+    const { area_name, schedule_type, time, section, user_id } = req.query;
+    const currentDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 현재 날짜
+    console.log("currentDate : ", currentDate);
+
+    try {
+        const connection = await conn;
+
+        // WorkingArea 테이블에서 area_id 조회
+        const areaQuery = 'SELECT area_id FROM WorkingArea WHERE area_name = ?';
+        const [areaResult] = await connection.query(areaQuery, [area_name]);
+        if (!areaResult) {
+            return res.status(404).json({ message: 'Area not found' });
+        }
+        const areaId = areaResult.area_id;
+
+        // WorkingTime 테이블에서 work_time_id 조회
+        const timeQuery = `
+            SELECT work_time_id 
+            FROM WorkingTime 
+            WHERE area_id = ? AND schedule_type = ? AND time = ?
+        `;
+        const [timeResult] = await connection.query(timeQuery, [areaId, schedule_type, time]);
+        if (!timeResult) {
+            return res.status(404).json({ message: 'Working time not found' });
+        }
+        const workTimeId = timeResult.work_time_id;
+
+        // WorkingDetail 테이블에서 value 조회
+        const detailQuery = `
+            SELECT * FROM WorkingDetail
+            WHERE work_time_id = ? AND section = ? AND user_id = ? AND time = ? AND schedule_type = ? AND DATE(create_at) = DATE(?)
+        `;
+        const [detailResult] = await connection.query(detailQuery, [workTimeId, section, user_id, time, schedule_type, currentDate]);
+        if (!detailResult) {
+            return res.status(404).json({ message: 'Working detail not found' });
+        }
+
+        res.json({
+            areaId,
+            workTimeId,
+            detail: detailResult
+        });
+    } catch (err) {
+        console.error('Error fetching schedule details:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 startServer();
+

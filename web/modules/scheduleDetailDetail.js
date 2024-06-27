@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, formatDateTime} from './utils.js'; // 유틸 함수 임포트
 
 function showModal(message, onConfirm) {
     const modalContent = document.querySelector('.modal-content');
@@ -39,6 +39,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
 
         // WorkingDetail 데이터 조회
         const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}`);
+        console.log("scheduleData.time : ",scheduleData.time);
         const workingDetailData = await workingDetailResponse.json();
 
         // value 값을 구분자 ','로 분리하여 배열로 변환
@@ -164,6 +165,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                     const userId = userProfile.userId;
                     const time = scheduleData.time.slice(0, 5); // HH:MM 형식으로 포맷팅
                     const scheduleType = scheduleData.schedule_type;
+                    const createAt = formatDateTime(new Date()); // 현재 시간을 YYYY-MM-DD HH:MM:SS 형식으로 포맷팅
 
                     if (workingDetailData && workingDetailData.value) {
                         showModal('정말로 수정하시겠습니까?', async () => {
@@ -200,7 +202,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
-                                body: JSON.stringify({ work_time_id: workTimeId, value, create_at: new Date(), section, user_id: userId, time, schedule_type: scheduleType }),
+                                body: JSON.stringify({ work_time_id: workTimeId, value, create_at: createAt, section, user_id: userId, time, schedule_type: scheduleType }),
                             });
 
                             if (response.ok) {

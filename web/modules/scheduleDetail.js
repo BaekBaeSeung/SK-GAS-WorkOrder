@@ -4,7 +4,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
     try {
         // 로컬 스토리지에서 섹션 데이터와 스케줄 데이터 불러오기
         const storedData = JSON.parse(localStorage.getItem('scheduleData')) || {};
-        const storedSections = JSON.parse(localStorage.getItem('scheduleSections')) || [];
+        const storedSections = JSON.parse(localStorage.getItem('scheduleSections')) || {};
         
         scheduleData = Object.keys(scheduleData).length > 0 ? scheduleData : storedData;
         sections = sections.length > 0 ? sections : storedSections;
@@ -13,10 +13,22 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
         localStorage.setItem('scheduleData', JSON.stringify(scheduleData));
         localStorage.setItem('scheduleSections', JSON.stringify(sections));
 
+        const sectionData = JSON.parse(localStorage.getItem('currentSectionData')) || {};
+
         const userProfile = await fetchUserProfile();
         const noticeCount = await fetchNoticeCount();
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
+
+        // 스케줄 관련 데이터를 한 번에 조회
+        const detailsResponse = await fetch(`/api/schedule-details?area_name=${scheduleData.area_name}&schedule_type=${scheduleData.schedule_type}&time=${scheduleData.time}&section=${sectionData.sectionName}&user_id=${userProfile.userId}`);
+        if (!detailsResponse.ok) {
+            throw new Error('Failed to fetch schedule details');
+        }
+        const detailsData = await detailsResponse.json();
+        const { areaId, workTimeId, detail } = detailsData;
+        const detailValue = detail.value;
+        console.log("detail : ", detail); // KST로 변환된 create_at 출력
 
         container.innerHTML = `
             <head>
@@ -49,7 +61,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
                         ${sections.map((section, index) => `
                         <div class="task">
                             <div class="task-item" data-task-id="${section.section_id}">
-                                <span class="task-number">${String(index + 1).padStart(2, '0')}</span>
+                                <span class="task-number ${detailValue ? 'input-active' : ''}">${String(index + 1).padStart(2, '0')}</span>
                                 <p class="task-name">${section.section}</p>
                             </div>
                         </div>
