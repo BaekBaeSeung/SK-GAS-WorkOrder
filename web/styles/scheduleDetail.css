@@ -200,6 +200,10 @@ body {
     align-items: center;
     justify-content: center;
 }
+.task-number.input-active {
+    background-color: #813CD9;
+    color: #FFFFFF;
+}
 
 .task-name {
     font-size: 2.5lvh;

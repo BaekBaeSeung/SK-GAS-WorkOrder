@@ -61,14 +61,17 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
                             <p class="location">${scheduleData.area_name || 'N/A'}</p>
                             <p class="time">${scheduleData.schedule_type === 'm' ? 'Morning' : scheduleData.schedule_type === 's' ? 'Swing' : 'Night'} ${scheduleData.time || 'N/A'}</p>
                         </div>
-                        ${sections.map((section, index) => `
-                        <div class="task">
-                            <div class="task-item" data-task-id="${section.section_id}">
-                                <span class="task-number">${String(index + 1).padStart(2, '0')}</span>
-                                <p class="task-name">${section.section}</p>
+                        ${sections.map((section, index) => {
+                            const isActive = details.some(detail => detail.section === section.section);
+                            return `
+                            <div class="task">
+                                <div class="task-item" data-task-id="${section.section_id}">
+                                    <span class="task-number ${isActive ? 'input-active' : ''}">${String(index + 1).padStart(2, '0')}</span>
+                                    <p class="task-name">${section.section}</p>
+                                </div>
                             </div>
-                        </div>
-                        `).join('')}
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             </div>
