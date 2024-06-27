@@ -21,14 +21,17 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
         // 스케줄 관련 데이터를 한 번에 조회
-        const detailsResponse = await fetch(`/api/schedule-details?area_name=${scheduleData.area_name}&schedule_type=${scheduleData.schedule_type}&time=${scheduleData.time}&section=${sectionData.sectionName}&user_id=${userProfile.userId}`);
+        const sectionNames = sections.map(section => section.section).join(',');
+        console.log("sectionNames : ", sectionNames);
+        const detailsResponse = await fetch(`/api/schedule-details?area_name=${scheduleData.area_name}&schedule_type=${scheduleData.schedule_type}&time=${scheduleData.time}&sections=${encodeURIComponent(sectionNames)}&user_id=${userProfile.userId}`);
+        
         if (!detailsResponse.ok) {
-            throw new Error('Failed to fetch schedule details');
+            // 여기는 데이터 입력이 없는 경우.... 어떻게 처리할건지 생각 해봐야 함.
         }
+        
         const detailsData = await detailsResponse.json();
-        const { areaId, workTimeId, detail } = detailsData;
-        const detailValue = detail.value;
-        console.log("detail : ", detail); // KST로 변환된 create_at 출력
+        const { areaId, workTimeId, details } = detailsData;
+        console.log("details : ", details); // 모든 행의 데이터를 출력
 
         container.innerHTML = `
             <head>
@@ -61,7 +64,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
                         ${sections.map((section, index) => `
                         <div class="task">
                             <div class="task-item" data-task-id="${section.section_id}">
-                                <span class="task-number ${detailValue ? 'input-active' : ''}">${String(index + 1).padStart(2, '0')}</span>
+                                <span class="task-number">${String(index + 1).padStart(2, '0')}</span>
                                 <p class="task-name">${section.section}</p>
                             </div>
                         </div>

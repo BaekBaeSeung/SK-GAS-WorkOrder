@@ -726,7 +726,8 @@ app.put('/api/updateWorkingDetail', async (req, res) => {
 // Schedule Details Endpoint
 //=================================================================
 app.get('/api/schedule-details', async (req, res) => {
-    const { area_name, schedule_type, time, section, user_id } = req.query;
+    const { area_name, schedule_type, time, sections, user_id } = req.query;
+    console.log("sectionssectionssections : ", sections);
     const currentDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 현재 날짜
     console.log("currentDate : ", currentDate);
 
@@ -756,17 +757,19 @@ app.get('/api/schedule-details', async (req, res) => {
         // WorkingDetail 테이블에서 value 조회
         const detailQuery = `
             SELECT * FROM WorkingDetail
-            WHERE work_time_id = ? AND section = ? AND user_id = ? AND time = ? AND schedule_type = ? AND DATE(create_at) = DATE(?)
+            WHERE work_time_id = ? AND section IN (?) AND user_id = ? AND time = ? AND schedule_type = ? AND DATE(create_at) = DATE(?)
         `;
-        const [detailResult] = await connection.query(detailQuery, [workTimeId, section, user_id, time, schedule_type, currentDate]);
-        if (!detailResult) {
+        const detailResults = await connection.query(detailQuery, [workTimeId, sections.split(','), user_id, time, schedule_type, currentDate]);
+        if (detailResults.length === 0) {
             return res.status(404).json({ message: 'Working detail not found' });
         }
+
+        console.log("detailResults : ", detailResults); // 모든 행의 데이터를 출력
 
         res.json({
             areaId,
             workTimeId,
-            detail: detailResult
+            details: detailResults
         });
     } catch (err) {
         console.error('Error fetching schedule details:', err);
