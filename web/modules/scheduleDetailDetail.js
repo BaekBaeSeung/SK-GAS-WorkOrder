@@ -99,7 +99,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                             
                             }).join('')}
                             <div class="submit-container"> <!-- 제출 버튼 컨테이너 추가 -->
-                                <button id="submit-button" class="submit-button">${workingDetailData ? '수정' : '제출'}</button>
+                                <button id="submit-button" class="submit-button">${workingDetailData && workingDetailData.value ? '수정' : '제출'}</button>
                             </div>
                         </div>
                     </div>
@@ -165,7 +165,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                     const time = scheduleData.time.slice(0, 5); // HH:MM 형식으로 포맷팅
                     const scheduleType = scheduleData.schedule_type;
 
-                    if (workingDetailData) {
+                    if (workingDetailData && workingDetailData.value) {
                         showModal('정말로 수정하시겠습니까?', async () => {
                             try {
                                 // WorkingDetail 테이블에 데이터 업데이트 요청 보내기
@@ -174,7 +174,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
-                                    body: JSON.stringify({ work_time_id: workingDetailData.work_time_id, value, create_at: new Date(), section, user_id: userId, time, schedule_type: scheduleType }),
+                                    body: JSON.stringify({ working_detail_id: workingDetailData.working_detail_id, value, section, user_id: userId, time, schedule_type: scheduleType }),
                                 });
 
                                 if (response.ok) {
@@ -189,6 +189,11 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                         });
                     } else {
                         try {
+                            // WorkingTime ID를 생성하기 위해 API 호출
+                            const workTimeResponse = await fetch(`/api/working-time?time=${time}&area_name=${scheduleData.area_name}`);
+                            const workTimeData = await workTimeResponse.json();
+                            const workTimeId = workTimeData[0].work_time_id;
+
                             // WorkingDetail 테이블에 데이터 인서트 요청 보내기
                             const response = await fetch('/api/insertWorkingDetail', {
                                 method: 'POST',

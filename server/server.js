@@ -703,20 +703,17 @@ app.get('/api/working-detail', async (req, res) => {
 // WorkingDetail 데이터 업데이트 엔드포인트
 //=================================================================
 app.put('/api/updateWorkingDetail', async (req, res) => {
-    const { work_time_id, value, create_at, section, user_id, time, schedule_type } = req.body;
+    const { working_detail_id, value, section, user_id, time, schedule_type } = req.body;
 
     try {
         const connection = await conn;
 
-        // create_at 값을 MariaDB에서 인식할 수 있는 형식으로 변환
-        const formattedCreateAt = new Date(create_at).toISOString().slice(0, 19).replace('T', ' ');
-
         const query = `
             UPDATE WorkingDetail
-            SET value = ?, create_at = ?, section = ?, user_id = ?, time = ?, schedule_type = ?
-            WHERE work_time_id = ? AND section = ? AND user_id = ? AND time = ? AND schedule_type = ?
+            SET value = ?, section = ?, user_id = ?, time = ?, schedule_type = ?
+            WHERE working_detail_id = ?
         `;
-        await connection.query(query, [value, formattedCreateAt, section, user_id, time, schedule_type, work_time_id, section, user_id, time, schedule_type]);
+        await connection.query(query, [value, section, user_id, time, schedule_type, working_detail_id]);
 
         res.json({ success: true, message: '데이터가 성공적으로 업데이트되었습니다.' });
     } catch (err) {
