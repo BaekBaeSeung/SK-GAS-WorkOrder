@@ -54,6 +54,43 @@ export async function renderSchedulePage(container) {
             return acc;
         }, []);
 
+        // 현재 시간을 기준으로 스케줄 정렬
+        const currentHour = today.getHours();
+        const timeSlots = [
+            { start: 0, end: 3, label: '00:00' },
+            { start: 4, end: 7, label: '04:00' },
+            { start: 8, end: 11, label: '08:00' },
+            { start: 12, end: 15, label: '12:00' },
+            { start: 16, end: 19, label: '16:00' },
+            { start: 20, end: 23, label: '20:00' }
+        ];
+
+        const currentSlot = timeSlots.find(slot => currentHour >= slot.start && currentHour <= slot.end);
+        if (currentSlot) {
+            todaySchedules.sort((a, b) => {
+                const aTime = new Date(`1970-01-01T${a.time}:00`);
+                const bTime = new Date(`1970-01-01T${b.time}:00`);
+                const currentTime = new Date(`1970-01-01T${currentSlot.label}:00`);
+                return Math.abs(aTime - currentTime) - Math.abs(bTime - currentTime);
+            });
+        } else {
+            // 현재 시간에 일치하는 슬롯이 없을 경우, 시간이 높은 순서대로 정렬
+            todaySchedules.sort((a, b) => {
+                const aTime = new Date(`1970-01-01T${a.time}:00`);
+                const bTime = new Date(`1970-01-01T${b.time}:00`);
+                return bTime - aTime;
+            });
+        }
+
+        // 스케줄 항목에 inactive 클래스 추가
+        todaySchedules.forEach(schedule => {
+            const scheduleTime = new Date(`1970-01-01T${schedule.time}:00`);
+            const currentTime = new Date(`1970-01-01T${currentSlot ? currentSlot.label : '00:00'}:00`);
+            if (Math.abs(scheduleTime - currentTime) > 0) {
+                schedule.inactive = true;
+            }
+        });
+
         // 어드민 사용자와 일반 사용자에 따라 다른 HTML 렌더링
         if (userProfile.isAdmin === 'ADMIN') {
             container.innerHTML = `
@@ -85,7 +122,7 @@ export async function renderSchedulePage(container) {
                                 <p class="global-time">${new Date(schedules[0].create_at).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\.$/, '') || 'N/A'}</p>
                             </div>
                             ${uniqueSchedules.map(schedule => `
-                                <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
+                                <div class="schedule-item ${schedule.inactive ? 'inactive' : ''}" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
                                     <p class="location" style="display: none;">${schedule.area_name}</p>
                                     <div class="shift-time">
                                         <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
@@ -136,7 +173,7 @@ export async function renderSchedulePage(container) {
                     </div>
                     <div class="schedule">
                         ${todaySchedules.map(schedule => `
-                            <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
+                            <div class="schedule-item ${schedule.inactive ? 'inactive' : ''}" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
                                 <p class="location">${schedule.area_name}</p>
                                 <div class="shift-time">
                                     <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>

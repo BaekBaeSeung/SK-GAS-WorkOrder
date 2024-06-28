@@ -306,3 +306,7 @@ body {
     padding-bottom: 0lvh;
     border-radius: 1lvh;
 }
+
+.schedule-item.inactive {
+    color: #6A6A6A;
+}
