@@ -674,9 +674,8 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
 //=================================================================
 app.get('/api/working-detail', async (req, res) => {
     const { section, user_id, time, schedule_type, date } = req.query;
-    const [year, month, day] = date.split('. ').map(part => part.trim());
-    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    console.log("formattedDate : ", formattedDate); // 디버깅용 로그
+    const currentDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 현재 날짜
+
     try {
         const connection = await conn;
         const query = `
@@ -687,7 +686,7 @@ app.get('/api/working-detail', async (req, res) => {
             AND time = ?
             AND schedule_type = ?
         `;
-        const results = await connection.query(query, [formattedDate, section, user_id, time, schedule_type]);
+        const results = await connection.query(query, [currentDate, section, user_id, time, schedule_type]);
 
         if (results.length > 0) {
             res.json(results[0]);
