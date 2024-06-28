@@ -41,12 +41,19 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         const subSections = Array.isArray(sectionData.subSections) ? sectionData.subSections : [];
 
         // WorkingDetail 데이터 조회
-        const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}`);
+        const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}&date=${scheduleData.date}`);
         console.log("scheduleData.time : ",scheduleData.time);
         const workingDetailData = await workingDetailResponse.json();
 
         // value 값을 구분자 ','로 분리하여 배열로 변환
         const inputValues = workingDetailData.value ? workingDetailData.value.split(',') : [];
+
+        // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기
+        const today = new Date();
+        const formattedToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        // input 요소와 submit 버튼 비활성화 여부 결정
+        const isEditable = scheduleData.date === formattedToday;
 
         container.innerHTML = `
             <head>
@@ -94,7 +101,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                                     <img src="/assets/img/common/p771.png" alt="Gauge" class="gauge">
                                     <!-- <img src="/assets/img/common/${subSection.item_pic}" alt="Gauge" class="gauge"> -->
                                     <div class="input-container">
-                                            <input type="text" class="input-field" value="${inputValues[index] || ''}">
+                                            <input type="text" class="input-field" value="${inputValues[index] || ''}" ${isEditable ? '' : 'disabled'}>
                                             <span class="unit">${subSection.section_unit}</span>
                                         </div>
                                     </div>
@@ -103,7 +110,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                             
                             }).join('')}
                             <div class="submit-container"> <!-- 제출 버튼 컨테이너 추가 -->
-                                <button id="submit-button" class="submit-button">${workingDetailData && workingDetailData.value ? '수정' : '제출'}</button>
+                                <button id="submit-button" class="submit-button" ${isEditable ? '' : 'disabled'}>${isEditable ? (workingDetailData && workingDetailData.value ? '수정' : '제출') : `${scheduleData.date}에 제출된 데이터입니다.`}</button>
                             </div>
                         </div>
                     </div>
@@ -296,4 +303,5 @@ function updateTime() {
 }
 
 updateTime();
+
 

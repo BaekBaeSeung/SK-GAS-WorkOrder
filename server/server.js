@@ -673,9 +673,10 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
 // WorkingDetail 데이터 조회 엔드포인트
 //=================================================================
 app.get('/api/working-detail', async (req, res) => {
-    const { section, user_id, time, schedule_type } = req.query;
-    const currentDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 현재 날짜
-
+    const { section, user_id, time, schedule_type, date } = req.query;
+    const [year, month, day] = date.split('. ').map(part => part.trim());
+    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    console.log("formattedDate : ", formattedDate); // 디버깅용 로그
     try {
         const connection = await conn;
         const query = `
@@ -686,7 +687,7 @@ app.get('/api/working-detail', async (req, res) => {
             AND time = ?
             AND schedule_type = ?
         `;
-        const results = await connection.query(query, [currentDate, section, user_id, time, schedule_type]);
+        const results = await connection.query(query, [formattedDate, section, user_id, time, schedule_type]);
 
         if (results.length > 0) {
             res.json(results[0]);
@@ -726,10 +727,14 @@ app.put('/api/updateWorkingDetail', async (req, res) => {
 // Schedule Details Endpoint
 //=================================================================
 app.get('/api/schedule-details', async (req, res) => {
-    const { area_name, schedule_type, time, sections, user_id } = req.query;
+    const { area_name, schedule_type, time, sections, user_id, date } = req.query;
+    console.log("date : ", date); // 디버깅용 로그
     console.log("sectionssectionssections : ", sections);
-    const currentDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 현재 날짜
-    console.log("currentDate : ", currentDate);
+
+    // date 변수를 YYYY-MM-DD 형식으로 변환
+    const [year, month, day] = date.split('. ').map(part => part.trim());
+    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    console.log("formattedDate : ", formattedDate); // 디버깅용 로그
 
     try {
         const connection = await conn;
@@ -754,12 +759,12 @@ app.get('/api/schedule-details', async (req, res) => {
         }
         const workTimeId = timeResult.work_time_id;
 
-        // WorkingDetail 테이블에서 value 조회
+        // WorkingDetail 
         const detailQuery = `
             SELECT * FROM WorkingDetail
             WHERE work_time_id = ? AND section IN (?) AND user_id = ? AND time = ? AND schedule_type = ? AND DATE(create_at) = DATE(?)
         `;
-        const detailResults = await connection.query(detailQuery, [workTimeId, sections.split(','), user_id, time, schedule_type, currentDate]);
+        const detailResults = await connection.query(detailQuery, [workTimeId, sections.split(','), user_id, time, schedule_type, formattedDate]);
         if (detailResults.length === 0) {
             return res.status(404).json({ message: 'Working detail not found' });
         }
@@ -776,6 +781,8 @@ app.get('/api/schedule-details', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+
 
 startServer();
 

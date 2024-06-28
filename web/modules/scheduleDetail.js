@@ -19,13 +19,14 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
         const noticeCount = await fetchNoticeCount();
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
+        console.log("scheduleData.date : ", scheduleData.date); // 스케줄 데이터 출력 (디버깅용)
 
         // 스케줄 관련 데이터를 한 번에 조회
         const sectionNames = sections.map(section => section.section).join(',');
         console.log("sectionNames : ", sectionNames);
         let detailsData = {};
         try {
-            const detailsResponse = await fetch(`/api/schedule-details?area_name=${scheduleData.area_name}&schedule_type=${scheduleData.schedule_type}&time=${scheduleData.time}&sections=${encodeURIComponent(sectionNames)}&user_id=${userProfile.userId}`);
+            const detailsResponse = await fetch(`/api/schedule-details?area_name=${scheduleData.area_name}&schedule_type=${scheduleData.schedule_type}&time=${scheduleData.time}&sections=${encodeURIComponent(sectionNames)}&user_id=${userProfile.userId}&date=${scheduleData.date}`);
             
             if (detailsResponse.ok) {
                 detailsData = await detailsResponse.json();
@@ -107,6 +108,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
                         throw new Error('Failed to fetch subsections');
                     }
                     const subSections = await response.json();
+                    
 
                     // 현재 스케줄 데이터와 섹션 정보를 로컬 스토리지에 저장
                     localStorage.setItem('currentScheduleData', JSON.stringify(scheduleData));

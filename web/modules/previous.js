@@ -60,7 +60,7 @@ export async function renderPreviousPage(container) {
                         <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
                             <div class="location-date-container">
                                 <p class="location">${schedule.area_name}</p>
-                                <p class="date">${new Date(schedule.create_at).toLocaleDateString()}</p>
+                                <p class="date">${new Date(schedule.create_at).toLocaleDateString().replace(/\.$/, '')}</p>
                             </div>
                             <div class="shift-time">
                                 <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
@@ -91,6 +91,7 @@ export async function renderPreviousPage(container) {
                 const areaName = el.querySelector('.location').textContent;
                 const scheduleType = el.dataset.shift;
                 const time = el.querySelector('.time').textContent;
+                const date = el.querySelector('.date').textContent; // date 정보 추가
                 try {
                     const response = await fetch(`/api/sections-by-area/${encodeURIComponent(areaName)}`);
                     if (!response.ok) {
@@ -103,6 +104,7 @@ export async function renderPreviousPage(container) {
                         area_name: areaName,
                         schedule_type: scheduleType,
                         time: time,
+                        date: date, // date 정보 추가
                         initial: schedules[0].schedule_type.toUpperCase()
                     };
 
@@ -169,3 +171,4 @@ function updateTime() {
 }
 
 updateTime();
+

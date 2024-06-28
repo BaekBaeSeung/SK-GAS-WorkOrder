@@ -22,7 +22,7 @@ export async function renderSchedulePage(container) {
 
         const today = new Date();
         const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-        console.log();
+         const formattedDate = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}`;
 
         const todaySchedules = schedules.filter(schedule => {
             const scheduleDate = new Date(schedule.create_at);
@@ -185,6 +185,7 @@ export async function renderSchedulePage(container) {
                         area_name: areaName,
                         schedule_type: scheduleType,
                         time: time,
+                        date: formattedDate, // 오늘 날짜를 연월일 형식으로 설정
                         initial: schedules[0].schedule_type.toUpperCase()
                     };
 
