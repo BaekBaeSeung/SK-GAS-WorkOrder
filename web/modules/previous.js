@@ -28,7 +28,24 @@ export async function renderPreviousPage(container) {
             return scheduleDateString < todayDateString;
         });
 
-        const previousSchedulesCount = previousSchedules.length < 10 ? `0${previousSchedules.length}` : previousSchedules.length;
+        // 중복된 스케줄 타임 제거
+        const uniquePreviousSchedules = previousSchedules.reduce((acc, schedule) => {
+            const scheduleDate = new Date(schedule.create_at);
+            const scheduleDateString = `${scheduleDate.getFullYear()}-${String(scheduleDate.getMonth() + 1).padStart(2, '0')}-${String(scheduleDate.getDate()).padStart(2, '0')}`;
+            if (!acc.some(item => {
+                const itemDate = new Date(item.create_at);
+                const itemDateString = `${itemDate.getFullYear()}-${String(itemDate.getMonth() + 1).padStart(2, '0')}-${String(itemDate.getDate()).padStart(2, '0')}`;
+                return item.time === schedule.time && itemDateString === scheduleDateString;
+            })) {
+                acc.push(schedule);
+            }
+            return acc;
+        }, []);
+
+        // 날짜순으로 정렬 (가장 최근 날짜가 위로 오도록)
+        uniquePreviousSchedules.sort((a, b) => new Date(b.create_at) - new Date(a.create_at));
+
+        const previousSchedulesCount = uniquePreviousSchedules.length < 10 ? `0${uniquePreviousSchedules.length}` : uniquePreviousSchedules.length;
 
         container.innerHTML = `
             <head>
@@ -56,7 +73,7 @@ export async function renderPreviousPage(container) {
                     <p>이전 점검 기록 [${previousSchedulesCount}] <span style="margin-right: 1.25lvh;" class="dash">-</span></p>
                 </div>
                 <div class="schedule">
-                    ${previousSchedules.map(schedule => `
+                    ${uniquePreviousSchedules.map(schedule => `
                         <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
                             <div class="location-date-container">
                                 <p class="location">${schedule.area_name}</p>
@@ -171,4 +188,3 @@ function updateTime() {
 }
 
 updateTime();
-

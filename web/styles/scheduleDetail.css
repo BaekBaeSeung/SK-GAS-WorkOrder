@@ -199,6 +199,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.5lvh;
 }
 .task-number.input-active {
     background-color: #813CD9;

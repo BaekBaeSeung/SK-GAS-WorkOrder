@@ -22,7 +22,7 @@ export async function renderSchedulePage(container) {
 
         const today = new Date();
         const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-         const formattedDate = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}`;
+        const formattedDate = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}`;
 
         const todaySchedules = schedules.filter(schedule => {
             const scheduleDate = new Date(schedule.create_at);
@@ -46,13 +46,6 @@ export async function renderSchedulePage(container) {
                 </div>
             `;
         }
-
-        const uniqueSchedules = todaySchedules.reduce((acc, schedule) => {
-            if (!acc.some(item => item.time === schedule.time)) {
-                acc.push(schedule);
-            }
-            return acc;
-        }, []);
 
         // 현재 시간을 기준으로 스케줄 정렬
         const currentHour = today.getHours();
@@ -82,8 +75,16 @@ export async function renderSchedulePage(container) {
             });
         }
 
+        // uniqueSchedules 생성
+        const uniqueSchedules = todaySchedules.reduce((acc, schedule) => {
+            if (!acc.some(item => item.time === schedule.time)) {
+                acc.push(schedule);
+            }
+            return acc;
+        }, []);
+
         // 스케줄 항목에 inactive 클래스 추가
-        todaySchedules.forEach(schedule => {
+        uniqueSchedules.forEach(schedule => {
             const scheduleTime = new Date(`1970-01-01T${schedule.time}:00`);
             const currentTime = new Date(`1970-01-01T${currentSlot ? currentSlot.label : '00:00'}:00`);
             if (Math.abs(scheduleTime - currentTime) > 0) {
@@ -119,7 +120,7 @@ export async function renderSchedulePage(container) {
                         <div class="schedule-item-container">
                             <div class="location-time">
                                 <p class="location">${schedules[0].area_name || 'N/A'}</p>
-                                <p class="global-time">${new Date(schedules[0].create_at).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\.$/, '') || 'N/A'}</p>
+                                <p class="global-time">${formattedDate}</p>
                             </div>
                             ${uniqueSchedules.map(schedule => `
                                 <div class="schedule-item ${schedule.inactive ? 'inactive' : ''}" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
@@ -172,7 +173,7 @@ export async function renderSchedulePage(container) {
                         </div>
                     </div>
                     <div class="schedule">
-                        ${todaySchedules.map(schedule => `
+                        ${uniqueSchedules.map(schedule => `
                             <div class="schedule-item ${schedule.inactive ? 'inactive' : ''}" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
                                 <p class="location">${schedule.area_name}</p>
                                 <div class="shift-time">
