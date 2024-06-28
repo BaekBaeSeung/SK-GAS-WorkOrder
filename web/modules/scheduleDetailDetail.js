@@ -10,17 +10,20 @@ function showModal(message, onConfirm) {
     const modal = document.getElementById('modal');
     modal.style.display = 'block';
 
-    // 모달의 x 버튼 이벤트 리스너 추가
-    const closeModal = document.querySelector('.close');
-    closeModal.addEventListener('click', () => {
+    const closeModal = () => {
         modal.style.display = 'none';
-    });
+        navigateTo('/scheduleDetail'); // 모달을 닫을 때 스케줄 디테일 페이지로 이동
+    };
+
+    const closeModalButton = document.querySelector('.close');
+    closeModalButton.addEventListener('click', closeModal);
 
     if (onConfirm) {
         const confirmButton = document.getElementById('confirm-button');
         confirmButton.addEventListener('click', () => {
             modal.style.display = 'none';
             onConfirm();
+            navigateTo('/scheduleDetail'); // 확인 버튼을 클릭할 때 스케줄 디테일 페이지로 이동
         });
     }
 }
@@ -207,6 +210,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
 
                             if (response.ok) {
                                 showModal('데이터가 성공적으로 제출되었습니다.');
+                                
                             } else {
                                 showModal('데이터 제출에 실패했습니다.');
                             }
@@ -292,3 +296,4 @@ function updateTime() {
 }
 
 updateTime();
+
