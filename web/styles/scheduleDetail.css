@@ -27,7 +27,7 @@ body {
 
 .schedule-detail-container {
     width: 50lvh;
-    min-height: 90lvh; /* Changed from height to min-height */
+    min-height: 100lvh; /* Changed from height to min-height */
     padding: 2lvh;
     text-align: center;
     max-height: 100vh; 
