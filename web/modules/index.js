@@ -57,10 +57,12 @@ window.navigateTo = navigateTo;
 
 function loadCSS(filename) {
     const link = document.createElement('link');
-    link.rel = 'stylesheet';
+    link.rel = 'preload'; // 변경된 부분
+    link.as = 'style'; // 변경된 부분
     link.type = 'text/css';
     link.href = filename;
     link.setAttribute('data-page-style', 'true'); // 페이지별 CSS 파일임을 표시
+    link.onload = () => { link.rel = 'stylesheet'; }; // 변경된 부분
     document.head.appendChild(link);
 }
 
@@ -185,19 +187,19 @@ function loadPage(path, state = {}) {
             break;
         case path === '/login':
             renderLoginPage(app);
-            loadCSS('./styles/login.css'); // 로그인 페이지 스타일 로드
+            loadCSS('/styles/login.css'); // 로그인 페이지 스타일 로드
             break;
         case path === '/schedule':
             renderSchedulePage(app);
-            loadCSS('./styles/schedule.css'); // 스케줄 페이지 스타일 로드
+            loadCSS('/styles/schedule.css'); // 스케줄 페이지 스타일 로드
             break;
         case path === '/notice':
             renderNoticePage(app);
-            loadCSS('./styles/notice.css'); // 공지사항 페이지 스타일 로드
+            loadCSS('/styles/notice.css'); // 공지사항 페이지 스타일 로드
             break;
         case path === '/previous':
             renderPreviousPage(app);
-            loadCSS('./styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
+            loadCSS('/styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
             break;
         case path === '/scheduleDetail':
             if ((!state.sections && !savedState.sections) || (!state.scheduleData && !savedState.scheduleData)) {
@@ -212,20 +214,20 @@ function loadPage(path, state = {}) {
             } else {
                 renderScheduleDetailPage(app, state.scheduleData || savedState.scheduleData, state.sections || savedState.sections);
             }
-            loadCSS('./styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
+            loadCSS('/styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
             break;
         case path.startsWith('/scheduleDetailDetail/'): // 수정된 부분
             const sectionId = path.split('/')[2];
             renderScheduleDetailDetailPage(app, sectionId);
-            loadCSS('./styles/scheduleDetailDetail.css');
+            loadCSS('/styles/scheduleDetailDetail.css');
             break;
         case path === '/scheduleDetailadmin': // 추가
             renderScheduleDetailAdminPage(app);
-            loadCSS('./styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
+            loadCSS('/styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
             break;
         case path === '/noticeAdmin': // 추가
             renderNoticeAdminPage(app);
-            loadCSS('./styles/noticeAdmin.css');
+            loadCSS('/styles/noticeAdmin.css');
             break;
         case path.startsWith('/noticeDetail/'): // 추가
             const noticeId = path.split('/')[2];
