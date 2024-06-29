@@ -55,7 +55,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         console.log("formattedToday : ", formattedToday);
         console.log("scheduleData.date : ", scheduleData.date);
         // input 요소와 submit 버튼 비활성화 여부 결정
-        const isEditable = scheduleData.date === formattedToday;
+        const isEditable = scheduleData.date === formattedToday && userProfile.isAdmin !== 'ADMIN';
 
         container.innerHTML = `
             <head>
@@ -111,7 +111,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                             
                             }).join('')}
                             <div class="submit-container"> <!-- 제출 버튼 컨테이너 추가 -->
-                                <button id="submit-button" class="submit-button" ${isEditable ? '' : 'disabled'}>${isEditable ? (workingDetailData && workingDetailData.value ? '수정' : '제출') : `${scheduleData.date}에 제출된 데이터입니다.`}</button>
+                                <button id="submit-button" class="submit-button" ${isEditable ? '' : 'disabled'} style="${userProfile.isAdmin === 'ADMIN' ? 'display: none;' : ''}">${isEditable ? (workingDetailData && workingDetailData.value ? '수정' : '제출') : `${scheduleData.date}에 제출된 데이터입니다.`}</button>
                             </div>
                         </div>
                     </div>
@@ -304,3 +304,4 @@ function updateTime() {
 }
 
 updateTime();
+
