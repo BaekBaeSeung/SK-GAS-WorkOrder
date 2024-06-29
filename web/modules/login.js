@@ -67,7 +67,7 @@ updateTime();
 
         const result = await response.json();
         if (result.success) {
-            showModal(`안녕하세요! ${result.name}님!<br>${result.userRole} 계정으로 로그인 되었습니다.<br><span id="countdown">3</span>&nbsp;초 뒤에 이동합니다.`, () => {
+            showModal(`안녕하세요! ${result.name}계정으로 로그인 했습니다!<br><span id="countdown">3</span>&nbsp;초 뒤에 이동합니다.`, () => {
                 window.navigateTo('/schedule'); // 로그인 성공 시 스케줄 페이지로 이동
             });
             document.cookie = `accessToken=${result.accessToken}; path=/; secure; HttpOnly`;

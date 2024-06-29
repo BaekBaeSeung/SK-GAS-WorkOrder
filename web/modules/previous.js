@@ -83,6 +83,10 @@ export async function renderPreviousPage(container) {
                                 <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
                                 <p class="time">${schedule.time}</p>
                             </div>
+                            <ul class="worker-info" style="text-align: left;">
+                                <li>교대 반장: ${schedule.foremanName}</li>
+                                <li>작업자: ${schedule.workerName}</li>
+                            </ul>
                         </div>
                     `).join('')}
                 </div>

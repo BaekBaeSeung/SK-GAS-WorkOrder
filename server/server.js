@@ -813,6 +813,91 @@ app.get('/api/schedule-details', async (req, res) => {
     }
 });
 
+//=================================================================
+// WorkingTime 데이터 조회 엔드포인트 (모든 행 반환)
+//=================================================================
+app.get('/api/working-times', async (req, res) => {
+    try {
+        const connection = await conn;
+        const results = await connection.query("SELECT * FROM WorkingTime");
+        res.json(results);
+    } catch (err) {
+        console.error('Error fetching working times:', err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+//=================================================================
+// WorkingArea 데이터 조회 엔드포인트 (area_id로 조회)
+//=================================================================
+app.get('/api/working-area/:area_id', async (req, res) => {
+    const { area_id } = req.params;
+    try {
+        const connection = await conn;
+        const [result] = await connection.query("SELECT * FROM WorkingArea WHERE area_id = ?", [area_id]);
+        if (result) {
+            res.json(result);
+        } else {
+            res.status(404).json({ message: 'Area not found' });
+        }
+    } catch (err) {
+        console.error('Error fetching working area:', err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+// 날짜 형식을 'YYYY-MM-DD HH:MM:SS'로 변환하는 함수
+function formatDateToMySQL(date) {
+    const pad = (n) => n < 10 ? '0' + n : n;
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+//=================================================================
+// Schedule 데이터 인서트 엔드포인트
+//=================================================================
+app.post('/api/insert-schedule', async (req, res) => {
+    const { area_name, section, schedule_type, time, create_at, user_id, foreman, worker } = req.body;
+    console.log("area_name : ", area_name);
+    console.log("section : ", section);
+    console.log("schedule_type : ", schedule_type);
+    console.log("time : ", time);
+    console.log("create_at : ", create_at);
+    console.log("user_id : ", user_id);
+    console.log("foreman : ", foreman);
+    console.log("worker : ", worker);
+
+    try {
+        const connection = await conn;
+        const formattedCreateAt = formatDateToMySQL(new Date(create_at));
+        const query = `
+            INSERT INTO schedule (schedule_id, area_name, section, schedule_type, time, create_at, user_id, foreman, worker)
+            VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        await connection.query(query, [area_name, section, schedule_type, time, formattedCreateAt, user_id, foreman, worker]);
+
+        res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
+    } catch (err) {
+        console.error('Error inserting schedule:', err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+//=================================================================
+// Foreman 데이터 조회 엔드포인트
+//=================================================================
+app.get('/api/foreman', async (req, res) => {
+    try {
+        const connection = await conn;
+        const [result] = await connection.query("SELECT user_id FROM User WHERE role = 'ADMIN' LIMIT 1");
+        if (result) {
+            res.json(result);
+        } else {
+            res.status(404).json({ message: 'Foreman not found' });
+        }
+    } catch (err) {
+        console.error('Error fetching foreman:', err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
 
 startServer();
 

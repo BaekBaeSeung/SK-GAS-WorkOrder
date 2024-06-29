@@ -58,9 +58,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         const isEditable = scheduleData.date === formattedToday && userProfile.isAdmin !== 'ADMIN';
 
         container.innerHTML = `
-            <head>
 
-            </head>
             <div class="schedule-detail-detail-container">
                 <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
                     <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
@@ -102,7 +100,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                                     <img src="/assets/img/common/p771.png" alt="Gauge" class="gauge">
                                     <!-- <img src="/assets/img/common/${subSection.item_pic}" alt="Gauge" class="gauge"> -->
                                     <div class="input-container">
-                                            <input type="text" class="input-field" value="${inputValues[index] || ''}" ${isEditable ? '' : 'disabled'}>
+                                            <input type="text" class="input-field" value="${inputValues[index] || ''}" ${isEditable ? '' : 'disabled'} ${isEditable ? '' : 'readonly'}>
                                             <span class="unit">${subSection.section_unit}</span>
                                         </div>
                                     </div>

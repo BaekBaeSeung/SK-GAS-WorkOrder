@@ -17,8 +17,19 @@ export async function renderSchedulePage(container) {
         } else {
             response = await fetch('/api/schedule');
         }
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch schedules');
+        }
+
         const schedules = await response.json();
         console.log('Schedules:', schedules); // 스케줄 데이터 출력 (디버깅용)
+
+        // 스케줄 데이터가 없을 경우 스케줄 선택 페이지로 이동
+        if (schedules.length === 0 && userProfile.isAdmin !== 'ADMIN') {
+            navigateTo('/scheduleSelect');
+            return;
+        }
 
         const today = new Date();
         const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
@@ -268,6 +279,7 @@ export async function renderSchedulePage(container) {
     } catch (error) {
         console.error('Error fetching user profile, notice count, or schedules:', error);
         alert('사용자 정보, 공지사항 개수 또는 스케줄을 가져오는데 실패했습니다.');
+        navigateTo('/scheduleSelect'); // 오류 발생 시 스케줄 선택 페이지로 이동
     }
 }
 
@@ -289,3 +301,4 @@ function updateTime() {
 }
 
 updateTime();
+

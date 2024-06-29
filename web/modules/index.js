@@ -20,6 +20,7 @@ import { renderScheduleDetailDetailPage } from './scheduleDetailDetail.js'; // �
 import { renderScheduleDetailAdminPage } from './scheduleDetailadmin.js'; // 추가
 import { renderNoticeAdminPage } from './noticeAdmin.js'; // noticeAdmin.js 파일에서 공지 작성 페이지 정의
 import { renderNoticeDetailPage } from './noticeDetail.js'; // noticeDetail.js 파일에서 공지사항 상세 페이지 정의
+import { renderScheduleSelectPage } from './scheduleSelect.js'; // 추가
 
 //=================================================================
 // Element List
@@ -193,6 +194,10 @@ function loadPage(path, state = {}) {
             renderSchedulePage(app);
             loadCSS('/styles/schedule.css'); // 스케줄 페이지 스타일 로드
             break;
+        case path === '/scheduleSelect': // 추가
+            renderScheduleSelectPage(app);
+            loadCSS('/styles/scheduleSelect.css'); // 스케줄 선택 페이지 스타일 로드
+            break;
         case path === '/notice':
             renderNoticePage(app);
             loadCSS('/styles/notice.css'); // 공지사항 페이지 스타일 로드
@@ -229,7 +234,7 @@ function loadPage(path, state = {}) {
             renderNoticeAdminPage(app);
             loadCSS('/styles/noticeAdmin.css');
             break;
-        case path.startsWith('/noticeDetail/'): // 추가
+        case path.startsWith('/noticeDetail/'): // 추가 
             const noticeId = path.split('/')[2];
             renderNoticeDetailPage(app, noticeId);
             break;
@@ -238,4 +243,3 @@ function loadPage(path, state = {}) {
             break; 
     }
 }
-

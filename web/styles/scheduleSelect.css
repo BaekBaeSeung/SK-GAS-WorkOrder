@@ -16,26 +16,24 @@ html, body {
 
     font-family: "NanumSquareAc";
     display: flex;
-    flex-direction: row; /* Changed from row to column */
+    flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
 body {
     background-color: #EEEEEE;
-    overflow-y: auto; /* 스크롤 가능하도록 설정 */
+    overflow-y: auto;
 }
 
-.previous-container {
+.schedule-container {
     width: 50lvh;
-    min-height: 90lvh; /* Changed from height to min-height */
-
+    height: 90lvh;
     text-align: center;
     /* background-color: #FFFFFF;
     border-radius: 1lvh;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15); */
-    max-height: 100vh; 
-    margin-top: 10vh;
+    
 }
 
 .logo {
@@ -47,7 +45,7 @@ body {
 .header {
     display: flex;
     align-items: center;
-    justify-content: center; /* Centered */
+    justify-content: center; /* 가운데 정렬 */
     margin-bottom: 2lvh;
 }
 
@@ -56,7 +54,6 @@ body {
     height: 8lvh;
     border-radius: 50%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    object-fit: cover; /* Added to maintain aspect ratio */
 }
 
 .initial {
@@ -70,7 +67,7 @@ body {
 .time-container {
     display: flex;
     align-items: center;
-    margin-left: 1lvh; /* Gap between elements */
+    margin-left: 1lvh; /* 요소 간 간격 조정 */
 }
 
 .time-date {
@@ -78,7 +75,7 @@ body {
     flex-direction: column;
     align-items: center;
     margin-right: 0.5lvh;
-    gap: -1lvh; /* Gap between time and date */
+    gap: -1lvh; /* 시간과 날짜의 위아래 간격 조정 */
 }
 
 .date {
@@ -93,46 +90,40 @@ body {
     margin-left: 0.2lvh;
 }
 
-.time {
-    font-size: 4lvh;
-    font-weight: 900;
-}
-
-.notice, .previous-records {
+.notice, .previous-records, #go-to-schedule {
     background-color: #F4F4F4;
     padding: 1lvh;
     border-radius: 1lvh;
-    margin-bottom: 2lvh; /* Same gap between notice and schedule */
+    margin-bottom: 2lvh; /* 공지사항과 스케줄 간의 간격을 동일하게 설정 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: left; /* Left-aligned */
+    text-align: left; /* 왼쪽 정렬 */
 }
 
-.notice p, .previous-records p {
+.notice p, .previous-records p, #go-to-schedule p {
     margin: 0;
-    font-size: 1.5lvh; /* Smaller font */
-    font-weight: 700; /* Bolder font */
-    margin-left: 1.5lvh; /* Left margin */
+    font-size: 1.5lvh; /* 글씨체 작게 */
+    font-weight: 700; /* 글씨체 두껍게 */
+    margin-left: 1.5lvh; /* 좌측 마진 */
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* 공지사항의 점을 우측 끝으로 이동 */
     align-items: center;
 }
-
-.notice .dash, .previous-records .dash {
-    font-size: 1.8lvh; 
-}
-
-.notice span, .previous-records span {
-    font-size: 3lvh;
-    font-weight: 900;
-    color: #7B7B7B;
-    margin-right: 1lvh;
-}
-
 
 .schedule {
     display: flex;
     flex-direction: column;
-    gap: 0.4lvh; /* Wider gap between time items */
+    gap: 0.4lvh; /* 각 간 항목 사이의 간격을 넓힘 */
+}
+
+.schedule-item-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4lvh; /* 각 항목 사이의 간격을 넓힘 */
+    background-color: #F4F4F4;
+    padding: 1lvh;
+    border-radius: 1lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2lvh;
 }
 
 .schedule-item {
@@ -142,18 +133,14 @@ body {
     border-radius: 1lvh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
-    flex-direction: column; /* Vertical */
-    align-items: flex-start; /* Left-aligned */
-    margin-bottom: 1.8lvh; /* Wider gap between time items */
-    color: #6A6A6A;
+    flex-direction: column; /* 세로 정렬 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+    margin-bottom: 1.8lvh; /* 각 항목 사이의 간격을 넓힘 */
+
 }
 
 .schedule-item p {
     margin: 0;
-}
-.worker-info {
-    margin-top: 0lvh;
-    margin-bottom: 0lvh;
 }
 
 .shift-time {
@@ -161,25 +148,12 @@ body {
     justify-content: space-between;
     width: 100%;
     margin-top: 1.2lvh;
-    
-}
-
-.location-date-container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
 }
 
 .location {
     font-size: 1.5lvh;
     font-weight: 600;
-    color: #6A6A6A;
-}
-
-.location-date-container .date {
-    font-size: 1.5lvh;
-    font-weight: 600;
-    color: #6A6A6A;
+    color: #888888;
 }
 
 .shift {
@@ -190,6 +164,46 @@ body {
 .time {
     font-size: 4lvh;
     font-weight: 900;
+}
+
+.previous-records-container {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 10lvh;
+}
+
+.previous-records {
+    background-color: #E3E3E3;
+    padding: 1.5lvh;
+    border-radius: 1.5lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    text-align: left;
+    position: absolute;
+    top: 0;
+    width: 94%;
+}
+
+.previous-records:nth-child(2) {
+    background-color: #EFEFEF;
+    top: 1lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.previous-records:nth-child(3) {
+    background-color: #F4F4F4;
+    top: 2lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.notice span {
+    font-size: 1.5lvh; /* 폰트 사이즈 조정 */
+    font-weight: 900;
+    color: #7B7B7B;
+    margin-right: 1lvh;
 }
 
 /* 모달 창 스타일 */
@@ -243,10 +257,56 @@ body {
 #logout-button:hover {
     background-color: #d32f2f; /* 어두운 빨간색 배경 */
 }
+
+.location-time {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.location-time p{
+    margin: 0 1lvh;
+    margin-bottom: 1lvh;
+}
+
+.location, .global-time {
+    font-size: 1.5lvh;
+    font-weight: 600;
+    color: #888888;
+}
+
+.schedule-item-container .location-time {
+
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.schedule-item-container .location, 
+.schedule-item-container .global-time {
+    font-size: 1.5lvh;
+    font-weight: 600;
+    color: #888888;
+}
+
+.schedule-item .time {
+    font-size: 4lvh;
+    font-weight: 900;
+}
+
+.worker-info{
+    margin-top: 0lvh;
+    margin-bottom: 0lvh;
+}
 .sticky-header {
     position: sticky;
-    top: 0lvh;
+    top: 0;
     background-color: #EEEEEE;
     z-index: 1000;
+    padding-bottom: 1lvh;
+    padding-bottom: 0lvh;
     border-radius: 1lvh;
+}
+
+.schedule-item.inactive {
+    color: #6A6A6A;
 }
