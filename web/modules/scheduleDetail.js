@@ -47,7 +47,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
                 <link rel="stylesheet" href="styles/scheduleDetail.css">
             </head>
             <div class="schedule-detail-container">
-                <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
+                <div class="sticky-header";> <!-- sticky-header 클래스 추가 -->
                     <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                     <div class="header">
                         <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">

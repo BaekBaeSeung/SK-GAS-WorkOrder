@@ -22,23 +22,40 @@ html, body {
 
 body {
     background-color: #EEEEEE;
-     overflow-y: auto;
+
 }
 
 .schedule-detail-container {
     width: 50lvh;
     min-height: 100lvh; /* Changed from height to min-height */
+    height: auto; /* 높이를 auto로 설정 */
     padding: 2lvh;
     text-align: center;
     max-height: 100vh; 
-    margin-top: 10vh;
-
+    
+    overflow-y: auto;
 }
+
+.schedule-detail-container::-webkit-scrollbar {
+    width: 0; /* 스크롤바 너비를 0으로 설정하여 보이지 않게 함 */
+    height: 0; /* 스크롤바 높이를 0으로 설정하여 보이지 않게 함 */
+}
+
+.schedule-detail-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.schedule-detail-container::-webkit-scrollbar {
+    display: none; /* 웹킷 브라우저에서 스크롤바를 숨김 */
+}
+
 
 .logo {
     width: 11lvh;
     margin-bottom: 1.6lvh;
     margin-left: -29lvh; 
+    margin-top: 5lvh;
 }
 
 .header {
@@ -265,7 +282,7 @@ body {
     background-color: #d32f2f; /* 어두운 빨간색 배경 */
 }
 .sticky-header {
-    position: sticky;
+    position: sticky; /* sticky에서 fixed로 변경 */
     top: 0;
     background-color: #EEEEEE;
     z-index: 1000;
