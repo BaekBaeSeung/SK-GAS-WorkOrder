@@ -106,16 +106,18 @@ export async function renderPreviousPage(container) {
         document.querySelectorAll('.schedule-item').forEach(el => {
             el.addEventListener('click', async () => {
                 const areaName = el.querySelector('.location').textContent;
+                console.log('areaNameareaNameareaName:', areaName); // 디버깅용 로그
                 const scheduleType = el.dataset.shift;
                 const time = el.querySelector('.time').textContent;
                 const date = el.querySelector('.date').textContent; // date 정보 추가
                 try {
                     const response = await fetch(`/api/sections-by-area/${encodeURIComponent(areaName)}`);
+                    console.log('ResponseResponseResponse:', response); // 디버깅용 로그
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
                     const sections = await response.json();
-                    console.log('Sections:', sections); // 디버깅용 로그
+                    console.log('Sectionssectionssections:', sections); // 디버깅용 로그
 
                     const scheduleData = {
                         area_name: areaName,
@@ -124,6 +126,7 @@ export async function renderPreviousPage(container) {
                         date: date, // date 정보 추가
                         initial: schedules[0].schedule_type.toUpperCase()
                     };
+                    
 
                     // scheduleDetail 페이지로 이동하면서 scheduleData와 sections 데이터를 전달
                     navigateTo('/scheduleDetail', { scheduleData, sections: Array.isArray(sections) ? sections : [] });

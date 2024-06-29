@@ -41,7 +41,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         const subSections = Array.isArray(sectionData.subSections) ? sectionData.subSections : [];
 
         // WorkingDetail 데이터 조회
-        const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}&date=${scheduleData.date}`);
+        const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}&date=${scheduleData.date}&isAdmin=${userProfile.isAdmin}`);
         console.log("scheduleData.time : ",scheduleData.time);
         const workingDetailData = await workingDetailResponse.json();
 

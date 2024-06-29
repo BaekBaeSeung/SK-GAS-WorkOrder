@@ -76,7 +76,7 @@ async function generateExcel(data) {
 
 
             // 헤더 추가 및 스타일 설정
-            const headerRow = worksheet.addRow(['구분', '', '', 'ITEM NO', 'UNIT', '8:00', '12:00', '16:00', '20:00', '00:00', '4:00']);
+            const headerRow = worksheet.addRow(['구분', '', '', 'ITEM NO', 'UNIT', '8:00', '12:00', '16:00', '20:00', '00:00', '02:00', '04:00', '06:00']);
             worksheet.mergeCells('A2:C2'); // 한 칸 더 늘려 병합
             headerRow.eachCell((cell, colNumber) => {
                 cell.font = { name: '돋움', size: 11, bold: true }; // 2행 폰트 설정
@@ -430,16 +430,18 @@ async function generateExcel(data) {
             });
 
             for (let i = 3; i <= 61; i++) {
-                // f~k 열에 데이터가 있는지 확인
+                // f~m 열에 데이터가 있는지 확인
                 const fCell = worksheet.getCell(`F${i}`);
                 const gCell = worksheet.getCell(`G${i}`);
                 const hCell = worksheet.getCell(`H${i}`);
                 const iCell = worksheet.getCell(`I${i}`);
                 const jCell = worksheet.getCell(`J${i}`);
                 const kCell = worksheet.getCell(`K${i}`);
+                const lCell = worksheet.getCell(`L${i}`); // L열 추가
+                const mCell = worksheet.getCell(`M${i}`); // M열 추가
 
                 // 데이터가 없더라도 테두리 설정
-                [fCell, gCell, hCell, iCell, jCell, kCell].forEach(cell => {
+                [fCell, gCell, hCell, iCell, jCell, kCell, lCell, mCell].forEach(cell => {
                     if (!cell.value) {
                         cell.value = '-';
                         cell.alignment = { vertical: 'middle', horizontal: 'center' }; // 가운데 정렬

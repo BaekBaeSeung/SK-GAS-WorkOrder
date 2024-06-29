@@ -26,7 +26,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
         console.log("sectionNames : ", sectionNames);
         let detailsData = {};
         try {
-            const detailsResponse = await fetch(`/api/schedule-details?area_name=${scheduleData.area_name}&schedule_type=${scheduleData.schedule_type}&time=${scheduleData.time}&sections=${encodeURIComponent(sectionNames)}&user_id=${userProfile.userId}&date=${scheduleData.date}`);
+            const detailsResponse = await fetch(`/api/schedule-details?area_name=${scheduleData.area_name}&schedule_type=${scheduleData.schedule_type}&time=${scheduleData.time}&sections=${encodeURIComponent(sectionNames)}&user_id=${userProfile.userId}&date=${scheduleData.date}&isAdmin=${userProfile.isAdmin}`);
             
             if (detailsResponse.ok) {
                 detailsData = await detailsResponse.json();

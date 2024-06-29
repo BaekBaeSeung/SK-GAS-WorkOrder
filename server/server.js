@@ -673,7 +673,7 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
 // WorkingDetail 데이터 조회 엔드포인트
 //=================================================================
 app.get('/api/working-detail', async (req, res) => {
-    const { section, user_id, time, schedule_type, date } = req.query;
+    const { section, user_id, time, schedule_type, date, isAdmin } = req.query;
     const currentDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 현재 날짜
     const [year, month, day] = date.split('. ').map(part => part.trim());
     const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -681,15 +681,31 @@ app.get('/api/working-detail', async (req, res) => {
 
     try {
         const connection = await conn;
-        const query = `
-            SELECT * FROM WorkingDetail
-            WHERE DATE(create_at) = ?
-            AND section = ?
-            AND user_id = ?
-            AND time = ?
-            AND schedule_type = ?
-        `;
-        const results = await connection.query(query, [formattedDate, section, user_id, time, schedule_type]);
+        let query;
+        let queryParams;
+
+        if (isAdmin === 'ADMIN') {
+            query = `
+                SELECT * FROM WorkingDetail
+                WHERE DATE(create_at) = ?
+                AND section = ?
+                AND time = ?
+                AND schedule_type = ?
+            `;
+            queryParams = [formattedDate, section, time, schedule_type];
+        } else {
+            query = `
+                SELECT * FROM WorkingDetail
+                WHERE DATE(create_at) = ?
+                AND section = ?
+                AND user_id = ?
+                AND time = ?
+                AND schedule_type = ?
+            `;
+            queryParams = [formattedDate, section, user_id, time, schedule_type];
+        }
+
+        const results = await connection.query(query, queryParams);
 
         if (results.length > 0) {
             res.json(results[0]);
@@ -729,7 +745,7 @@ app.put('/api/updateWorkingDetail', async (req, res) => {
 // Schedule Details Endpoint
 //=================================================================
 app.get('/api/schedule-details', async (req, res) => {
-    const { area_name, schedule_type, time, sections, user_id, date } = req.query;
+    const { area_name, schedule_type, time, sections, user_id, date, isAdmin } = req.query;
     console.log("date : ", date); // 디버깅용 로그
     console.log("sectionssectionssections : ", sections);
 
@@ -761,12 +777,25 @@ app.get('/api/schedule-details', async (req, res) => {
         }
         const workTimeId = timeResult.work_time_id;
 
-        // WorkingDetail 
-        const detailQuery = `
-            SELECT * FROM WorkingDetail
-            WHERE work_time_id = ? AND section IN (?) AND user_id = ? AND time = ? AND schedule_type = ? AND DATE(create_at) = DATE(?)
-        `;
-        const detailResults = await connection.query(detailQuery, [workTimeId, sections.split(','), user_id, time, schedule_type, formattedDate]);
+        // WorkingDetail 데이터 조회 쿼리
+        let detailQuery;
+        let queryParams;
+
+        if (isAdmin === 'ADMIN') {
+            detailQuery = `
+                SELECT * FROM WorkingDetail
+                WHERE work_time_id = ? AND section IN (?) AND time = ? AND schedule_type = ? AND DATE(create_at) = DATE(?)
+            `;
+            queryParams = [workTimeId, sections.split(','), time, schedule_type, formattedDate];
+        } else {
+            detailQuery = `
+                SELECT * FROM WorkingDetail
+                WHERE work_time_id = ? AND section IN (?) AND user_id = ? AND time = ? AND schedule_type = ? AND DATE(create_at) = DATE(?)
+            `;
+            queryParams = [workTimeId, sections.split(','), user_id, time, schedule_type, formattedDate];
+        }
+
+        const detailResults = await connection.query(detailQuery, queryParams);
         if (detailResults.length === 0) {
             return res.status(404).json({ message: 'Working detail not found' });
         }
@@ -785,6 +814,6 @@ app.get('/api/schedule-details', async (req, res) => {
 });
 
 
-
 startServer();
+
 
