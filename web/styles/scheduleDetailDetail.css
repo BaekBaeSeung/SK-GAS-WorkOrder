@@ -147,15 +147,17 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center; /* 가운데 정렬 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 크기 계산 */
     margin-bottom: 2lvh;
-    width: 96%;
+    width: 100%;
 }
 
 .location-time{
     display: flex;
     justify-content: space-between;
     width: 100%;
+    min-width: 100%;
 }
 .time-date .time {
     font-size: 4lvh;
@@ -188,10 +190,11 @@ body {
 .task-item {
     background-color: #EAEAEA;
     border-radius: 8px;
-    padding: 10px;
+    padding: 10px 0 10px 0;
     margin: 10px 0;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 .task-item p.task-name {
@@ -202,12 +205,15 @@ body {
 }
 
 .task-item p.task-name-header {
-    width: 46.5lvh;
+    width: 100%; /* 너비를 100%로 설정 */
     text-align: center;
     font-weight: 700;
     font-size: 1.8lvh;
     color: #2A2A2A;
     border-radius: 50%;
+    margin: 0; /* 여백 제거 */
+    padding: 1lvh; /* 패딩 추가 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 크기 계산 */
 }
 
 .task-header {
