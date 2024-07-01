@@ -5,7 +5,7 @@
     "main": "./server/server.js",
     "scripts": {
         "webserver": "cross-env IS_DEV=false node ./server/server.js",
-        "liveserver": "cross-env IS_DEV=true HOST=0.0.0.0 PORT=6080 pm2 start ./server/server.js --name SK-GAS-POC --watch",
+        "liveserver": "cross-env IS_DEV=true HOST=0.0.0.0 PORT=6080 pm2 start ./server/server.js --name SK-GAS-POC --watch --max-restarts 10 --restart-delay 1000",
         "testserver": "cross-env IS_DEV=true node ./server/test.js",
         "build": "cross-env IS_BUILD=true node ./server/server.js",
         "test": "echo \"Error: no test specified\" && exit 1"

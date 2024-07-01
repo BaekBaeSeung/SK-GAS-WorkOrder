@@ -927,6 +927,13 @@ app.get('/api/foreman', async (req, res) => {
     }
 });
 
+//=================================================================
+// Crash Endpoint for Testing
+//=================================================================
+app.get('/api/crash', (req, res) => {
+    throw new Error('Intentional Server Crash for Testing');
+});
+
 startServer();
 
 

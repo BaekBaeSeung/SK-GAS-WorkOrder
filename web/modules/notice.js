@@ -41,6 +41,7 @@ export async function renderNoticePage(container) {
 
         container.innerHTML = `
             <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
                 <link rel="stylesheet" href="styles/notice.css">
             </head>
             <div class="notice-container">
@@ -87,6 +88,8 @@ export async function renderNoticePage(container) {
                 </div>
             </div>
         `;
+                // 두 번 터치 시 줌 방지
+
 
         function updateTime() {
             const currentTimeElement = document.getElementById('current-time');

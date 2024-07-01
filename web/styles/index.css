@@ -99,19 +99,22 @@ html, body {
     user-select: none;
     -webkit-text-size-adjust: none;
     -ms-text-size-adjust: none;
+    -ms-user-select: none;
     -moz-text-size-adjust: none;
     -o-text-size-adjust: none;
     touch-action: pan-y;
-
+    touch-action: manipulation;
     font-family: "NanumSquareAc";
 
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    
 }
 
 body {
     background-color: #EEEEEE;
+    
 }
 
