@@ -169,9 +169,9 @@ export async function renderScheduleSelectPage(container) {
                     });
                     const result = await response.json();
                     if (result.success) {
-                        showModal('데이터가 성공적으로 저장되었습니다.');
+                        showModal('선택하신 스케줄이 배정되었습니다.');
                     } else {
-                        showModal('데이터 저장에 실패했습니다.');
+                        showModal('스케줄이 배정에 실패했습니다.');
                     }
                 } catch (error) {
                     console.error('Error inserting schedule:', error);

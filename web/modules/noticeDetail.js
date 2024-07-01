@@ -9,7 +9,20 @@ export async function renderNoticeDetailPage(container, noticeId) {
         const response = await fetch(`/api/notice-data/${noticeId}`);
         const notice = await response.json();
 
-        const storedData = JSON.parse(localStorage.getItem('scheduleData')) || {};
+        // 서버에서 스케줄 데이터 가져오기
+        let scheduleResponse;
+        if (userProfile.isAdmin === 'ADMIN') {
+            scheduleResponse = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+        } else {
+            scheduleResponse = await fetch('/api/schedule');
+        }
+
+        if (!scheduleResponse.ok) {
+            throw new Error('Failed to fetch schedules');
+        }
+
+        const schedules = await scheduleResponse.json();
+        const initial = schedules.length > 0 ? schedules[0].schedule_type.toUpperCase() : '';
 
         // NoticeRead 테이블에 데이터 삽입 요청
         await fetch('/api/notice-read', {
@@ -29,7 +42,7 @@ export async function renderNoticeDetailPage(container, noticeId) {
                     <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                     <div class="header">
                         <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span>
+                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${initial}</span>
                         <div class="time-container">
                             <div class="time-date">
                                 <span class="time" id="current-time">${formatTime(getCurrentTime())}</span>
@@ -39,7 +52,7 @@ export async function renderNoticeDetailPage(container, noticeId) {
                         </div>
                     </div>
                     <div class="notice" id="notice">
-                        <p>공지사항 <span class="dash">-</span></p>
+                        <p>공지사항 게시판 보기. <span class="dash">-</span></p>
                     </div>
                 </div>
                 <div class="notice-detail" id="notice-detail">
@@ -68,7 +81,6 @@ export async function renderNoticeDetailPage(container, noticeId) {
             const currentTimeElem = document.querySelector('.time');
             const currentDateElem = document.querySelector('.date');
             const currentDayElem = document.querySelector('.day');
-            const initialElem = document.querySelector('.initial');
 
             if (currentTimeElem) {
                 currentTimeElem.innerHTML = formatTime(getCurrentTime());

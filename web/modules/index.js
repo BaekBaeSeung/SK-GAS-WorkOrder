@@ -109,11 +109,11 @@ style.innerHTML = `
     .modal {
         display: none;
         position: fixed;
-        z-index: 1000;
+        z-index: 1001;
         left: 0;
         top: 0;
-        width: 100%;
-        height: 100%;
+        width: 10lvh;
+        height: 10lvh;
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.5);
         justify-content: center;
@@ -125,8 +125,7 @@ style.innerHTML = `
         margin: auto;
         padding: 20px;
         border: 1px solid #888;
-        width: 100%;
-        max-width: 500px;
+        width: 15lvh; /* 너비를 자동으로 조정 */
         border-radius: 10px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         animation: slideIn 0.3s;

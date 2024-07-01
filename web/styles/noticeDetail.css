@@ -141,7 +141,8 @@ body {
     display: flex;
     flex-direction: column; /* 수정 */
     gap: 0.5lvh; /* 추가 */
-    margin-top: 1lvh;
+    margin-top: 3lvh;
+    margin-bottom: 1lvh;
 }
 
 .notice-item.urgent {

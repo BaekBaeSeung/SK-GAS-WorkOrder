@@ -40,6 +40,21 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         // sectionData.subSections가 배열인지 확인하고, 배열이 아닌 경우 빈 배열로 초기화
         const subSections = Array.isArray(sectionData.subSections) ? sectionData.subSections : [];
 
+        // 서버에서 스케줄 데이터 가져오기
+        let scheduleResponse;
+        if (userProfile.isAdmin === 'ADMIN') {
+            scheduleResponse = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+        } else {
+            scheduleResponse = await fetch('/api/schedule');
+        }
+
+        if (!scheduleResponse.ok) {
+            throw new Error('Failed to fetch schedules');
+        }
+
+        const schedules = await scheduleResponse.json();
+        const initial = schedules.length > 0 ? schedules[0].schedule_type.toUpperCase() : '';
+
         // WorkingDetail 데이터 조회
         const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}&date=${scheduleData.date}&isAdmin=${userProfile.isAdmin}`);
         console.log("scheduleData.time : ",scheduleData.time);
@@ -58,13 +73,12 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         const isEditable = scheduleData.date === formattedToday && userProfile.isAdmin !== 'ADMIN';
 
         container.innerHTML = `
-
             <div class="schedule-detail-detail-container">
                 <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
                     <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                     <div class="header">
                         <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${scheduleData.initial}</span>
+                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${initial}</span>
                         <div class="time-container">
                             <div class="time-date">
                                 <span class="time">${formatTime(getCurrentTime())}</span>
@@ -287,7 +301,6 @@ function updateTime() {
     const currentTimeElem = document.querySelector('.time');
     const currentDateElem = document.querySelector('.date');
     const currentDayElem = document.querySelector('.day');
-    const initialElem = document.querySelector('.initial');
 
     if (currentTimeElem) {
         currentTimeElem.innerHTML = formatTime(getCurrentTime());
@@ -298,8 +311,8 @@ function updateTime() {
     if (currentDayElem) {
         currentDayElem.textContent = getCurrentDay();
     }
+    
     requestAnimationFrame(updateTime);
 }
 
 updateTime();
-

@@ -21,6 +21,21 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
         console.log("scheduleData.date : ", scheduleData.date); // 스케줄 데이터 출력 (디버깅용)
 
+        // 서버에서 스케줄 데이터 가져오기
+        let scheduleResponse;
+        if (userProfile.isAdmin === 'ADMIN') {
+            scheduleResponse = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+        } else {
+            scheduleResponse = await fetch('/api/schedule');
+        }
+
+        if (!scheduleResponse.ok) {
+            throw new Error('Failed to fetch schedules');
+        }
+
+        const schedules = await scheduleResponse.json();
+        const initial = schedules.length > 0 ? schedules[0].schedule_type.toUpperCase() : '';
+
         // 스케줄 관련 데이터를 한 번에 조회
         const sectionNames = sections.map(section => section.section).join(',');
         console.log("sectionNames : ", sectionNames);
@@ -51,7 +66,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
                     <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                     <div class="header">
                         <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span>
+                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${initial}</span>
                         <div class="time-container">
                             <div class="time-date">
                                 <span class="time">${formatTime(getCurrentTime())}</span>
@@ -121,7 +136,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
 
                     // 스케줄 디테일 디테일 페이지로 이동
                     navigateTo(`/scheduleDetailDetail/${sectionId}`,{
-                        initial: scheduleData.initial
+                        initial: initial
                     });
                 } catch (error) {
                     console.error('Error fetching subsections:', error);
