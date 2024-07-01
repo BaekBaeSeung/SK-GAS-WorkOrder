@@ -173,6 +173,16 @@ function startServer() {
     }
 }
 
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    // 필요한 경우 서버를 재시작하거나, 알림을 보냅니다.
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    // 필요한 경우 서버를 재시작하거나, 알림을 보냅니다.
+});
+
 //=================================================================
 // Test Database Connection
 //=================================================================
@@ -182,7 +192,6 @@ async function testDatabaseConnection() {
         const connection = await conn;
         const rows = await connection.query("SELECT * FROM user");
         console.log("Database connection successful. Data from user table:");
-        console.log(rows);
     } catch (err) {
         console.error("Database connection failed:", err);
     }
@@ -321,7 +330,7 @@ async function fetchNoticeData() {
     try {
         const connection = await conn;
         const rows = await connection.query("SELECT * FROM notice");
-        console.log("Fetched notice data:\n", rows); // 데이터 출력
+        
         return rows;
     } catch (err) {
         console.error("Failed to fetch data:", err);
@@ -330,7 +339,7 @@ async function fetchNoticeData() {
 }
 
 app.get('/api/notice-data', async (req, res) => {
-const token = req.cookies.accessToken;
+    const token = req.cookies.accessToken;
 
     if (!token) {
         return res.status(401).json({ message: '토큰이 없습니다.' });
@@ -338,7 +347,7 @@ const token = req.cookies.accessToken;
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        console.log('Decoded Token:', decoded); // 디버깅용 로그
+        
 
         const connection = await conn;
         const notices = await connection.query("SELECT * FROM notice");
@@ -355,7 +364,9 @@ const token = req.cookies.accessToken;
         res.json(notices);
     } catch (err) {
         console.error("Error fetching notice data:", err);
-        res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 fetchNoticeData();
@@ -373,11 +384,11 @@ app.get('/api/notice-count', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        console.log('Decoded Token:', decoded); // 디버깅용 로그
+        
 
         const connection = await conn;
         const [result] = await connection.query("SELECT COUNT(*) as count FROM notice");
-        console.log('Notice Count Result:', result); // 디버깅용 로그
+        
 
         // BigInt 값을 문자열로 변환
         const count = result.count.toString();
@@ -400,7 +411,7 @@ app.get('/api/schedule', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        console.log('Decoded Token:', decoded); // 디버깅용 로그
+        
 
         const connection = await conn;
         const query = `
@@ -408,7 +419,7 @@ app.get('/api/schedule', async (req, res) => {
             WHERE user_id = ?
         `;
         const results = await connection.query(query, [decoded.userId]);
-        console.log('Schedule Data:', results); // 디버깅용 로그
+        
 
         res.json(results);
     } catch (err) {
@@ -429,7 +440,7 @@ app.get('/api/schedule/today', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        console.log('Decoded Token:', decoded); // 디버깅용 로그
+        
 
         const connection = await conn;
         const today = new Date();
@@ -440,7 +451,7 @@ app.get('/api/schedule/today', async (req, res) => {
             WHERE user_id = ? AND DATE_FORMAT(create_at, '%Y-%m-%d') = ?
         `;
         const results = await connection.query(query, [decoded.userId, todayDateString]);
-        console.log('Today\'s Schedule Data:', results); // 디버깅용 로그
+        
 
         res.json(results);
     } catch (err) {
@@ -461,12 +472,12 @@ app.get('/api/schedule/all', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        console.log('Decoded Token:', decoded); // 디버깅용 로그
+        
 
         const connection = await conn;
         const query = `SELECT * FROM schedule`;
         const results = await connection.query(query);
-        console.log('All Schedule Data:', results); // 디버깅용 로그
+        
 
         // 각 스케줄의 foreman과 worker 컬럼을 사용하여 User 테이블에서 이름 조회
         for (let schedule of results) {
@@ -475,7 +486,7 @@ app.get('/api/schedule/all', async (req, res) => {
             schedule.foremanName = foreman ? foreman.name : 'Unknown';
             schedule.workerName = worker ? worker.name : 'Unknown';
         }
-        console.log('All Schedule Data with Names:', results); // 디버깅용 로그
+        
 
         res.json(results);
     } catch (err) {
@@ -507,7 +518,7 @@ app.get('/api/notice-data/:noticeId', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        console.log('Decoded Token:', decoded); // 디버깅용 로그
+        
 
         const noticeId = req.params.noticeId;
         const connection = await conn;
@@ -536,7 +547,7 @@ app.post('/api/notice', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        console.log('Decoded Token------:', decoded); // 디버깅용 로그
+        
 
         const { importance, content } = req.body;
         const noticeId = uuidv4(); // UUID 생성
@@ -570,7 +581,7 @@ app.post('/api/notice-read', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        console.log('Decoded Tokennoticenoticenoticenotice:', decoded); // 디버깅용 로그
+        
 
         const { noticeId } = req.body;
         const noticeReadId = uuidv4(); // UUID 생성
@@ -603,29 +614,24 @@ app.get('/api/sections-by-area/:areaName', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        console.log('Decoded Token:', decoded); // 디버깅용 로그
+        
 
         const areaName = req.params.areaName;
         const connection = await conn;
 
         // WorkingArea 테이블에서 area_name으로 area_id 조회
         const workingArea = await connection.query("SELECT area_id FROM WorkingArea WHERE area_name = ?", areaName);
-        console.log('workingArea:', workingArea);
+        
 
         if (!workingArea || workingArea.length === 0) {
             return res.status(404).json({ message: '해당 지역을 찾을 수 없습니다.' });
         }
 
         const areaId = workingArea[0].area_id;
-        console.log('areaId:', areaId);
-
-        // Section 테이블에서 area_id가 일치하는 모든 행 조회
-
-        // const all = await connection.query("SELECT * FROM Section");
-        // console.log('all:', all);
+    
 
         const sections = await connection.query("SELECT * FROM Section WHERE area_id = ?", [areaId]);
-        console.log('sections:', sections);
+        
 
         res.json(sections);
     } catch (err) {
@@ -641,7 +647,7 @@ app.get('/api/subsections/:sectionId', async (req, res) => {
         const rows = await connection.query('SELECT * FROM SubSection WHERE section_id = ?', [sectionId]);
         
         // 섹션 아이디가 같은 두 개의 항목을 반환하는지 확인하기 위해 콘솔 로그 추가
-        console.log('Fetched SubSections:', rows);
+        
 
         res.json(rows);
     } catch (error) {
@@ -709,7 +715,7 @@ app.get('/api/working-detail', async (req, res) => {
     const currentDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 현재 날짜
     const [year, month, day] = date.split('. ').map(part => part.trim());
     const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    console.log("formattedDate : ", formattedDate); // 디버깅용 로그
+    
 
     try {
         const connection = await conn;
@@ -778,13 +784,11 @@ app.put('/api/updateWorkingDetail', async (req, res) => {
 //=================================================================
 app.get('/api/schedule-details', async (req, res) => {
     const { area_name, schedule_type, time, sections, user_id, date, isAdmin } = req.query;
-    console.log("date : ", date); // 디버깅용 로그
-    console.log("sectionssectionssections : ", sections);
+
 
     // date 변수를 YYYY-MM-DD 형식으로 변환
     const [year, month, day] = date.split('. ').map(part => part.trim());
     const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    console.log("formattedDate : ", formattedDate); // 디버깅용 로그
 
     try {
         const connection = await conn;
@@ -832,8 +836,6 @@ app.get('/api/schedule-details', async (req, res) => {
             return res.status(404).json({ message: 'Working detail not found' });
         }
 
-        console.log("detailResults : ", detailResults); // 모든 행의 데이터를 출력
-
         res.json({
             areaId,
             workTimeId,
@@ -855,7 +857,9 @@ app.get('/api/working-times', async (req, res) => {
         res.json(results);
     } catch (err) {
         console.error('Error fetching working times:', err);
-        res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -889,14 +893,6 @@ function formatDateToMySQL(date) {
 //=================================================================
 app.post('/api/insert-schedule', async (req, res) => {
     const { area_name, section, schedule_type, time, create_at, user_id, foreman, worker } = req.body;
-    console.log("area_name : ", area_name);
-    console.log("section : ", section);
-    console.log("schedule_type : ", schedule_type);
-    console.log("time : ", time);
-    console.log("create_at : ", create_at);
-    console.log("user_id : ", user_id);
-    console.log("foreman : ", foreman);
-    console.log("worker : ", worker);
 
     try {
         const connection = await conn;
