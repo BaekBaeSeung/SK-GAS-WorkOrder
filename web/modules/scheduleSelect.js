@@ -21,8 +21,7 @@ export async function renderScheduleSelectPage(container) {
             const area = await response.json();
             return area.area_name;
         }));
-        
-       
+
 
         // foreman을 조회하여 user_id를 가져옴
         const foremanResponse = await fetch('/api/foreman');
@@ -41,7 +40,7 @@ export async function renderScheduleSelectPage(container) {
         if (userProfile.isAdmin === 'ADMIN') {
             response = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
         } else {
-            response = await fetch('/api/schedule');
+            response = await fetch('/api/schedule/today');
         }
 
         if (!response.ok) {
@@ -49,7 +48,7 @@ export async function renderScheduleSelectPage(container) {
         }
 
         const schedules = await response.json();
-        console.log('Schedules:', schedules); // 스케줄 데이터 출력 (디버깅용)
+        console.log('Today\'s Schedules:', schedules); // 오늘 날짜의 스케줄 데이터 출력 (디버깅용)
 
         // uniqueSchedules 생성
         const uniqueSchedules = schedules.reduce((acc, schedule) => {
@@ -58,6 +57,20 @@ export async function renderScheduleSelectPage(container) {
             }
             return acc;
         }, []);
+
+        // 오늘 날짜와 같은 스케줄만 필터링
+        const today = new Date();
+        const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        const todaySchedules = uniqueSchedules.filter(schedule => {
+            console.log("schedule.create_at : ", schedule.create_at);
+            const scheduleDate = new Date(schedule.create_at.replace(' ', 'T')); // 공백을 'T'로 대체하여 Date 객체로 변
+            const scheduleDateString = `${scheduleDate.getFullYear()}-${String(scheduleDate.getMonth() + 1).padStart(2, '0')}-${String(scheduleDate.getDate()).padStart(2, '0')}`;
+            return scheduleDateString === todayDateString;
+        });
+
+        // 스케줄 페이지 숫자 표시 (10보다 작을 때 앞에 0 추가)
+        const scheduleCount = todaySchedules.length < 10 ? `0${todaySchedules.length}` : todaySchedules.length;
+        console.log("scheduleCount : ", scheduleCount);
 
         // 어드민 사용자와 일반 사용자에 따라 다른 HTML 렌더링
         container.innerHTML = `
@@ -79,7 +92,7 @@ export async function renderScheduleSelectPage(container) {
                         </div>
                     </div>
                     <div class="notice" id="go-to-schedule">
-                        <p>스케줄 페이지 [${uniqueSchedules.length}]<span class="dash">●</span></p>
+                        <p>스케줄 페이지 [${scheduleCount}]<span class="dash">●</span></p>
                     </div>
                 </div>
                 
@@ -132,11 +145,14 @@ export async function renderScheduleSelectPage(container) {
                 
 
                 // 스케줄 중복 확인
-                const isDuplicate = uniqueSchedules.some(schedule => 
-                    schedule.area_name === areaName && 
-                    schedule.schedule_type === scheduleType && 
-                    schedule.time === time
-                );
+                const isDuplicate = uniqueSchedules.some(schedule => {
+                    const scheduleDate = new Date(schedule.create_at);
+                    const scheduleDateString = `${scheduleDate.getFullYear()}-${String(scheduleDate.getMonth() + 1).padStart(2, '0')}-${String(scheduleDate.getDate()).padStart(2, '0')}`;
+                    return schedule.area_name === areaName && 
+                           schedule.schedule_type === scheduleType && 
+                           schedule.time === time &&
+                           scheduleDateString === todayDateString;
+                });
 
                 if (isDuplicate) {
                     showModal('이미 존재하는 스케줄입니다.');

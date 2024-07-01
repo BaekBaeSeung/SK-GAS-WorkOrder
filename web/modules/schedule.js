@@ -25,14 +25,21 @@ export async function renderSchedulePage(container) {
         const schedules = await response.json();
         console.log('Schedules:', schedules); // 스케줄 데이터 출력 (디버깅용)
 
-        // 스케줄 데이터가 없을 경우 스케줄 선택 페이지로 이동
-        if (schedules.length === 0 && userProfile.isAdmin !== 'ADMIN') {
+        const today = new Date();
+        const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        // 스케줄 데이터가 없거나, 모든 스케줄의 create_at이 오늘 날짜가 아닌 경우 스케줄 선택 페이지로 이동
+        const hasTodaySchedule = schedules.some(schedule => {
+            const scheduleDate = new Date(schedule.create_at);
+            const scheduleDateString = `${scheduleDate.getFullYear()}-${String(scheduleDate.getMonth() + 1).padStart(2, '0')}-${String(scheduleDate.getDate()).padStart(2, '0')}`;
+            return scheduleDateString === todayDateString;
+        });
+
+        if (schedules.length === 0 || (!hasTodaySchedule && userProfile.isAdmin !== 'ADMIN')) {
             navigateTo('/scheduleSelect');
             return;
         }
 
-        const today = new Date();
-        const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         const formattedDate = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}`;
 
         const todaySchedules = schedules.filter(schedule => {
@@ -301,4 +308,3 @@ function updateTime() {
 }
 
 updateTime();
-

@@ -418,6 +418,38 @@ app.get('/api/schedule', async (req, res) => {
 });
 
 //=================================================================
+// Today's Schedule Data Endpoint
+//=================================================================
+app.get('/api/schedule/today', async (req, res) => {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 없습니다.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
+        console.log('Decoded Token:', decoded); // 디버깅용 로그
+
+        const connection = await conn;
+        const today = new Date();
+        const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        const query = `
+            SELECT * FROM schedule 
+            WHERE user_id = ? AND DATE_FORMAT(create_at, '%Y-%m-%d') = ?
+        `;
+        const results = await connection.query(query, [decoded.userId, todayDateString]);
+        console.log('Today\'s Schedule Data:', results); // 디버깅용 로그
+
+        res.json(results);
+    } catch (err) {
+        console.error("Error fetching today's schedule data:", err);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+//=================================================================
 // Schedule Data Endpoint for Admin
 //=================================================================
 app.get('/api/schedule/all', async (req, res) => {
