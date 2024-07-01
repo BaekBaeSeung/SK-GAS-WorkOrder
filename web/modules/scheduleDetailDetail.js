@@ -73,6 +73,9 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         const isEditable = scheduleData.date === formattedToday && userProfile.isAdmin !== 'ADMIN';
 
         container.innerHTML = `
+            <head>
+                <link rel="stylesheet" href="/styles/scheduleDetailDetail.css">
+            </head>
             <div class="schedule-detail-detail-container">
                 <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
                     <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">

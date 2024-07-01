@@ -14,7 +14,7 @@ export async function renderNoticeAdminPage(container) {
 
         container.innerHTML = `
             <head>
-                <link rel="stylesheet" href="styles/noticeAdmin.css">
+                <link rel="stylesheet" href="/styles/noticeAdmin.css">
             </head>
             <div class="notice-admin-container">
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">

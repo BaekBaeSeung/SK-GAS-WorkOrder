@@ -35,6 +35,17 @@ import { renderScheduleSelectPage } from './scheduleSelect.js'; // 추가
 // //=================================================================
 // // Start Script
 // //=================================================================
+
+function loadCSS(filename) {
+    const link = document.createElement('link');
+    link.rel = 'preload'; // 변경된 부분
+    link.as = 'style'; // 변경된 부분
+    link.type = 'text/css';
+    link.href = filename;
+    link.setAttribute('data-page-style', 'true'); // 페이지별 CSS 파일임을 표시
+    link.onload = () => { link.rel = 'stylesheet'; }; // 변경된 부분
+    document.head.appendChild(link);
+}
 window.addEventListener("DOMContentLoaded", async() => {
     loadPage(window.location.pathname);
 });
@@ -56,16 +67,7 @@ function navigateTo(path, state = {}) {
 // navigateTo 함수를 전역으로 사용 가능하게 설정
 window.navigateTo = navigateTo;
 
-function loadCSS(filename) {
-    const link = document.createElement('link');
-    link.rel = 'preload'; // 변경된 부분
-    link.as = 'style'; // 변경된 부분
-    link.type = 'text/css';
-    link.href = filename;
-    link.setAttribute('data-page-style', 'true'); // 페이지별 CSS 파일임을 표시
-    link.onload = () => { link.rel = 'stylesheet'; }; // 변경된 부분
-    document.head.appendChild(link);
-}
+
 
 function getCookie(name) {
     const value = `; ${document.cookie}`;
@@ -161,6 +163,8 @@ function loadPage(path, state = {}) {
         existingLink.remove();
     }
 
+
+
     const accessToken = getCookie('accessToken');
 
     // 로그인 페이지와 로딩 페이지를 제외한 모든 페이지에 대해 엑세스 토큰 확인
@@ -183,7 +187,7 @@ function loadPage(path, state = {}) {
     switch(true) {
         case path === '/':
             renderLoadingPage(app);
-            // loadCSS('./styles/loading.css'); // 로딩 페이지 스타일 로드
+            loadCSS('/styles/loading.css'); // 로딩 페이지 스타일 로드
             break;
         case path === '/login':
             renderLoginPage(app);
@@ -242,3 +246,4 @@ function loadPage(path, state = {}) {
             break; 
     }
 }
+

@@ -50,7 +50,7 @@ export async function renderPreviousPage(container) {
 
         container.innerHTML = `
             <head>
-                <link rel="stylesheet" href="styles/previous.css">
+                <link rel="stylesheet" href="/styles/previous.css">
             </head>
             <div class="previous-container">
                 <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->

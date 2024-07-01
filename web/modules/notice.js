@@ -42,7 +42,7 @@ export async function renderNoticePage(container) {
         container.innerHTML = `
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-                <link rel="stylesheet" href="styles/notice.css">
+                <link rel="stylesheet" href="/styles/notice.css">
             </head>
             <div class="notice-container">
                 <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->

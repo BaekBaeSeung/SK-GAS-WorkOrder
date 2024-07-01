@@ -75,7 +75,7 @@ export async function renderScheduleSelectPage(container) {
         // 어드민 사용자와 일반 사용자에 따라 다른 HTML 렌더링
         container.innerHTML = `
             <head>
-                <link rel="stylesheet" href="styles/schedule.css">
+                <link rel="stylesheet" href="/styles/schedule.css">
             </head>
             <div class="schedule-container">
                 <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
@@ -89,7 +89,7 @@ export async function renderScheduleSelectPage(container) {
                                 <span class="date">${getCurrentDate()}</span>
                             </div>
                             <span class="day">${getCurrentDay()}</span>
-                        </div>
+                        </div> 
                     </div>
                     <div class="notice" id="go-to-schedule">
                         <p>스케줄 페이지 [${scheduleCount}]<span class="dash">●</span></p>

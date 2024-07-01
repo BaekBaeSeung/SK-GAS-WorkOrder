@@ -114,7 +114,7 @@ export async function renderSchedulePage(container) {
         if (userProfile.isAdmin === 'ADMIN') {
             container.innerHTML = `
                 <head>
-                    <link rel="stylesheet" href="styles/schedule.css">
+                    <link rel="stylesheet" href="/styles/schedule.css">
                 </head>
                 <div class="schedule-container">
                     <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->

@@ -59,7 +59,7 @@ export async function renderScheduleDetailPage(container, scheduleData = {}, sec
 
         container.innerHTML = `
             <head>
-                <link rel="stylesheet" href="styles/scheduleDetail.css">
+                <link rel="stylesheet" href="/styles/scheduleDetail.css">
             </head>
             <div class="schedule-detail-container">
                 <div class="sticky-header";> <!-- sticky-header 클래스 추가 -->

@@ -11,7 +11,7 @@ export async function renderScheduleDetailAdminPage(container) {
 
         container.innerHTML = `
             <head>
-                <link rel="stylesheet" href="styles/scheduleDetailadmin.css">
+                <link rel="stylesheet" href="/styles/scheduleDetailadmin.css">
             </head>
             <div class="admin-container">
                 <header class="header">
