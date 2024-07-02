@@ -1,4 +1,4 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
 
 export async function renderNoticeDetailPage(container, noticeId) {
     try {
@@ -35,10 +35,13 @@ export async function renderNoticeDetailPage(container, noticeId) {
 
         container.innerHTML = `
             <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
                 <link rel="stylesheet" href="/styles/noticeDetail.css">
             </head>
-            <div class="notice-container">
-                <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
+            <div class="grid-container">
+
+                <div class="notice-container">
+                    <div class="sticky-header">
                     <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                     <div class="header">
                         <img src="/assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
@@ -55,7 +58,6 @@ export async function renderNoticeDetailPage(container, noticeId) {
                         <p>공지사항 게시판 보기. <span class="dash">-</span></p>
                     </div>
                 </div>
-                <div class="notice-detail" id="notice-detail">
                     <div class="notice-item ${notice.importance === 'HIGH' ? 'urgent' : 'normal'}">
                         <div class="title-date-container">
                             <p class="title" style="color: ${notice.importance === 'HIGH' ? '#F08000' : 'inherit'};">
@@ -136,3 +138,4 @@ export async function renderNoticeDetailPage(container, noticeId) {
         alert('공지사항 세부 정보를 가져오는데 실패했습니다.');
     }
 }
+

@@ -1,7 +1,4 @@
-* {
-    margin: 0;
-    padding: 0;
-}
+
 html, body {
     margin: 0;
     padding: 0;
@@ -38,13 +35,13 @@ body {
     font-family: "NanumSquareAc";
 }
 
-
 .grid-container {
     display: grid;
     grid-template-rows: auto 1fr; /* sticky-header와 schedule-container를 겹치지 않게 함 */
     width: 100%;
     height: 100%;
 }
+
 .notice-container {
     width: 100%;
     height: 100%;
@@ -170,6 +167,7 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
     position: relative; /* 추가 */
+    max-width: 30ch; /* 텍스트 길이를 20자까지 제한 */
 }
 
 .notice-item.urgent {
