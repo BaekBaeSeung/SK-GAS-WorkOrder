@@ -44,8 +44,8 @@ export async function renderNoticePage(container) {
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
                 <link rel="stylesheet" href="/styles/notice.css">
             </head>
-            <div class="notice-container">
-                <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
+            <div class="grid-container">
+                <div class="sticky-header">
                     <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                     <div class="header">
                         <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
@@ -80,11 +80,11 @@ export async function renderNoticePage(container) {
                 </div>
                 ${userProfile.isAdmin === 'ADMIN' ? '<button id="download-excel"><img src="./assets/img/common/xls_pic.png" alt="엑셀 다운로드" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></button>' : ''}
                 ${userProfile.isAdmin === 'ADMIN' ? '<button id="add-notice">+</button>' : ''}
-            </div>
-            <div id="modal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <button id="logout-button">로그아웃</button>
+                <div id="modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <button id="logout-button">로그아웃</button>
+                    </div>
                 </div>
             </div>
         `;

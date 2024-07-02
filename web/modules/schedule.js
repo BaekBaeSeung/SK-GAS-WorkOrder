@@ -116,9 +116,9 @@ export async function renderSchedulePage(container) {
                 <head>
                     <link rel="stylesheet" href="/styles/schedule.css">
                 </head>
-                <div class="schedule-container">
+                <div class="grid-container">
                     <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
-                        <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
+                        <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                         <div class="header">
                             <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
                             <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${schedules[0].schedule_type.toUpperCase()}</span>
@@ -134,31 +134,33 @@ export async function renderSchedulePage(container) {
                             <p>공지사항 [${noticeCount}]<span class="dash">●</span></p>
                         </div>
                     </div>
-                    <div class="schedule-detail">
-                        <div class="schedule-item-container">
-                            <div class="location-time">
-                                <p class="location">${schedules[0].area_name || 'N/A'}</p>
-                                <p class="global-time">${formattedDate}</p>
-                            </div>
-                            ${uniqueSchedules.map(schedule => `
-                                <div class="schedule-item ${schedule.inactive ? 'inactive' : ''}" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
-                                    <p class="location" style="display: none;">${schedule.area_name}</p>
-                                    <div class="shift-time">
-                                        <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
-                                        <p class="time">${schedule.time}</p>
-                                    </div>
-                                    <ul class="worker-info" style="text-align: left;">
-                                        <li>교대 반장: ${schedule.foremanName}</li>
-                                        <li>작업자: ${schedule.workerName}</li>
-                                    </ul>
+                    <div class="schedule-container">
+                        <div class="schedule-detail">
+                            <div class="schedule-item-container">
+                                <div class="location-time">
+                                    <p class="location">${schedules[0].area_name || 'N/A'}</p>
+                                    <p class="global-time">${formattedDate}</p>
                                 </div>
-                            `).join('')}
+                                ${uniqueSchedules.map(schedule => `
+                                    <div class="schedule-item ${schedule.inactive ? 'inactive' : ''}" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
+                                        <p class="location" style="display: none;">${schedule.area_name}</p>
+                                        <div class="shift-time">
+                                            <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
+                                            <p class="time">${schedule.time}</p>
+                                        </div>
+                                        <ul class="worker-info" style="text-align: left;">
+                                            <li>교대 반장: ${schedule.foremanName}</li>
+                                            <li>작업자: ${schedule.workerName}</li>
+                                        </ul>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
+                        <div class="previous-records-container">
+                            ${previousRecordsHTML}
+                        </div>
+                        <div class="margin-bottom"></div>
                     </div>
-                    <div class="previous-records-container"">
-                        ${previousRecordsHTML}
-                    </div>
-                    <div class="margin-bottom"></div>
                 </div>
                 <div id="modal" class="modal">
                     <div class="modal-content">
@@ -172,7 +174,7 @@ export async function renderSchedulePage(container) {
                 <head>
                     <link rel="stylesheet" href="styles/schedule.css">
                 </head>
-                <div class="schedule-container">
+                <div class="grid-container">
                     <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
                         <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                         <div class="header">
@@ -190,7 +192,7 @@ export async function renderSchedulePage(container) {
                             <p>공지사항 [${noticeCount}]<span class="dash">●</span></p>
                         </div>
                     </div>
-                    <div class="schedule">
+                    <div class="schedule-container">
                         ${uniqueSchedules.map(schedule => `
                             <div class="schedule-item ${schedule.inactive ? 'inactive' : ''}" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
                                 <p class="location">${schedule.area_name}</p>

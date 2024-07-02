@@ -3,7 +3,8 @@
     padding: 0;
 }
 html, body {
-    margin: 0 auto;
+    margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -23,30 +24,38 @@ html, body {
     justify-content: center;
     align-items: center;
 }
-*{
-    touch-action: manipulation; /* 두 번 터치 줌 비활성화 */
-}
+
 body {
     background-color: #EEEEEE;
-    overflow-y: auto; /* 스크롤 가능하도록 설정 */
-    
+    overflow-y: auto;
+    display: grid;
+    grid-template-rows: auto 1fr; /* 첫 번째 행은 자동 높이, 두 번째 행은 남은 공간 차지 */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    font-family: "NanumSquareAc";
 }
 
+
+.grid-container {
+    display: grid;
+    grid-template-rows: auto 1fr; /* sticky-header와 schedule-container를 겹치지 않게 함 */
+    width: 100%;
+    height: 100%;
+}
 .notice-container {
-    width: 50lvh;
-    height: 90lvh;
-    padding: 2lvh;
+    width: 100%;
+    height: 100%;
+    padding: 2%;
     text-align: center;
-    /* background-color: #FFFFFF;
-    border-radius: 1lvh;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 10px 0 15px rgba(0, 0, 0, 0.15); */
-    max-height: 100vh; /* 최대 높이를 설정하여 스크롤이 생기도록 함 */
+    margin-top: 5%;
 }
 
 .logo {
     width: 11lvh;
     margin-bottom: 1.6lvh;
-    margin-left: -29lvh; 
 }
 
 .header {
@@ -109,7 +118,7 @@ body {
     background-color: #F4F4F4;
     padding: 1lvh;
     border-radius: 1lvh;
-    margin-bottom: 2lvh;
+
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: left;
 }
@@ -140,6 +149,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1lvh;
+    margin-top: 4%;
 }
 
 .notice-item {
@@ -153,8 +163,8 @@ body {
     gap: 0.5lvh; /* 추가 */
     margin-top: 1lvh;
     margin-bottom: 1lvh;
-    
 }
+
 .notice-item li {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -162,10 +172,10 @@ body {
     position: relative; /* 추가 */
 }
 
-
 .notice-item.urgent {
     border-left: 8px solid #F08000;
 }
+
 .notice-item.normal {
     border-left: 8px solid #F4F4F4;
 }
@@ -196,7 +206,6 @@ body {
     margin: 0;
     padding-left: lvh;
     list-style-type: disc;
-    
 }
 
 .notice-item ul li {
@@ -205,7 +214,6 @@ body {
     margin-top: 0.5lvh;
     color: #6A6A6A;
 }
-
 
 /* 모달 창 스타일 */
 .modal {
@@ -305,7 +313,6 @@ body {
     height: 5lvh; /* 버튼 크기 */
     border-radius: 50%; /* 이미지도 둥글게 */
     object-fit: cover; /* 이미지가 요소에 꽉 차도록 설정 */
-    
 }
 .new {
     color: #ff2f2f;
@@ -318,5 +325,5 @@ body {
     background-color: #EEEEEE;
     z-index: 1000;
     border-radius: 1lvh;
-    
+    margin-top: 10%;
 }
