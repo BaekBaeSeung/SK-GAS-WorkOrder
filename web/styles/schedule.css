@@ -24,10 +24,18 @@ html, body {
 body {
     background-color: #EEEEEE;
     overflow-y: auto;
+    display: grid;
+    grid-template-rows: auto 1fr; /* 첫 번째 행은 자동 높이, 두 번째 행은 남은 공간 차지 */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    font-family: "NanumSquareAc";
 }
 
 .schedule-container {
-    width: 50lvh;
+    width: 100%;
     height: 90lvh;
     text-align: center;
     /* background-color: #FFFFFF;
@@ -93,16 +101,54 @@ body {
     margin-left: 0.2lvh;
 }
 
-.notice, .previous-records {
+.notice {
+    background-color: #F4F4F4;
+    padding: 2% 0 2% 0;
+    border-radius: 1lvh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    /* text-align: center; 텍스트 가운데 정렬 */
+
+    width: 100%;
+    justify-content: space-between; /* 좌우 끝으로 배치 */
+    align-items: center; /* 수직 가운데 정렬 */
+}
+
+.notice p {
+    color: #1B1B1B;
+    margin: 0;
+    font-size: 1.5lvh; /* 글씨체 작게 */
+    font-weight: 700; /* 글씨체 두껍게 */
+    display: flex;
+    justify-content: left; /* 공지사항의 점을 가운데로 이동 */
+    align-items: center;
+    margin-left: 5%;
+}
+.notice span {
+    font-size: 1.5lvh; /* 폰트 사이즈 조정 */
+    font-weight: 900;
+    color: #7B7B7B;
+
+    align-items: center;
+}
+.notice .dash {
+    margin-left: auto; /* 자동으로 왼쪽 마진 추가 */
+    font-size: 1.5lvh; /* 폰트 사이즈 조정 */
+    font-weight: 900;
+    color: #7B7B7B;
+    margin-right: 5%;
+}
+
+.previous-records {
     background-color: #F4F4F4;
     padding: 1lvh;
     border-radius: 1lvh;
     margin-bottom: 2lvh; /* 공지사항과 스케줄 간의 간격을 동일하게 설정 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: left; /* 왼쪽 정렬 */
+    margin-bottom: 10%;
 }
 
-.notice p, .previous-records p {
+.previous-records p {
     margin: 0;
     font-size: 1.5lvh; /* 글씨체 작게 */
     font-weight: 700; /* 글씨체 두껍게 */
@@ -113,6 +159,7 @@ body {
 }
 
 .schedule {
+    margin-top: 5%;
     display: flex;
     flex-direction: column;
     gap: 0.4lvh; /* 각 간 항목 사이의 간격을 넓힘 */
@@ -130,9 +177,10 @@ body {
 }
 
 .schedule-item {
-    background-color: #EAEAEA;
+    background-color: #F4F4F4;
+    color: #2B2B2B;
     padding: 1lvh;
-    margin: 0 1lvh;
+
     border-radius: 1lvh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -176,38 +224,35 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-bottom: 10lvh;
+
 }
 
 .previous-records {
     background-color: #E3E3E3;
-    padding: 1.5lvh;
     border-radius: 1.5lvh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     text-align: left;
-    position: absolute;
+    position: relative;
     top: 0;
-    width: 94%;
+    width: 100%;
+    box-sizing: border-box; /* 패딩과 보더를 포함한 전체 너비 설정 */
 }
 
 .previous-records:nth-child(2) {
     background-color: #EFEFEF;
     top: 1lvh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    position: absolute;
 }
 
 .previous-records:nth-child(3) {
     background-color: #F4F4F4;
     top: 2lvh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
 }
 
-.notice span {
-    font-size: 1.5lvh; /* 폰트 사이즈 조정 */
-    font-weight: 900;
-    color: #7B7B7B;
-    margin-right: 1lvh;
-}
+
 
 /* 모달 창 스타일 */
 .modal {
@@ -268,7 +313,7 @@ body {
 }
 .location-time p{
     margin: 0 1lvh;
-    margin-bottom: 1lvh;
+    
 }
 
 .location, .global-time {
@@ -305,9 +350,8 @@ body {
     top: 0;
     background-color: #EEEEEE;
     z-index: 1000;
-    padding-bottom: 1lvh;
-    padding-bottom: 0lvh;
     border-radius: 1lvh;
+    margin-top: 10%;
 }
 
 .schedule-item.inactive {
