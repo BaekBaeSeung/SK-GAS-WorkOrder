@@ -113,11 +113,12 @@ html, body {
 
 body {
     background-color: #EEEEEE;
+    
 }
 
 #app {
-    width: 50lvh;
-    height: 90lvh;
+    width: 90%;
+    height: 90%;
     background-color: #F08000;
     border-radius: 1lvh 15lvh 1lvh 1lvh;
     display: flex;
@@ -130,15 +131,15 @@ body {
 }
 
 #app img {
-    width: 30lvh;
-    margin-bottom: 2lvh;
+    width: 70%;
+    margin-bottom: 2%;
     filter: brightness(0) saturate(100%) invert(99%) sepia(1%) saturate(2724%) hue-rotate(303deg) brightness(114%) contrast(87%);
 }
 
 #app p {
     font-size: 2.3lvh;
-    margin-bottom: 1lvh;
-    font-weight: bold;
+    margin-bottom: 3%;
+    font-weight: 900;
     letter-spacing: 0.02lvh;
 }
 
@@ -152,7 +153,7 @@ body {
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 4px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 18lvh;
+    margin-top: 10%;
 }
 #app #startText {
     font-weight: bold;
