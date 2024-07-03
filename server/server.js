@@ -365,18 +365,16 @@ app.get('/api/notice-count', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        
 
         const connection = await conn;
         const [result] = await connection.query("SELECT COUNT(*) as count FROM notice");
-        
 
         // BigInt 값을 문자열로 변환
         const count = result.count.toString();
-        res.json({ count });
+        return res.json({ count });
     } catch (err) {
         console.error("Error fetching notice count:", err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -499,20 +497,19 @@ app.get('/api/notice-data/:noticeId', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        
 
         const noticeId = req.params.noticeId;
         const connection = await conn;
         const [notice] = await connection.query("SELECT * FROM notice WHERE notice_id = ?", [noticeId]);
 
         if (notice) {
-            res.json(notice);
+            return res.json(notice);
         } else {
-            res.status(404).json({ message: '공지사항을 찾을 수 없습니다.' });
+            return res.status(404).json({ message: '공지사항을 찾을 수 없습니다.' });
         }
     } catch (err) {
         console.error("Error fetching notice detail:", err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -612,10 +609,10 @@ app.get('/api/sections-by-area/:areaName', async (req, res) => {
         const sections = await connection.query("SELECT * FROM Section WHERE area_id = ?", [areaId]);
         
 
-        res.json(sections);
+        return res.json(sections);
     } catch (err) {
         console.error("Error fetching sections by area name:", err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -628,10 +625,10 @@ app.get('/api/subsections/:sectionId', async (req, res) => {
         // 섹션 아이디가 같은 두 개의 항목을 반환하는지 확인하기 위해 콘솔 로그 추가
         
 
-        res.json(rows);
+        return res.json(rows);
     } catch (error) {
         console.error('Error fetching subsections:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -651,10 +648,10 @@ app.get('/api/working-time', async (req, res) => {
         `;
         const results = await connection.query(query, [time, area_name]);
 
-        res.json(results);
+        return res.json(results);
     } catch (err) {
         console.error('Error fetching working time data:', err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -679,10 +676,10 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
         `;
         await connection.query(query, [work_time_id, value, formattedCreateAt, section, user_id, formattedTime, schedule_type]);
 
-        res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
+        return res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
     } catch (err) {
         console.error('Error inserting working detail:', err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -725,13 +722,13 @@ app.get('/api/working-detail', async (req, res) => {
         const results = await connection.query(query, queryParams);
 
         if (results.length > 0) {
-            res.json(results[0]);
+            return res.json(results[0]);
         } else {
-            res.status(404).json({ message: '일치하는 데이터가 없습니다.' });
+            return res.status(404).json({ message: '일치하는 데이터가 없습니다.' });
         }
     } catch (err) {
         console.error('Error fetching working detail:', err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -751,10 +748,10 @@ app.put('/api/updateWorkingDetail', async (req, res) => {
         `;
         await connection.query(query, [value, section, user_id, time, schedule_type, working_detail_id]);
 
-        res.json({ success: true, message: '데이터가 성공적으로 업데이트되었습니다.' });
+        return res.json({ success: true, message: '데이터가 성공적으로 업데이트되었습니다.' });
     } catch (err) {
         console.error('Error updating working detail:', err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -815,14 +812,14 @@ app.get('/api/schedule-details', async (req, res) => {
             return res.status(404).json({ message: 'Working detail not found' });
         }
 
-        res.json({
+        return res.json({
             areaId,
             workTimeId,
             details: detailResults
         });
     } catch (err) {
         console.error('Error fetching schedule details:', err);
-        res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Server error' });
     }
 });
 
