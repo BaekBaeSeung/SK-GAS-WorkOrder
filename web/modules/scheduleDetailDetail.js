@@ -76,7 +76,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
             <head>
                 <link rel="stylesheet" href="/styles/scheduleDetailDetail.css">
             </head>
-            <div class="schedule-detail-detail-container">
+            <div class="grid-detail-detail-container">
                 <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
                     <img src="/assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo" id="logo">
                     <div class="header">
@@ -100,7 +100,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                             <p class="location">${scheduleData.area_name || 'N/A'}</p>
                             <p class="time">${scheduleData.schedule_type === 'm' ? 'Morning' : scheduleData.schedule_type === 's' ? 'Swing' : 'Night'} ${scheduleData.time || 'N/A'}</p>
                         </div>
-                        <div class="task-item">
+                        <div class="task-item task-item-header">
                             <p class="task-name task-name-header">${sectionData.sectionName}</p>
                         </div>
                         <div class="task">
