@@ -6,7 +6,7 @@ const conn = mariadb.createConnection({
     user: 'root',
     password: 'mariadb',
     database: 'test03',
-    connectionLimit: 5
+    connectionLimit: 20
 });
 
 module.exports.conn = conn;

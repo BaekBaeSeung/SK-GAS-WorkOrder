@@ -201,8 +201,8 @@ body {
 }
 
 .notice-item ul {
+    padding: 3%;
     margin: 0;
-    padding-left: lvh;
     list-style-type: disc;
 }
 
@@ -211,6 +211,7 @@ body {
     font-weight: 400;
     margin-top: 0.5lvh;
     color: #6A6A6A;
+    list-style-position: inside; /* 점을 텍스트 안쪽에 배치 */
 }
 
 /* 모달 창 스타일 */

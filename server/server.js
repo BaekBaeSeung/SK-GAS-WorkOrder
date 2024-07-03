@@ -184,24 +184,6 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 //=================================================================
-// Test Database Connection
-//=================================================================
-
-async function testDatabaseConnection() {
-    try {
-        const connection = await conn;
-        const rows = await connection.query("SELECT * FROM user");
-        console.log("Database connection successful. Data from user table:");
-    } catch (err) {
-        console.error("Database connection failed:", err);
-    }
-}
-
-// Call the test function
-testDatabaseConnection();
-
-
-//=================================================================
 // Login Endpoint
 //=================================================================
 
@@ -235,7 +217,7 @@ function generateRefreshToken(user) { // 리프레시 토큰 생성
     });
 }
 
-app.post('/login', async (req, res) => { // 로그인 요청 처리
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
@@ -245,7 +227,6 @@ app.post('/login', async (req, res) => { // 로그인 요청 처리
         if (rows.length > 0) {
             const user = rows[0];
 
-            // 회원 상태 확인 
             if (user.state !== '정상') {
                 return res.json({ success: false, message: '접근 거부. 관리자에게 문의하세요.' });
             }
@@ -253,18 +234,17 @@ app.post('/login', async (req, res) => { // 로그인 요청 처리
             const accessToken = generateAccessToken(user);
             const refreshToken = generateRefreshToken(user);
 
-            // HttpOnly 속성을 제거하여 클라이언트 측에서 접근 가능하게 설정
             res.cookie('accessToken', accessToken, { secure: true });
             res.cookie('refreshToken', refreshToken, { secure: true });
             res.cookie('userRole', user.role, { secure: true });
 
-            res.json({ success: true, userRole: user.role, name: user.name});
+            return res.json({ success: true, userRole: user.role, name: user.name });
         } else {
-            res.json({ success: false, message: 'Invalid username or password' });
+            return res.json({ success: false, message: 'Invalid username or password' });
         }
     } catch (err) {
         console.error("Error during login:", err);
-        res.status(500).json({ success: false, message: 'Internal server error' });
+        return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
 
@@ -278,10 +258,12 @@ app.post('/refreshToken', function (req, res) {
     }
 
     jwt.verify(refreshToken, REFRESH_SECRET, function (err, user) {
-        if (err) return res.status(401).json({
-            error: true,
-            message: "Invalid Refresh Token."
-        });
+        if (err) {
+            return res.status(401).json({
+                error: true,
+                message: "Invalid Refresh Token."
+            });
+        }
 
         // generate new access token
         const accessToken = generateAccessToken(user);
@@ -347,7 +329,6 @@ app.get('/api/notice-data', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        
 
         const connection = await conn;
         const notices = await connection.query("SELECT * FROM notice");
@@ -361,11 +342,11 @@ app.get('/api/notice-data', async (req, res) => {
             notice.isNew = !readRecord; // 읽은 기록이 없으면 새로운 공지사항
         }
 
-        res.json(notices);
+        return res.json(notices);
     } catch (err) {
         console.error("Error fetching notice data:", err);
         if (!res.headersSent) {
-            res.status(500).json({ message: '서버 오류' });
+            return res.status(500).json({ message: '서버 오류' });
         }
     }
 });
@@ -547,7 +528,6 @@ app.post('/api/notice', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        
 
         const { importance, content } = req.body;
         const noticeId = uuidv4(); // UUID 생성
@@ -562,10 +542,10 @@ app.post('/api/notice', async (req, res) => {
         `;
         await connection.query(query, [noticeId, userId, content, createAt, updatedAt, importance]);
 
-        res.json({ success: true, message: '공지사항이 성공적으로 저장되었습니다.' });
+        return res.json({ success: true, message: '공지사항이 성공적으로 저장되었습니다.' });
     } catch (err) {
         console.error("Error saving notice:", err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -581,7 +561,6 @@ app.post('/api/notice-read', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
-        
 
         const { noticeId } = req.body;
         const noticeReadId = uuidv4(); // UUID 생성
@@ -595,10 +574,10 @@ app.post('/api/notice-read', async (req, res) => {
         `;
         await connection.query(query, [noticeReadId, userId, noticeId, readAt]);
 
-        res.json({ success: true, message: 'Notice read record successfully inserted.' });
+        return res.json({ success: true, message: 'Notice read record successfully inserted.' });
     } catch (err) {
         console.error("Error inserting notice read record:", err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -854,15 +833,14 @@ app.get('/api/working-times', async (req, res) => {
     try {
         const connection = await conn;
         const results = await connection.query("SELECT * FROM WorkingTime");
-        res.json(results);
+        return res.json(results);
     } catch (err) {
         console.error('Error fetching working times:', err);
         if (!res.headersSent) {
-            res.status(500).json({ message: '서버 오류' });
+            return res.status(500).json({ message: '서버 오류' });
         }
     }
 });
-
 //=================================================================
 // WorkingArea 데이터 조회 엔드포인트 (area_id로 조회)
 //=================================================================
@@ -872,13 +850,13 @@ app.get('/api/working-area/:area_id', async (req, res) => {
         const connection = await conn;
         const [result] = await connection.query("SELECT * FROM WorkingArea WHERE area_id = ?", [area_id]);
         if (result) {
-            res.json(result);
+            return res.json(result);
         } else {
-            res.status(404).json({ message: 'Area not found' });
+            return res.status(404).json({ message: 'Area not found' });
         }
     } catch (err) {
         console.error('Error fetching working area:', err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -903,10 +881,10 @@ app.post('/api/insert-schedule', async (req, res) => {
         `;
         await connection.query(query, [area_name, section, schedule_type, time, formattedCreateAt, user_id, foreman, worker]);
 
-        res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
+        return res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
     } catch (err) {
         console.error('Error inserting schedule:', err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
 //=================================================================
@@ -917,23 +895,15 @@ app.get('/api/foreman', async (req, res) => {
         const connection = await conn;
         const [result] = await connection.query("SELECT user_id FROM User WHERE role = 'ADMIN' LIMIT 1");
         if (result) {
-            res.json(result);
+            return res.json(result);
         } else {
-            res.status(404).json({ message: 'Foreman not found' });
+            return res.status(404).json({ message: 'Foreman not found' });
         }
     } catch (err) {
         console.error('Error fetching foreman:', err);
-        res.status(500).json({ message: '서버 오류' });
+        return res.status(500).json({ message: '서버 오류' });
     }
 });
-
-//=================================================================
-// Crash Endpoint for Testing
-//=================================================================
-app.get('/api/crash', (req, res) => {
-    throw new Error('Intentional Server Crash for Testing');
-});
-
 startServer();
 
 

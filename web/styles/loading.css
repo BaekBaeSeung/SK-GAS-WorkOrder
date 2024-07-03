@@ -117,8 +117,8 @@ body {
 }
 
 #app {
-    width: 90%;
-    height: 90%;
+    width: 50%;
+    height: 60%;
     background-color: #F08000;
     border-radius: 1lvh 15lvh 1lvh 1lvh;
     display: flex;
