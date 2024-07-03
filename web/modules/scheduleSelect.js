@@ -170,6 +170,8 @@ export async function renderScheduleSelectPage(container) {
                     const result = await response.json();
                     if (result.success) {
                         showModal('선택하신 스케줄이 배정되었습니다.');
+                        // 스케줄 데이터를 다시 가져와서 숫자 업데이트
+                        await updateScheduleCount();
                     } else {
                         showModal('스케줄이 배정에 실패했습니다.');
                     }
@@ -179,6 +181,35 @@ export async function renderScheduleSelectPage(container) {
                 }
             });
         });
+
+        // 스케줄 데이터를 다시 가져와서 숫자 업데이트하는 함수
+        async function updateScheduleCount() {
+            try {
+                const response = await fetch('/api/schedule/today');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch schedules');
+                }
+                const schedules = await response.json();
+                const uniqueSchedules = schedules.reduce((acc, schedule) => {
+                    if (!acc.some(item => item.time === schedule.time)) {
+                        acc.push(schedule);
+                    }
+                    return acc;
+                }, []);
+                const today = new Date();
+                const todayDateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                const todaySchedules = uniqueSchedules.filter(schedule => {
+                    const scheduleDate = new Date(schedule.create_at.replace(' ', 'T'));
+                    const scheduleDateString = `${scheduleDate.getFullYear()}-${String(scheduleDate.getMonth() + 1).padStart(2, '0')}-${String(scheduleDate.getDate()).padStart(2, '0')}`;
+                    return scheduleDateString === todayDateString;
+                });
+                const scheduleCount = todaySchedules.length < 10 ? `0${todaySchedules.length}` : todaySchedules.length;
+                const goToScheduleElement = document.querySelector('#go-to-schedule p');
+                goToScheduleElement.innerHTML = `스케줄 페이지 [${scheduleCount}]<span class="dash">●</span>`;
+            } catch (error) {
+                console.error('Error updating schedule count:', error);
+            }
+        }
 
         // 모달 관련 이벤트 리스너 추가
         const modal = document.getElementById('modal');

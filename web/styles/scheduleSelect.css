@@ -27,8 +27,8 @@ body {
 }
 
 .schedule-container {
-    width: 50lvh;
-    height: 90lvh;
+    width: 100%;
+    height: 100%;
     text-align: center;
     /* background-color: #FFFFFF;
     border-radius: 1lvh;
@@ -39,7 +39,7 @@ body {
 .logo {
     width: 11lvh;
     margin-bottom: 1.6lvh;
-    margin-left: -29lvh; 
+    margin-left: -78%; 
 }
 
 .header {
@@ -93,16 +93,7 @@ body {
     margin-left: 0.2lvh;
 }
 
-.notice, .previous-records, #go-to-schedule {
-    background-color: #F4F4F4;
-    padding: 1lvh;
-    border-radius: 1lvh;
-    margin-bottom: 2lvh; /* 공지사항과 스케줄 간의 간격을 동일하게 설정 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: left; /* 왼쪽 정렬 */
-}
-
-.notice p, .previous-records p, #go-to-schedule p {
+.notice p, #go-to-schedule p {
     margin: 0;
     font-size: 1.5lvh; /* 글씨체 작게 */
     font-weight: 700; /* 글씨체 두껍게 */
@@ -132,7 +123,6 @@ body {
 .schedule-item {
     background-color: #EAEAEA;
     padding: 1lvh;
-    margin: 0 1lvh;
     border-radius: 1lvh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
