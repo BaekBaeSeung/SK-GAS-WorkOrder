@@ -89,38 +89,29 @@
 }
 
 html, body {
-    margin: 0 auto;
+    margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    user-select: none;
-    -webkit-text-size-adjust: none;
-    -ms-text-size-adjust: none;
-    -moz-text-size-adjust: none;
-    -o-text-size-adjust: none;
-    touch-action: pan-y;
-
     font-family: "NanumSquareAc";
+    background-color: #EEEEEE;
+}
 
+body {
     display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-body {
-    background-color: #EEEEEE;
-    
-}
-
 #app {
-    width: 50%;
-    height: 60%;
+    scale:0.9;
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    max-height: 900px;
     background-color: #F08000;
-    border-radius: 1lvh 15lvh 1lvh 1lvh;
+    border-radius: 0lvh 15lvh 0lvh 0lvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -128,159 +119,44 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     color: #EEEEEE;
     text-align: center;
+    padding: 5vmin;
+    box-sizing: border-box;
 }
 
 #app img {
     width: 70%;
-    margin-bottom: 2%;
+    max-width: 300px;
+    margin-bottom: 5vmin;
     filter: brightness(0) saturate(100%) invert(99%) sepia(1%) saturate(2724%) hue-rotate(303deg) brightness(114%) contrast(87%);
 }
 
 #app p {
-    font-size: 2.3lvh;
-    margin-bottom: 3%;
+    font-size: 4vmin;
+    margin-bottom: 5vmin;
     font-weight: 900;
-    letter-spacing: 0.02lvh;
+    letter-spacing: 0.2vmin;
 }
 
 #app button {
     background-color: transparent;
     border: 2px solid #EEEEEE;
-    border-radius: 20lvh;
-    padding: 0.8lvh 1.5lvh;
+    border-radius: 5vmin;
+    padding: 2vmin 4vmin;
     color: #EEEEEE;
-    font-size: 1.5lvh;
+    font-size: 3vmin;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 4px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 10%;
+    margin-top: 5vmin;
 }
+
 #app #startText {
     font-weight: bold;
-    margin: 1lvh;
-    letter-spacing: 0.02lvh;
+    letter-spacing: 0.2vmin;
 }
 
 #app button:hover {
     background-color: #EEEEEE;
     color: #F08000;
-}
-
-
-@media (min-device-width: 412px) and (max-device-width: 412px) and (min-device-height: 823px) and (max-device-height: 823px) {
-    #app {
-        width: 44lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 360px) and (max-device-width: 360px) and (min-device-height: 740px) and (max-device-height: 740px) {
-    #app {
-        width: 44lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 353px) and (max-device-width: 353px) and (min-device-height: 745px) and (max-device-height: 745px) {
-    #app {
-        width: 44lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 320px) and (max-device-width: 320px) and (min-device-height: 658px) and (max-device-height: 658px) {
-    #app {
-        width: 44lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 393px) and (max-device-width: 393px) and (min-device-height: 786px) and (max-device-height: 786px) {
-    #app {
-        width: 44lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 414px) and (max-device-width: 414px) and (min-device-height: 896px) and (max-device-height: 896px) {
-    #app {
-        width: 42lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 390px) and (max-device-width: 390px) and (min-device-height: 844px) and (max-device-height: 844px) {
-    #app {
-        width: 42lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 430px) and (max-device-width: 430px) and (min-device-height: 932px) and (max-device-height: 932px) {
-    #app {
-        width: 42lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 412px) and (max-device-width: 412px) and (min-device-height: 915px) and (max-device-height: 915px) {
-    #app {
-        width: 42lvh;
-        height: 87lvh;
-    }
-}
-
-
-@media (min-device-width: 344px) and (max-device-width: 344px) and (min-device-height: 882px) and (max-device-height: 882px) {
-    #app {
-        width: 36lvh;
-        height: 85lvh;
-    }
-
-    #app p {
-    font-size: 2lvh;
-    margin-bottom: 0.8lvh;
-    }
-
-    #app button {
-        font-size: 1.2lvh;
-    }
-
-    #app #startText {
-        margin: 0.4lvh;
-    }
-
-    #app img {
-        width: 26lvh;
-        margin-bottom: 1.3lvh;
-    }
-}
-
-@media (min-device-width: 412px) and (max-device-width: 412px) and (min-device-height: 914px) and (max-device-height: 914px) {
-    #app {
-        width: 42lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 411px) and (max-device-width: 411px) and (min-device-height: 823px) and (max-device-height: 823px) {
-    #app {
-        width: 42lvh;
-        height: 87lvh;
-    }
-}
-
-@media (min-device-width: 375px) and (max-device-width: 375px) and (min-device-height: 812px) and (max-device-height: 812px) {
-    #app {
-        width: 44lvh;
-        height: 81lvh;
-    }
-}
-
-@media (min-device-width: 412px) and (max-device-width: 412px) and (min-device-height: 892px) and (max-device-height: 892px) {
-    #app {
-        width: 42lvh;
-        height: 87lvh;
-    }
 }
 

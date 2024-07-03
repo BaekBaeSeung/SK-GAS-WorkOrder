@@ -316,9 +316,21 @@ body {
     border: 0.15lvh solid #813CD9;
     border-radius: 0.2lvh;
     text-align: center;
-    user-select: none; /* 드래그 비활성화 */
+    user-select: none; /* 텍스트 선택 방지 */
+    -webkit-user-select: none; /* Safari용 */
+    -moz-user-select: none; /* Firefox용 */
+    -ms-user-select: none; /* IE용 */
+    pointer-events: none; /* 모든 포인터 이벤트 비활성화 */
+    touch-action: none; /* 모든 터치 액션 비활성화 */
 }
 
+.input-field:disabled {
+    background-color: #f0f0f0; /* 배경색 변경 */
+    color: #888; /* 텍스트 색상 변경 */
+
+    pointer-events: none; /* 모든 포인터 이벤트 비활성화 */
+    touch-action: none; /* 모든 터치 액션 비활성화 */
+}
 
 .unit {
     font-size: 1.5lvh;

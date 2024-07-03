@@ -71,6 +71,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         console.log("scheduleData.date : ", scheduleData.date);
         // input 요소와 submit 버튼 비활성화 여부 결정
         const isEditable = scheduleData.date === formattedToday && userProfile.isAdmin !== 'ADMIN';
+        const showButton = isEditable;
 
         container.innerHTML = `
             <head>
@@ -125,8 +126,12 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                             `;
                             
                             }).join('')}
-                            <div class="submit-container"> <!-- 제출 버튼 컨테이너 추가 -->
-                                <button id="submit-button" class="submit-button" ${isEditable ? '' : 'disabled'} style="${userProfile.isAdmin === 'ADMIN' ? 'display: none;' : ''}">${isEditable ? (workingDetailData && workingDetailData.value ? '수정' : '제출') : `${scheduleData.date}에 제출된 데이터입니다.`}</button>
+                            <div class="submit-container">
+                                ${showButton ? `
+                                    <button id="submit-button" class="submit-button">
+                                        ${workingDetailData && workingDetailData.value ? '수정' : '제출'}
+                                    </button>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -259,6 +264,20 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
                     }
                 }
             });
+
+            // 텍스트 선택 방지
+            inputField.addEventListener('selectstart', (event) => {
+                if (!isEditable) {
+                    event.preventDefault();
+                }
+            });
+
+            // 드래그 방지
+            inputField.addEventListener('dragstart', (event) => {
+                if (!isEditable) {
+                    event.preventDefault();
+                }
+            });
         });
 
         // 모달 관련 이벤트 리스너 추가
@@ -319,3 +338,5 @@ function updateTime() {
 }
 
 updateTime();
+
+

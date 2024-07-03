@@ -17,7 +17,7 @@ import { renderNoticePage } from './notice.js'; // notice.js 파일에서 공지
 import { renderPreviousPage } from './previous.js'; // previous.js 파일에서 이전 점검 기록 페이지 정의
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
 import { renderScheduleDetailDetailPage } from './scheduleDetailDetail.js'; // 추가
-import { renderScheduleDetailAdminPage } from './scheduleDetailadmin.js'; // 추가
+// import { renderScheduleDetailAdminPage } from './scheduleDetailadmin.js'; // 추가
 import { renderNoticeAdminPage } from './noticeAdmin.js'; // noticeAdmin.js 파일에서 공지 작성 페이지 정의
 import { renderNoticeDetailPage } from './noticeDetail.js'; // noticeDetail.js 파일에서 공지사항 상세 페이지 정의
 import { renderScheduleSelectPage } from './scheduleSelect.js'; // 추가
@@ -229,10 +229,10 @@ function loadPage(path, state = {}) {
             renderScheduleDetailDetailPage(app, sectionId);
             loadCSS('/styles/scheduleDetailDetail.css');
             break;
-        case path === '/scheduleDetailadmin': // 추가
-            renderScheduleDetailAdminPage(app);
-            loadCSS('/styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
-            break;
+        // case path === '/scheduleDetailadmin': // 추가
+        //     renderScheduleDetailAdminPage(app);
+        //     loadCSS('/styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
+        //     break;
         case path === '/noticeAdmin': // 추가
             renderNoticeAdminPage(app);
             loadCSS('/styles/noticeAdmin.css');
