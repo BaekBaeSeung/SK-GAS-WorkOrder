@@ -66,11 +66,14 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기
         const today = new Date();
         const formattedToday = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}`; // 형식을 scheduleData.date와 동일하게 변경
+        console.log("formattedToday : ", formattedToday);
+
 
         console.log("formattedToday : ", formattedToday);
         console.log("scheduleData.date : ", scheduleData.date);
         // input 요소와 submit 버튼 비활성화 여부 결정
         const isEditable = scheduleData.date === formattedToday && userProfile.isAdmin !== 'ADMIN';
+        console.log("isEditable : ", isEditable);
         const showButton = isEditable;
 
         container.innerHTML = `
@@ -338,5 +341,6 @@ function updateTime() {
 }
 
 updateTime();
+
 
 
