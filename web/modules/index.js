@@ -46,22 +46,140 @@ function loadCSS(filename) {
     link.onload = () => { link.rel = 'stylesheet'; }; // 변경된 부분
     document.head.appendChild(link);
 }
-window.addEventListener("DOMContentLoaded", async() => {
+
+function applyFadeEffect(container) {
+    container.classList.add('fade-in');
+    setTimeout(() => {
+        container.classList.add('active');
+    }, 50);
+
+    setTimeout(() => {
+        container.classList.remove('fade-in', 'active');
+    }, 500);
+}
+
+function loadPage(path, state = {}) {
+    const app = document.getElementById('app');
+    
+    // 페이드 아웃 효과 적용
+    app.classList.add('fade-in');
+    app.classList.remove('active');
+
+    setTimeout(() => {
+        // 기존 스타일 제거
+        const existingLink = document.querySelector('link[data-page-style]');
+        if (existingLink) {
+            existingLink.remove();
+        }
+
+        const accessToken = getCookie('accessToken');
+
+        // 로그인 페이지와 로딩 페이지를 제외한 모든 페이지에 대해 엑세스 토큰 확인
+        if (path !== '/' && path !== '/login' && !accessToken) {
+            showModal('로그인이 필요합니다.');
+            navigateTo('/login');
+            return;
+        }
+
+        // 로그인 상태에서 로그인 페이지로 접근 시도 시
+        if (path === '/login' && accessToken) {
+            showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.');
+            navigateTo('/schedule'); // 로그인 상태라면 스케줄 페이지로 리다이렉트
+            return;
+        }
+
+        // localStorage에서 상태 복원
+        const savedState = JSON.parse(localStorage.getItem('pageState')) || {};
+
+        switch(true) {
+            case path === '/':
+                renderLoadingPage(app);
+                loadCSS('/styles/loading.css'); // 로딩 페이지 스타일 로드
+                break;
+            case path === '/login':
+                renderLoginPage(app);
+                loadCSS('/styles/login.css'); // 로그인 페이지 스타일 로드
+                break;
+            case path === '/schedule':
+                renderSchedulePage(app);
+                loadCSS('/styles/schedule.css'); // 스케줄 페이지 스타일 로드
+                break;
+            case path === '/scheduleSelect': // 추가
+                renderScheduleSelectPage(app);
+                loadCSS('/styles/scheduleSelect.css'); // 스케줄 선택 페이지 스타일 로드
+                break;
+            case path === '/notice':
+                renderNoticePage(app);
+                loadCSS('/styles/notice.css'); // 공지사항 페이지 스타일 로드
+                break;
+            case path === '/previous':
+                renderPreviousPage(app);
+                loadCSS('/styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
+                break;
+            case path === '/scheduleDetail':
+                if ((!state.sections && !savedState.sections) || (!state.scheduleData && !savedState.scheduleData)) {
+                    const storedSections = JSON.parse(localStorage.getItem('scheduleSections'));
+                    const storedScheduleData = JSON.parse(localStorage.getItem('scheduleData'));
+                    if (!storedSections || storedSections.length === 0 || !storedScheduleData) {
+                        showModal('잘못된 접근입니다.'); 
+                        navigateTo('/schedule');
+                        return;
+                    }
+                    renderScheduleDetailPage(app, storedScheduleData, storedSections);
+                } else {
+                    renderScheduleDetailPage(app, state.scheduleData || savedState.scheduleData, state.sections || savedState.sections);
+                }
+                loadCSS('/styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
+                break;
+            case path.startsWith('/scheduleDetailDetail/'): // 수정된 부분
+                const sectionId = path.split('/')[2];
+                renderScheduleDetailDetailPage(app, sectionId);
+                loadCSS('/styles/scheduleDetailDetail.css');
+                break;
+            // case path === '/scheduleDetailadmin': // 추가
+            //     renderScheduleDetailAdminPage(app);
+            //     loadCSS('/styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
+            //     break;
+            case path === '/noticeAdmin': // 추가
+                renderNoticeAdminPage(app);
+                loadCSS('/styles/noticeAdmin.css');
+                break;
+            case path.startsWith('/noticeDetail/'): // 추가 
+                const noticeId = path.split('/')[2];
+                renderNoticeDetailPage(app, noticeId);
+                break;
+            default:
+                app.innerHTML = `<h1>404 - Page Not Found</h1>`;
+                break; 
+        }
+
+        // 페이드인 효과 적용
+        applyFadeEffect(app);
+    }, 250); // 페이드 아웃을 위한 짧은 지연
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    const app = document.getElementById('app');
+    applyFadeEffect(app);
     loadPage(window.location.pathname);
 });
 
-window.onload = () => {
-    // Remove the global click and touchstart event listeners
-};
-
-window.addEventListener('popstate', () => {
-    loadPage(window.location.pathname);
+window.addEventListener('popstate', (event) => {
+    loadPage(window.location.pathname, event.state);
 });
 
 function navigateTo(path, state = {}) {
-    history.pushState(state, '', path);
-    localStorage.setItem('pageState', JSON.stringify(state)); // 상태를 localStorage에 저장
-    loadPage(path, state);
+    const app = document.getElementById('app');
+    
+    // 페이드 아웃 효과 적용
+    app.classList.add('fade-in');
+    app.classList.remove('active');
+
+    setTimeout(() => {
+        history.pushState(state, '', path);
+        localStorage.setItem('pageState', JSON.stringify(state));
+        loadPage(path, state);
+    }, 250); // 페이드 아웃을 위한 짧은 지연
 }
 
 // navigateTo 함수를 전역으로 사용 가능하게 설정
@@ -154,96 +272,3 @@ style.innerHTML = `
     }
 `;
 document.head.appendChild(style);
-
-function loadPage(path, state = {}) {
-    const app = document.getElementById('app');
-    // 기존 스타일 제거
-    const existingLink = document.querySelector('link[data-page-style]');
-    if (existingLink) {
-        existingLink.remove();
-    }
-
-
-
-    const accessToken = getCookie('accessToken');
-
-    // 로그인 페이지와 로딩 페이지를 제외한 모든 페이지에 대해 엑세스 토큰 확인
-    if (path !== '/' && path !== '/login' && !accessToken) {
-        showModal('로그인이 필요합니다.');
-        navigateTo('/login');
-        return;
-    }
-
-    // 로그인 상태에서 로그인 페이지로 접근 시도 시
-    if (path === '/login' && accessToken) {
-        showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.');
-        navigateTo('/schedule'); // 로그인 상태라면 스케줄 페이지로 리다이렉트
-        return;
-    }
-
-    // localStorage에서 상태 복원
-    const savedState = JSON.parse(localStorage.getItem('pageState')) || {};
-
-    switch(true) {
-        case path === '/':
-            renderLoadingPage(app);
-            loadCSS('/styles/loading.css'); // 로딩 페이지 스타일 로드
-            break;
-        case path === '/login':
-            renderLoginPage(app);
-            loadCSS('/styles/login.css'); // 로그인 페이지 스타일 로드
-            break;
-        case path === '/schedule':
-            renderSchedulePage(app);
-            loadCSS('/styles/schedule.css'); // 스케줄 페이지 스타일 로드
-            break;
-        case path === '/scheduleSelect': // 추가
-            renderScheduleSelectPage(app);
-            loadCSS('/styles/scheduleSelect.css'); // 스케줄 선택 페이지 스타일 로드
-            break;
-        case path === '/notice':
-            renderNoticePage(app);
-            loadCSS('/styles/notice.css'); // 공지사항 페이지 스타일 로드
-            break;
-        case path === '/previous':
-            renderPreviousPage(app);
-            loadCSS('/styles/previous.css'); // 이전 점검 기록 페이지 스타일 로드
-            break;
-        case path === '/scheduleDetail':
-            if ((!state.sections && !savedState.sections) || (!state.scheduleData && !savedState.scheduleData)) {
-                const storedSections = JSON.parse(localStorage.getItem('scheduleSections'));
-                const storedScheduleData = JSON.parse(localStorage.getItem('scheduleData'));
-                if (!storedSections || storedSections.length === 0 || !storedScheduleData) {
-                    showModal('잘못된 접근입니다.'); 
-                    navigateTo('/schedule');
-                    return;
-                }
-                renderScheduleDetailPage(app, storedScheduleData, storedSections);
-            } else {
-                renderScheduleDetailPage(app, state.scheduleData || savedState.scheduleData, state.sections || savedState.sections);
-            }
-            loadCSS('/styles/scheduleDetail.css'); // 스케줄 상세 페이지 스타일 로드
-            break;
-        case path.startsWith('/scheduleDetailDetail/'): // 수정된 부분
-            const sectionId = path.split('/')[2];
-            renderScheduleDetailDetailPage(app, sectionId);
-            loadCSS('/styles/scheduleDetailDetail.css');
-            break;
-        // case path === '/scheduleDetailadmin': // 추가
-        //     renderScheduleDetailAdminPage(app);
-        //     loadCSS('/styles/scheduleDetailadmin.css'); // 관리자 페이지 스타일 로드
-        //     break;
-        case path === '/noticeAdmin': // 추가
-            renderNoticeAdminPage(app);
-            loadCSS('/styles/noticeAdmin.css');
-            break;
-        case path.startsWith('/noticeDetail/'): // 추가 
-            const noticeId = path.split('/')[2];
-            renderNoticeDetailPage(app, noticeId);
-            break;
-        default:
-            app.innerHTML = `<h1>404 - Page Not Found</h1>`;
-            break; 
-    }
-}
-
