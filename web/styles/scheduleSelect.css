@@ -39,7 +39,8 @@ body {
 .logo {
     width: 11lvh;
     margin-bottom: 1.6lvh;
-    margin-left: -78%; 
+    margin-left: -4%; 
+    align-self: flex-start;
 }
 
 .header {
@@ -297,6 +298,9 @@ body {
 
     padding-bottom: 0lvh;
     border-radius: 1lvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .schedule-item.inactive {

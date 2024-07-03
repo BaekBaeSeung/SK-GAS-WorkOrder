@@ -53,45 +53,47 @@ export async function renderPreviousPage(container) {
                 <link rel="stylesheet" href="/styles/previous.css">
             </head>
             <div class="previous-container">
-                <div class="sticky-header"> <!-- sticky-header 클래스 추가 -->
-                    <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
-                    <div class="header">
-                        <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                        <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span>
-                        <div class="time-container">
-                            <div class="time-date">
-                                <span class="time">${formatTime(getCurrentTime())}</span>
-                                <span class="date">${getCurrentDate()}</span>
+                <div class="grid-container">
+                    <div class="sticky-header">
+                        <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
+                        <div class="header">
+                            <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
+                            <span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span>
+                            <div class="time-container">
+                                <div class="time-date">
+                                    <span class="time">${formatTime(getCurrentTime())}</span>
+                                    <span class="date">${getCurrentDate()}</span>
+                                </div>
+                                <span class="day">${getCurrentDay()}</span>
                             </div>
-                            <span class="day">${getCurrentDay()}</span>
+                        </div>
+                        <div class="notice" id="notice">
+                            <p>공지사항 [${noticeCount}] <span class="dash" style="font-size: 1.5vh;">●</span></p>
+                        </div>
+                        <div class="previous-records" id="previous-records">
+                            <p>이전 점검 기록 [${previousSchedulesCount}] <span style="margin-right: 1.25lvh;" class="dash">-</span></p>
                         </div>
                     </div>
-                    <div class="notice" id="notice">
-                        <p>공지사항 [${noticeCount}] <span class="dash" style="font-size: 1.5vh;">●</span></p>
+                    <div class="schedule-container">
+                        ${uniquePreviousSchedules.map(schedule => `
+                            <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
+                                <div class="location-date-container">
+                                    <p class="location">${schedule.area_name}</p>
+                                    <p class="date">${new Date(schedule.create_at).toLocaleDateString().replace(/\.$/, '')}</p>
+                                </div>
+                                <div class="shift-time">
+                                    <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
+                                    <p class="time">${schedule.time}</p>
+                                </div>
+                                ${userProfile.isAdmin === 'ADMIN' ? `
+                                <ul class="worker-info">
+                                    <li>교대 반장: ${schedule.foremanName}</li>
+                                    <li>작업자: ${schedule.workerName}</li>
+                                </ul>
+                                ` : ''}
+                            </div>
+                        `).join('')}
                     </div>
-                </div>
-                <div class="previous-records" id="previous-records">
-                    <p>이전 점검 기록 [${previousSchedulesCount}] <span style="margin-right: 1.25lvh;" class="dash">-</span></p>
-                </div>
-                <div class="schedule">
-                    ${uniquePreviousSchedules.map(schedule => `
-                        <div class="schedule-item" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
-                            <div class="location-date-container">
-                                <p class="location">${schedule.area_name}</p>
-                                <p class="date">${new Date(schedule.create_at).toLocaleDateString().replace(/\.$/, '')}</p>
-                            </div>
-                            <div class="shift-time">
-                                <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>
-                                <p class="time">${schedule.time}</p>
-                            </div>
-                            ${userProfile.isAdmin === 'ADMIN' ? `
-                            <ul class="worker-info" style="text-align: left;">
-                                <li>교대 반장: ${schedule.foremanName}</li>
-                                <li>작업자: ${schedule.workerName}</li>
-                            </ul>
-                            ` : ''}
-                        </div>
-                    `).join('')}
                 </div>
             </div>
             <div id="modal" class="modal">

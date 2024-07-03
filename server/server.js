@@ -297,11 +297,15 @@ app.get('/api/user-profile', async (req, res) => {
                 profile_pic: user.profile_pic,
             });
         } else {
-            res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+            if (!res.headersSent) {
+                res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+            }
         }
     } catch (err) {
         console.error("Error fetching user profile:", err);
-        res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -346,7 +350,7 @@ app.get('/api/notice-data', async (req, res) => {
     } catch (err) {
         console.error("Error fetching notice data:", err);
         if (!res.headersSent) {
-            return res.status(500).json({ message: '서버 오류' });
+            res.status(500).json({ message: '서버 오류' });
         }
     }
 });
@@ -374,7 +378,9 @@ app.get('/api/notice-count', async (req, res) => {
         return res.json({ count });
     } catch (err) {
         console.error("Error fetching notice count:", err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -505,11 +511,15 @@ app.get('/api/notice-data/:noticeId', async (req, res) => {
         if (notice) {
             return res.json(notice);
         } else {
-            return res.status(404).json({ message: '공지사항을 찾을 수 없습니다.' });
+            if (!res.headersSent) {
+                res.status(404).json({ message: '공지사항을 찾을 수 없습니다.' });
+            }
         }
     } catch (err) {
         console.error("Error fetching notice detail:", err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -542,7 +552,9 @@ app.post('/api/notice', async (req, res) => {
         return res.json({ success: true, message: '공지사항이 성공적으로 저장되었습니다.' });
     } catch (err) {
         console.error("Error saving notice:", err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -574,7 +586,9 @@ app.post('/api/notice-read', async (req, res) => {
         return res.json({ success: true, message: 'Notice read record successfully inserted.' });
     } catch (err) {
         console.error("Error inserting notice read record:", err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -600,7 +614,9 @@ app.get('/api/sections-by-area/:areaName', async (req, res) => {
         
 
         if (!workingArea || workingArea.length === 0) {
-            return res.status(404).json({ message: '해당 지역을 찾을 수 없습니다.' });
+            if (!res.headersSent) {
+                return res.status(404).json({ message: '해당 지역을 찾을 수 없습니다.' });
+            }
         }
 
         const areaId = workingArea[0].area_id;
@@ -612,23 +628,27 @@ app.get('/api/sections-by-area/:areaName', async (req, res) => {
         return res.json(sections);
     } catch (err) {
         console.error("Error fetching sections by area name:", err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
+//=================================================================
+// Subsections Endpoint
+//=================================================================
 app.get('/api/subsections/:sectionId', async (req, res) => {
     const { sectionId } = req.params;
     try {
         const connection = await conn;
         const rows = await connection.query('SELECT * FROM SubSection WHERE section_id = ?', [sectionId]);
-        
-        // 섹션 아이디가 같은 두 개의 항목을 반환하는지 확인하기 위해 콘솔 로그 추가
-        
 
         return res.json(rows);
     } catch (error) {
         console.error('Error fetching subsections:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
     }
 });
 
@@ -651,7 +671,9 @@ app.get('/api/working-time', async (req, res) => {
         return res.json(results);
     } catch (err) {
         console.error('Error fetching working time data:', err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -679,7 +701,9 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
         return res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
     } catch (err) {
         console.error('Error inserting working detail:', err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -724,11 +748,15 @@ app.get('/api/working-detail', async (req, res) => {
         if (results.length > 0) {
             return res.json(results[0]);
         } else {
-            return res.status(404).json({ message: '일치하는 데이터가 없습니다.' });
+            if (!res.headersSent) {
+                res.status(404).json({ message: '일치하는 데이터가 없습니다.' });
+            }
         }
     } catch (err) {
         console.error('Error fetching working detail:', err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -834,7 +862,7 @@ app.get('/api/working-times', async (req, res) => {
     } catch (err) {
         console.error('Error fetching working times:', err);
         if (!res.headersSent) {
-            return res.status(500).json({ message: '서버 오류' });
+            res.status(500).json({ message: '서버 오류' });
         }
     }
 });
@@ -849,11 +877,15 @@ app.get('/api/working-area/:area_id', async (req, res) => {
         if (result) {
             return res.json(result);
         } else {
-            return res.status(404).json({ message: 'Area not found' });
+            if (!res.headersSent) {
+                res.status(404).json({ message: 'Area not found' });
+            }
         }
     } catch (err) {
         console.error('Error fetching working area:', err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -881,9 +913,12 @@ app.post('/api/insert-schedule', async (req, res) => {
         return res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
     } catch (err) {
         console.error('Error inserting schedule:', err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
+
 //=================================================================
 // Foreman 데이터 조회 엔드포인트
 //=================================================================
@@ -894,7 +929,9 @@ app.get('/api/foreman', async (req, res) => {
         if (result) {
             return res.json(result);
         } else {
-            return res.status(404).json({ message: 'Foreman not found' });
+            if (!res.headersSent) {
+                res.status(404).json({ message: 'Foreman  not found' });
+            }
         }
     } catch (err) {
         console.error('Error fetching foreman:', err);

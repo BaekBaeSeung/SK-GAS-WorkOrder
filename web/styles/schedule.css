@@ -55,6 +55,7 @@ body {
 .logo {
     width: 11lvh;
     margin-bottom: 1.6lvh;
+    margin-left: -4%; 
 }
 
 .header {
@@ -110,7 +111,7 @@ body {
 
 .notice {
     background-color: #F4F4F4;
-    padding: 2% 0 2% 0;
+    padding: 1lvh 0 1lvh 0;
     border-radius: 1lvh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     /* text-align: center; 텍스트 가운데 정렬 */

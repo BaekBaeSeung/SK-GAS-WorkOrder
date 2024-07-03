@@ -53,6 +53,7 @@ body {
 .logo {
     width: 11lvh;
     margin-bottom: 1.6lvh;
+    margin-left: -4%;
 }
 
 .header {
@@ -148,10 +149,12 @@ body {
     gap: 1lvh;
     margin-top: 4%;
 }
-
+.previous-container{
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 .notice-item {
     background-color: #F4F4F4;
-    padding: 1.5lvh;
+    padding: 1lvh;
     border-radius: 1lvh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: left;
