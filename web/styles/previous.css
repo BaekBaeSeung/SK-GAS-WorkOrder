@@ -172,6 +172,7 @@ body {
 .worker-info {
     margin-top: 0lvh;
     margin-bottom: 0lvh;
+    text-align: left;
 }
 
 .shift-time {

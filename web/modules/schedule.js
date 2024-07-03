@@ -142,7 +142,7 @@ export async function renderSchedulePage(container) {
                                     <p class="global-time">${formattedDate}</p>
                                 </div>
                                 ${uniqueSchedules.map(schedule => `
-                                    <div class="schedule-item ${schedule.inactive ? 'inactive' : ''}" data-shift="${schedule.schedule_type}" data-time="${schedule.time}">
+                                    <div class="schedule-item ${schedule.inactive ? 'inactive' : ''}" data-shift="${schedule.schedule_type}" data-time="${schedule.time}" style="background-color: #EAEAEA;">
                                         <p class="location" style="display: none;">${schedule.area_name}</p>
                                         <div class="shift-time">
                                             <p class="shift">${schedule.schedule_type === 'm' ? 'Morning' : schedule.schedule_type === 's' ? 'Swing' : 'Night'}</p>

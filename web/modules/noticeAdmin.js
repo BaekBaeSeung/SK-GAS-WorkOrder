@@ -4,7 +4,6 @@ export async function renderNoticeAdminPage(container) {
     try {
         const userProfile = await fetchUserProfile();
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
-        const storedData = JSON.parse(localStorage.getItem('scheduleData')) || {};
 
         if (userProfile.isAdmin !== 'ADMIN') {
             alert('권한을 확인하세요.');
@@ -20,7 +19,7 @@ export async function renderNoticeAdminPage(container) {
                 <img src="./assets/img/common/color_logo.png" alt="SK 가스 로고" class="logo">
                 <div class="header">
                     <img src="./assets/img/common/${userProfile.profile_pic}" alt="Avatar" class="avatar" id="avatar" style="object-fit: cover;">
-                    <span class="initial"><span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">${storedData.initial}</span></span>
+                    <span class="initial"><span class="initial" style="${userProfile.isAdmin === 'ADMIN' ? 'opacity: 0;' : ''}">M</span></span>
                     <div class="time-container">
                         <div class="time-date">
                             <span class="time">${getCurrentTime()}</span>
