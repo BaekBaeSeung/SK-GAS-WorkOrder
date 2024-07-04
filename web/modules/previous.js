@@ -1,9 +1,20 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
+import debounce from 'lodash/debounce';
 
-export async function renderPreviousPage(container) {
+let isLoading = false;
+let controller = new AbortController();
+
+export const renderPreviousPage = debounce(async function(container) {
+    if (isLoading) return;
+    isLoading = true;
+
     try {
-        const userProfile = await fetchUserProfile();
-        const noticeCount = await fetchNoticeCount();
+        // 이전 요청 취소
+        controller.abort();
+        controller = new AbortController();
+
+        const userProfile = await fetchUserProfile(controller.signal);
+        const noticeCount = await fetchNoticeCount(controller.signal);
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
@@ -12,9 +23,9 @@ export async function renderPreviousPage(container) {
         // 서버에서 스케줄 데이터 가져오기
         let response;
         if (userProfile.isAdmin === 'ADMIN') {
-            response = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+            response = await fetch('/api/schedule/all', { signal: controller.signal }); // 모든 스케줄 데이터 가져오기
         } else {
-            response = await fetch('/api/schedule');
+            response = await fetch('/api/schedule', { signal: controller.signal });
         }
         const schedules = await response.json();
         console.log('Schedules:', schedules); // 스케줄 데이터 출력 (디버깅용)
@@ -176,10 +187,16 @@ export async function renderPreviousPage(container) {
             navigateTo('/schedule');
         });
     } catch (error) {
-        console.error('Error fetching user profile, notice count, or schedules:', error);
-        alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
+        if (error.name === 'AbortError') {
+            console.log('Fetch aborted');
+        } else {
+            console.error('Error details:', error);
+            container.innerHTML = '<div class="error">데이터를 가져오는데 실패했습니다. 다시 시도해주세요.</div>';
+        }
+    } finally {
+        isLoading = false;
     }
-}
+}, 0);  
 
 function updateTime() {
     const currentTimeElem = document.querySelector('.time');

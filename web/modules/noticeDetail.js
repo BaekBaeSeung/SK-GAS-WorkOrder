@@ -1,20 +1,31 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, logout, formatTime, showErrorModal } from './utils.js'; // 유틸 함수 임포트
+import debounce from 'lodash/debounce';
 
-export async function renderNoticeDetailPage(container, noticeId) {
+let isLoading = false;
+let controller = new AbortController();
+
+export const renderNoticeDetailPage = debounce(async function(container, noticeId) {
+    if (isLoading) return;
+    isLoading = true;
+
     try {
-        const userProfile = await fetchUserProfile();
+        // 이전 요청 취소
+        controller.abort();
+        controller = new AbortController();
+
+        const userProfile = await fetchUserProfile(controller.signal);
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
 
         // 서버에서 공지사항 데이터 가져오기
-        const response = await fetch(`/api/notice-data/${noticeId}`);
+        const response = await fetch(`/api/notice-data/${noticeId}`, { signal: controller.signal });
         const notice = await response.json();
 
         // 서버에서 스케줄 데이터 가져오기
         let scheduleResponse;
         if (userProfile.isAdmin === 'ADMIN') {
-            scheduleResponse = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+            scheduleResponse = await fetch('/api/schedule/all', { signal: controller.signal }); // 모든 스케줄 데이터 가져오기
         } else {
-            scheduleResponse = await fetch('/api/schedule');
+            scheduleResponse = await fetch('/api/schedule', { signal: controller.signal });
         }
 
         if (!scheduleResponse.ok) {
@@ -30,13 +41,13 @@ export async function renderNoticeDetailPage(container, noticeId) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ noticeId })
+            body: JSON.stringify({ noticeId }),
+            signal: controller.signal
         });
 
         container.innerHTML = `
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-                <link rel="stylesheet" href="/styles/noticeDetail.css">
             </head>
             <div class="grid-container">
 
@@ -134,8 +145,13 @@ export async function renderNoticeDetailPage(container, noticeId) {
             navigateTo('/notice');
         });
     } catch (error) {
-        console.error('Error fetching notice detail:', error);
-        alert('공지사항 세부 정보를 가져오는데 실패했습니다.');
+        if (error.name === 'AbortError') {
+            console.log('Fetch aborted');
+        } else {
+            console.error('Error details:', error);
+            showErrorModal('공지사항 세부 정보를 가져오는데 실패했습니다.');
+        }
+    } finally {
+        isLoading = false;
     }
-}
-
+}, 0); 

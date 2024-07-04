@@ -1,4 +1,8 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, formatDateTime} from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, formatDateTime, showErrorModal } from './utils.js';
+import debounce from 'lodash/debounce';
+
+let isLoading = false;
+let controller = new AbortController();
 
 function showModal(message, onConfirm) {
     const modalContent = document.querySelector('.modal-content');
@@ -28,10 +32,17 @@ function showModal(message, onConfirm) {
     }
 }
 
-export async function renderScheduleDetailDetailPage(container, sectionId) {
+export const renderScheduleDetailDetailPage = debounce(async function(container, sectionId) {
+    if (isLoading) return;
+    isLoading = true;
+
     try {
-        const userProfile = await fetchUserProfile();
-        const noticeCount = await fetchNoticeCount();
+        // 이전 요청 취소
+        controller.abort();
+        controller = new AbortController();
+
+        const userProfile = await fetchUserProfile(controller.signal);
+        const noticeCount = await fetchNoticeCount(controller.signal);
 
         // 로컬 스토리지에서 스케줄 데이터와 섹션 데이터 불러오기
         const scheduleData = JSON.parse(localStorage.getItem('currentScheduleData')) || {};
@@ -43,9 +54,9 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         // 서버에서 스케줄 데이터 가져오기
         let scheduleResponse;
         if (userProfile.isAdmin === 'ADMIN') {
-            scheduleResponse = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+            scheduleResponse = await fetch('/api/schedule/all', { signal: controller.signal }); // 모든 스케줄 데이터 가져오기
         } else {
-            scheduleResponse = await fetch('/api/schedule');
+            scheduleResponse = await fetch('/api/schedule', { signal: controller.signal });
         }
 
         if (!scheduleResponse.ok) {
@@ -56,7 +67,7 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         const initial = schedules.length > 0 ? schedules[0].schedule_type.toUpperCase() : '';
 
         // WorkingDetail 데이터 조회
-        const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}&date=${scheduleData.date}&isAdmin=${userProfile.isAdmin}`);
+        const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}&date=${scheduleData.date}&isAdmin=${userProfile.isAdmin}`, { signal: controller.signal });
         console.log("scheduleData.time : ",scheduleData.time);
         const workingDetailData = await workingDetailResponse.json();
 
@@ -317,10 +328,16 @@ export async function renderScheduleDetailDetailPage(container, sectionId) {
         }
 
     } catch (error) {
-        console.error('Error fetching user profile or notice count:', error);
-        alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
+        if (error.name === 'AbortError') {
+            console.log('Fetch aborted');
+        } else {
+            console.error('Error details:', error);
+            showErrorModal('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
+        }
+    } finally {
+        isLoading = false;
     }
-}
+}, 0);  
 
 function updateTime() {
     const currentTimeElem = document.querySelector('.time');
@@ -341,6 +358,3 @@ function updateTime() {
 }
 
 updateTime();
-
-
-

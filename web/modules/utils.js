@@ -116,3 +116,19 @@ export function formatDateTime(date) {
     const seconds = pad(date.getSeconds());
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+export function showErrorModal(message) {
+    const modal = document.createElement('div');
+    modal.className = 'error-modal';
+    modal.innerHTML = `
+        <div class="error-modal-content">
+            <p>${message}</p>
+            <button id="error-modal-close">확인</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('error-modal-close').addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+}

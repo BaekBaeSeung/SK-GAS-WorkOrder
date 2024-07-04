@@ -147,6 +147,7 @@ function loadPage(path, state = {}) {
             case path.startsWith('/noticeDetail/'): // 추가 
                 const noticeId = path.split('/')[2];
                 renderNoticeDetailPage(app, noticeId);
+                loadCSS('/styles/noticeDetail.css');
                 break;
             default:
                 app.innerHTML = `<h1>404 - Page Not Found</h1>`;

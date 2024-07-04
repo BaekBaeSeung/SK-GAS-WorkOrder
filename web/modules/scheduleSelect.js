@@ -1,30 +1,41 @@
 import { renderNoticePage } from './notice.js';
 import { renderPreviousPage } from './previous.js';
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, logout, formatTime, showErrorModal } from './utils.js'; // 유틸 함수 임포트
 
-export async function renderScheduleSelectPage(container) {
+import debounce from 'lodash/debounce';
+
+let isLoading = false;
+let controller = new AbortController();
+
+export const renderScheduleSelectPage = debounce(async function(container) {
+    if (isLoading) return;
+    isLoading = true;
+
     try {
-        const userProfile = await fetchUserProfile();
+        // 이전 요청 취소
+        controller.abort();
+        controller = new AbortController();
+
+        const userProfile = await fetchUserProfile(controller.signal);
         console.log('User ProfileProfileProfile:', userProfile.userId); // 사용자 프로필 정보 출력 (디버깅용)
 
 
         // workingtime 데이터를 조회
-        const workingTimesResponse = await fetch('/api/working-times');
+        const workingTimesResponse = await fetch('/api/working-times', { signal: controller.signal });
         const workingTimes = await workingTimesResponse.json();
         console.log('Working Times:', workingTimes); // workingtime 데이터 출력 (디버깅용)
 
         // area_id로 workingarea 데이터를 조회하여 area_name을 가져옴
         const areaNames = await Promise.all(workingTimes.map(async (schedule) => {
-            
-            const response = await fetch(`/api/working-area/${schedule.area_id}`);
+            const response = await fetch(`/api/working-area/${schedule.area_id}`, { signal: controller.signal });
             const area = await response.json();
             return area.area_name;
         }));
 
 
         // foreman을 조회하여 user_id를 가져옴
-        const foremanResponse = await fetch('/api/foreman');
+        const foremanResponse = await fetch('/api/foreman', { signal: controller.signal });
         const foremanData = await foremanResponse.json();
         const foremanId = foremanData.user_id;
 
@@ -38,9 +49,9 @@ export async function renderScheduleSelectPage(container) {
         // 서버에서 스케줄 데이터 가져오기
         let response;
         if (userProfile.isAdmin === 'ADMIN') {
-            response = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+            response = await fetch('/api/schedule/all', { signal: controller.signal }); // 모든 스케줄 데이터 가져오기
         } else {
-            response = await fetch('/api/schedule/today');
+            response = await fetch('/api/schedule/today', { signal: controller.signal });
         }
 
         if (!response.ok) {
@@ -256,10 +267,16 @@ export async function renderScheduleSelectPage(container) {
             navigateTo('/schedule');
         });
     } catch (error) {
-        console.error('Error fetching user profile or working times:', error);
-        alert('사용자 정보 또는 스케줄을 가져오는데 실패했습니다.');
+        if (error.name === 'AbortError') {
+            console.log('Fetch aborted');
+        } else {
+            console.error('Error details:', error);
+            showErrorModal('사용자 정보 또는 스케줄을 가져오는데 실패했습니다.');
+        }
+    } finally {
+        isLoading = false;
     }
-}
+}, 0);
 
 function updateTime() {
     const currentTimeElem = document.querySelector('.time');
@@ -280,20 +297,24 @@ function updateTime() {
 
 updateTime();
 
-// 모달 표시 함수
+// 모달 표시 함수 수정
 function showModal(message) {
-    const modalContent = document.querySelector('.modal-content');
+    const modal = document.getElementById('modal');
+    const modalContent = modal.querySelector('.modal-content');
     modalContent.innerHTML = `
         <span class="close">&times;</span>
         <p>${message}</p>
     `;
     modal.style.display = 'block';
-    document.querySelector('.close').addEventListener('click', () => {
+    
+    const closeModal = () => {
         modal.style.display = 'none';
-    });
+    };
+
+    document.querySelector('.close').addEventListener('click', closeModal);
     window.addEventListener('click', (event) => {
         if (event.target == modal) {
-            modal.style.display = 'none';
+            closeModal();
         }
     });
 }

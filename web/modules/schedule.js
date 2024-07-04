@@ -2,15 +2,23 @@ import { renderNoticePage } from './notice.js';
 import { renderPreviousPage } from './previous.js';
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
+import debounce from 'lodash/debounce';
 
 // AbortController 인스턴스를 모듈 스코프에 선언
 let controller = new AbortController();
 
-export async function renderSchedulePage(container) {
+let isLoading = false;
+
+export const renderSchedulePage = debounce(async function(container) {
+    if (isLoading) return;
+    isLoading = true;
+
     try {
         // 이전 요청 취소
         controller.abort();
         controller = new AbortController();
+
+
 
         const userProfile = await fetchUserProfile(controller.signal);
         const noticeCount = await fetchNoticeCount(controller.signal);
@@ -296,12 +304,13 @@ export async function renderSchedulePage(container) {
         if (error.name === 'AbortError') {
             console.log('Fetch aborted');
         } else {
-            console.error('Error fetching user profile, notice count, or schedules:', error);
-            alert('사용자 정보, 공지사항 개수 또는 스케줄을 가져오는데 실패했습니다.');
-            navigateTo('/scheduleSelect');
+            console.error('Error details:', error);
+            container.innerHTML = '<div class="error">데이터를 가져오는데 실패했습니다. 다시 시도해주세요.</div>';
         }
+    } finally {
+        isLoading = false;
     }
-}
+}, 0);  // 300ms 디바운스 적용
 
 function updateTime() {
     const currentTimeElem = document.querySelector('.time');

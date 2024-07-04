@@ -1,22 +1,35 @@
 import { downloadExcel } from './xlsx.js';
-import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime } from './utils.js'; // 유틸 함수 임포트
+import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, showErrorModal } from './utils.js'; // 유틸 함수 임포트
 import { renderNoticeDetailPage } from './noticeDetail.js'; // noticeDetail 임포트
+import debounce from 'lodash/debounce';
 
-export async function renderNoticePage(container) {
+let isLoading = false;
+let controller = new AbortController();
+
+export const renderNoticePage = debounce(async function(container) {
+    if (isLoading) return;
+    isLoading = true;
+
     try {
-        const userProfile = await fetchUserProfile();
-        const noticeCount = await fetchNoticeCount();
+        // 이전 요청 취소
+        controller.abort();
+        controller = new AbortController();
+
+        // 로딩 인디케이터 표시
+
+        const userProfile = await fetchUserProfile(controller.signal);
+        const noticeCount = await fetchNoticeCount(controller.signal);
 
         // 서버에서 공지사항 데이터 가져오기
-        const response = await fetch('/api/notice-data');
+        const response = await fetch('/api/notice-data', { signal: controller.signal });
         let notices = await response.json();
 
         // 서버에서 스케줄 데이터 가져오기
         let scheduleResponse;
         if (userProfile.isAdmin === 'ADMIN') {
-            scheduleResponse = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+            scheduleResponse = await fetch('/api/schedule/all', { signal: controller.signal }); // 모든 스케줄 데이터 가져오기
         } else {
-            scheduleResponse = await fetch('/api/schedule');
+            scheduleResponse = await fetch('/api/schedule', { signal: controller.signal });
         }
 
         if (!scheduleResponse.ok) {
@@ -163,7 +176,13 @@ export async function renderNoticePage(container) {
             });
         });
     } catch (error) {
-        console.error('Error fetching user profile or notice count:', error);
-        alert('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
+        if (error.name === 'AbortError') {
+            console.log('Fetch aborted');
+        } else {
+            console.error('Error details:', error);
+            showErrorModal('사용자 정보 또는 공지사항 개수를 가져오는데 실패했습니다.');
+        }
+    } finally {
+        isLoading = false;
     }
-}
+}, 0);  // 300ms 디바운스 적용
