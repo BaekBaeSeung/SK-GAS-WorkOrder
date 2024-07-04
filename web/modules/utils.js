@@ -66,18 +66,13 @@ export function getCookie(name) {
 }
 
 // 사용자 프로필 정보를 서버에서 가져오는 함수
-export async function fetchUserProfile() {
+export async function fetchUserProfile(signal) {
     const accessToken = getCookie('accessToken');
     if (!accessToken) {
         throw new Error('로그인 토큰이 없습니다.');
     }
 
-    const response = await fetch('/api/user-profile', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    });
+    const response = await fetch('/api/user-profile', { signal });
     console.log(response);
 
     if (!response.ok) {
@@ -88,18 +83,13 @@ export async function fetchUserProfile() {
 }
 
 // 공지사항 개수를 서버에서 가져오는 함수
-export async function fetchNoticeCount() {
+export async function fetchNoticeCount(signal) {
     const accessToken = getCookie('accessToken');
     if (!accessToken) {
         throw new Error('로그인 토큰이 없습니다.');
     }
 
-    const response = await fetch('/api/notice-count', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    });
+    const response = await fetch('/api/notice-count', { signal });
 
     if (!response.ok) {
         throw new Error('공지사항 개수를 가져오는데 실패했습니다.');

@@ -3,19 +3,26 @@ import { renderPreviousPage } from './previous.js';
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
 
+// AbortController 인스턴스를 모듈 스코프에 선언
+let controller = new AbortController();
+
 export async function renderSchedulePage(container) {
     try {
-        const userProfile = await fetchUserProfile();
-        const noticeCount = await fetchNoticeCount();
+        // 이전 요청 취소
+        controller.abort();
+        controller = new AbortController();
+
+        const userProfile = await fetchUserProfile(controller.signal);
+        const noticeCount = await fetchNoticeCount(controller.signal);
         console.log('User Profile:', userProfile); // 사용자 프로필 정보 출력 (디버깅용)
         console.log('Notice Count:', noticeCount); // 공지사항 개수 출력 (디버깅용)
 
         // 서버에서 스케줄 데이터 가져오기
         let response;
         if (userProfile.isAdmin === 'ADMIN') {
-            response = await fetch('/api/schedule/all'); // 모든 스케줄 데이터 가져오기
+            response = await fetch('/api/schedule/all', { signal: controller.signal }); // 모든 스케줄 데이터 가져오기
         } else {
-            response = await fetch('/api/schedule');
+            response = await fetch('/api/schedule', { signal: controller.signal });
         }
 
         if (!response.ok) {
@@ -286,9 +293,13 @@ export async function renderSchedulePage(container) {
             navigateTo('/schedule');
         });
     } catch (error) {
-        console.error('Error fetching user profile, notice count, or schedules:', error);
-        alert('사용자 정보, 공지사항 개수 또는 스케줄을 가져오는데 실패했습니다.');
-        navigateTo('/scheduleSelect'); // 오류 발생 시 스케줄 선택 페이지로 이동
+        if (error.name === 'AbortError') {
+            console.log('Fetch aborted');
+        } else {
+            console.error('Error fetching user profile, notice count, or schedules:', error);
+            alert('사용자 정보, 공지사항 개수 또는 스케줄을 가져오는데 실패했습니다.');
+            navigateTo('/scheduleSelect');
+        }
     }
 }
 

@@ -228,7 +228,8 @@ app.post('/login', async (req, res) => {
             const user = rows[0];
 
             if (user.state !== '정상') {
-                return res.json({ success: false, message: '접근 거부. 관리자에게 문의하세요.' });
+                res.json({ success: false, message: '접근 거부. 관리자에게 문의하세요.' });
+                return;
             }
 
             const accessToken = generateAccessToken(user);
@@ -238,37 +239,41 @@ app.post('/login', async (req, res) => {
             res.cookie('refreshToken', refreshToken, { secure: true });
             res.cookie('userRole', user.role, { secure: true });
 
-            return res.json({ success: true, userRole: user.role, name: user.name });
+            res.json({ success: true, userRole: user.role, name: user.name });
         } else {
-            return res.json({ success: false, message: 'Invalid username or password' });
+            res.json({ success: false, message: 'Invalid username or password' });
         }
     } catch (err) {
         console.error("Error during login:", err);
-        return res.status(500).json({ success: false, message: 'Internal server error' });
+        if (!res.headersSent) {
+            res.status(500).json({ success: false, message: 'Internal server error' });
+        }
     }
 });
 
 app.post('/refreshToken', function (req, res) {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
-        return res.status(400).json({
+        res.status(400).json({
             error: true,
             message: "Refresh Token is required."
         });
+        return;
     }
 
     jwt.verify(refreshToken, REFRESH_SECRET, function (err, user) {
         if (err) {
-            return res.status(401).json({
+            res.status(401).json({
                 error: true,
                 message: "Invalid Refresh Token."
             });
+            return;
         }
 
         // generate new access token
         const accessToken = generateAccessToken(user);
         res.cookie('accessToken', accessToken, { httpOnly: true, secure: true });
-        return res.json({ accessToken });
+        res.json({ accessToken });
     });
 });
 
@@ -279,7 +284,8 @@ app.get('/api/user-profile', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
@@ -287,20 +293,19 @@ app.get('/api/user-profile', async (req, res) => {
         const connection = await conn;
         const rows = await connection.query("SELECT * FROM user WHERE user_id = ?", [decoded.userId]);
 
-        if (rows.length > 0) {
-            const user = rows[0];
-            res.json({
-                userId: user.user_id,
-                name: user.name,
-                username: user.team_name,
-                isAdmin: user.role,
-                profile_pic: user.profile_pic,
-            });
-        } else {
-            if (!res.headersSent) {
-                res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
-            }
+        if (rows.length === 0) {
+            res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+            return;
         }
+
+        const user = rows[0];
+        res.json({
+            userId: user.user_id,
+            name: user.name,
+            username: user.team_name,
+            isAdmin: user.role,
+            profile_pic: user.profile_pic,
+        });
     } catch (err) {
         console.error("Error fetching user profile:", err);
         if (!res.headersSent) {
@@ -316,7 +321,6 @@ async function fetchNoticeData() {
     try {
         const connection = await conn;
         const rows = await connection.query("SELECT * FROM notice");
-        
         return rows;
     } catch (err) {
         console.error("Failed to fetch data:", err);
@@ -328,15 +332,16 @@ app.get('/api/notice-data', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
 
-        const connection = await conn;
-        const notices = await connection.query("SELECT * FROM notice");
+        const notices = await fetchNoticeData(); // fetchNoticeData 함수 사용
 
+        const connection = await conn;
         // 각 공지사항에 대해 사용자가 읽었는지 여부를 확인
         for (let notice of notices) {
             const [readRecord] = await connection.query(
@@ -346,7 +351,7 @@ app.get('/api/notice-data', async (req, res) => {
             notice.isNew = !readRecord; // 읽은 기록이 없으면 새로운 공지사항
         }
 
-        return res.json(notices);
+        res.json(notices);
     } catch (err) {
         console.error("Error fetching notice data:", err);
         if (!res.headersSent) {
@@ -354,7 +359,6 @@ app.get('/api/notice-data', async (req, res) => {
         }
     }
 });
-fetchNoticeData();
 
 //=================================================================
 // Notice Count Endpoint
@@ -364,18 +368,19 @@ app.get('/api/notice-count', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
+        jwt.verify(token, JWT_SECRET); // 토큰 검증만 수행
 
         const connection = await conn;
         const [result] = await connection.query("SELECT COUNT(*) as count FROM notice");
 
         // BigInt 값을 문자열로 변환
         const count = result.count.toString();
-        return res.json({ count });
+        res.json({ count });
     } catch (err) {
         console.error("Error fetching notice count:", err);
         if (!res.headersSent) {
@@ -391,13 +396,13 @@ app.get('/api/schedule', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET); // 토큰 검증
         
-
         const connection = await conn;
         const query = `
             SELECT * FROM schedule 
@@ -405,11 +410,12 @@ app.get('/api/schedule', async (req, res) => {
         `;
         const results = await connection.query(query, [decoded.userId]);
         
-
         res.json(results);
     } catch (err) {
         console.error("Error fetching schedule data:", err);
-        res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -420,7 +426,8 @@ app.get('/api/schedule/today', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
@@ -441,7 +448,9 @@ app.get('/api/schedule/today', async (req, res) => {
         res.json(results);
     } catch (err) {
         console.error("Error fetching today's schedule data:", err);
-        res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -452,7 +461,8 @@ app.get('/api/schedule/all', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
@@ -473,10 +483,14 @@ app.get('/api/schedule/all', async (req, res) => {
         }
         
 
-        res.json(results);
+        if (!res.headersSent) {
+            res.json(results);
+        }
     } catch (err) {
         console.error("Error fetching all schedule data:", err);
-        res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 
@@ -485,10 +499,20 @@ app.get('/api/schedule/all', async (req, res) => {
 //=================================================================
 
 app.post('/logout', (req, res) => {
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-    res.clearCookie('userRole');
-    res.json({ success: true, message: '로그아웃 되었습니다.' });
+    try {
+        res.clearCookie('accessToken', { httpOnly: true, secure: true, sameSite: 'strict' });
+        res.clearCookie('refreshToken', { httpOnly: true, secure: true, sameSite: 'strict' });
+        res.clearCookie('userRole', { httpOnly: true, secure: true, sameSite: 'strict' });
+        
+        if (!res.headersSent) {
+            res.json({ success: true, message: '로그아웃 되었습니다.' });
+        }
+    } catch (err) {
+        console.error("Error during logout:", err);
+        if (!res.headersSent) {
+            res.status(500).json({ success: false, message: '로그아웃 중 오류가 발생했습니다.' });
+        }
+    }
 });
 
 //=================================================================
@@ -498,7 +522,8 @@ app.get('/api/notice-data/:noticeId', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
@@ -509,11 +534,9 @@ app.get('/api/notice-data/:noticeId', async (req, res) => {
         const [notice] = await connection.query("SELECT * FROM notice WHERE notice_id = ?", [noticeId]);
 
         if (notice) {
-            return res.json(notice);
+            res.json(notice);
         } else {
-            if (!res.headersSent) {
-                res.status(404).json({ message: '공지사항을 찾을 수 없습니다.' });
-            }
+            res.status(404).json({ message: '공지사항을 찾을 수 없습니다.' });
         }
     } catch (err) {
         console.error("Error fetching notice detail:", err);
@@ -530,7 +553,8 @@ app.post('/api/notice', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
@@ -549,7 +573,7 @@ app.post('/api/notice', async (req, res) => {
         `;
         await connection.query(query, [noticeId, userId, content, createAt, updatedAt, importance]);
 
-        return res.json({ success: true, message: '공지사항이 성공적으로 저장되었습니다.' });
+        res.json({ success: true, message: '공지사항이 성공적으로 저장되었습니다.' });
     } catch (err) {
         console.error("Error saving notice:", err);
         if (!res.headersSent) {
@@ -565,7 +589,8 @@ app.post('/api/notice-read', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
@@ -583,7 +608,7 @@ app.post('/api/notice-read', async (req, res) => {
         `;
         await connection.query(query, [noticeReadId, userId, noticeId, readAt]);
 
-        return res.json({ success: true, message: 'Notice read record successfully inserted.' });
+        res.json({ success: true, message: 'Notice read record successfully inserted.' });
     } catch (err) {
         console.error("Error inserting notice read record:", err);
         if (!res.headersSent) {
@@ -599,7 +624,8 @@ app.get('/api/sections-by-area/:areaName', async (req, res) => {
     const token = req.cookies.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: '토큰이 없습니다.' });
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
     }
 
     try {
@@ -610,22 +636,21 @@ app.get('/api/sections-by-area/:areaName', async (req, res) => {
         const connection = await conn;
 
         // WorkingArea 테이블에서 area_name으로 area_id 조회
-        const workingArea = await connection.query("SELECT area_id FROM WorkingArea WHERE area_name = ?", areaName);
+        const [workingArea] = await connection.query("SELECT area_id FROM WorkingArea WHERE area_name = ?", [areaName]);
         
 
-        if (!workingArea || workingArea.length === 0) {
-            if (!res.headersSent) {
-                return res.status(404).json({ message: '해당 지역을 찾을 수 없습니다.' });
-            }
+        if (!workingArea) {
+            res.status(404).json({ message: '해당 지역을 찾을 수 없습니다.' });
+            return;
         }
 
-        const areaId = workingArea[0].area_id;
+        const areaId = workingArea.area_id;
     
 
         const sections = await connection.query("SELECT * FROM Section WHERE area_id = ?", [areaId]);
         
 
-        return res.json(sections);
+        res.json(sections);
     } catch (err) {
         console.error("Error fetching sections by area name:", err);
         if (!res.headersSent) {
@@ -639,14 +664,26 @@ app.get('/api/sections-by-area/:areaName', async (req, res) => {
 //=================================================================
 app.get('/api/subsections/:sectionId', async (req, res) => {
     const { sectionId } = req.params;
+
+    // 토큰 검증 (필요한 경우)
+    const token = req.cookies.accessToken;
+    if (!token) {
+        res.status(401).json({ message: '토큰이 없습니다.' });
+        return;
+    }
+
     try {
+        jwt.verify(token, JWT_SECRET); // 토큰 검증
+
         const connection = await conn;
         const rows = await connection.query('SELECT * FROM SubSection WHERE section_id = ?', [sectionId]);
 
-        return res.json(rows);
+        res.json(rows);
     } catch (error) {
         console.error('Error fetching subsections:', error);
-        if (!res.headersSent) {
+        if (error instanceof jwt.JsonWebTokenError) {
+            res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
+        } else if (!res.headersSent) {
             res.status(500).json({ error: 'Internal server error' });
         }
     }
@@ -658,6 +695,12 @@ app.get('/api/subsections/:sectionId', async (req, res) => {
 app.get('/api/working-time', async (req, res) => {
     const { time, area_name } = req.query;
 
+    // 입력 유효성 검사
+    if (!time || !area_name) {
+        res.status(400).json({ message: '시간과 지역 이름이 필요합니다.' });
+        return;
+    }
+
     try {
         const connection = await conn;
         const query = `
@@ -668,7 +711,7 @@ app.get('/api/working-time', async (req, res) => {
         `;
         const results = await connection.query(query, [time, area_name]);
 
-        return res.json(results);
+        res.json(results);
     } catch (err) {
         console.error('Error fetching working time data:', err);
         if (!res.headersSent) {
@@ -683,8 +726,16 @@ app.get('/api/working-time', async (req, res) => {
 app.post('/api/insertWorkingDetail', async (req, res) => {
     const { work_time_id, value, create_at, section, user_id, time, schedule_type } = req.body;
 
+    // 입력 유효성 검사
+    if (!work_time_id || !value || !create_at || !section || !user_id || !time || !schedule_type) {
+        res.status(400).json({ message: '모든 필드를 입력해주세요.' });
+        return;
+    }
+
+    let connection;
     try {
-        const connection = await conn;
+        connection = await conn;
+        await connection.beginTransaction(); // 트랜잭션 시작
 
         // create_at 값을 MariaDB에서 인식할 수 있는 형식으로 변환
         const formattedCreateAt = new Date(create_at).toISOString().slice(0, 19).replace('T', ' ');
@@ -698,12 +749,18 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
         `;
         await connection.query(query, [work_time_id, value, formattedCreateAt, section, user_id, formattedTime, schedule_type]);
 
-        return res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
+        await connection.commit(); // 트랜잭션 커밋
+
+        res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
     } catch (err) {
+        if (connection) await connection.rollback(); // 오류 발생 시 롤백
+
         console.error('Error inserting working detail:', err);
         if (!res.headersSent) {
             res.status(500).json({ message: '서버 오류' });
         }
+    } finally {
+        if (connection) connection.release(); // 연결 풀에 연결 반환
     }
 });
 
@@ -712,12 +769,17 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
 //=================================================================
 app.get('/api/working-detail', async (req, res) => {
     const { section, user_id, time, schedule_type, date, isAdmin } = req.query;
-    const currentDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD 형식으로 현재 날짜
-    const [year, month, day] = date.split('. ').map(part => part.trim());
-    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    
+
+    // 입력 유효성 검사
+    if (!section || !time || !schedule_type || !date) {
+        res.status(400).json({ message: '필수 파라미터가 누락되었습니다.' });
+        return;
+    }
 
     try {
+        const [year, month, day] = date.split('. ').map(part => part.trim());
+        const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
         const connection = await conn;
         let query;
         let queryParams;
@@ -732,6 +794,10 @@ app.get('/api/working-detail', async (req, res) => {
             `;
             queryParams = [formattedDate, section, time, schedule_type];
         } else {
+            if (!user_id) {
+                res.status(400).json({ message: 'user_id가 필요합니다.' });
+                return;
+            }
             query = `
                 SELECT * FROM WorkingDetail
                 WHERE DATE(create_at) = ?
@@ -746,17 +812,13 @@ app.get('/api/working-detail', async (req, res) => {
         const results = await connection.query(query, queryParams);
 
         if (results.length > 0) {
-            return res.json(results[0]);
+            res.json(results[0]);
         } else {
-            if (!res.headersSent) {
-                res.status(404).json({ message: '일치하는 데이터가 없습니다.' });
-            }
+            res.status(404).json({ message: '일치하는 데이터가 없습니다.' });
         }
     } catch (err) {
         console.error('Error fetching working detail:', err);
-        if (!res.headersSent) {
-            res.status(500).json({ message: '서버 오류' });
-        }
+        res.status(500).json({ message: '서버 오류' });
     }
 });
 
@@ -774,21 +836,25 @@ app.put('/api/updateWorkingDetail', async (req, res) => {
             SET value = ?, section = ?, user_id = ?, time = ?, schedule_type = ?
             WHERE working_detail_id = ?
         `;
-        await connection.query(query, [value, section, user_id, time, schedule_type, working_detail_id]);
+        const result = await connection.query(query, [value, section, user_id, time, schedule_type, working_detail_id]);
 
-        return res.json({ success: true, message: '데이터가 성공적으로 업데이트되었습니다.' });
+        if (result.affectedRows > 0) {
+            res.json({ success: true, message: '데이터가 성공적으로 업데이트되었습니다.' });
+        } else {
+            res.status(404).json({ success: false, message: '업데이트할 데이터를 찾을 수 없습니다.' });
+        }
     } catch (err) {
         console.error('Error updating working detail:', err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ success: false, message: '서버 오류' });
+        }
     }
 });
-
 //=================================================================
 // Schedule Details Endpoint
 //=================================================================
 app.get('/api/schedule-details', async (req, res) => {
     const { area_name, schedule_type, time, sections, user_id, date, isAdmin } = req.query;
-
 
     // date 변수를 YYYY-MM-DD 형식으로 변환
     const [year, month, day] = date.split('. ').map(part => part.trim());
@@ -801,7 +867,8 @@ app.get('/api/schedule-details', async (req, res) => {
         const areaQuery = 'SELECT area_id FROM WorkingArea WHERE area_name = ?';
         const [areaResult] = await connection.query(areaQuery, [area_name]);
         if (!areaResult) {
-            return res.status(404).json({ message: 'Area not found' });
+            res.status(404).json({ message: 'Area not found' });
+            return;
         }
         const areaId = areaResult.area_id;
 
@@ -813,7 +880,8 @@ app.get('/api/schedule-details', async (req, res) => {
         `;
         const [timeResult] = await connection.query(timeQuery, [areaId, schedule_type, time]);
         if (!timeResult) {
-            return res.status(404).json({ message: 'Working time not found' });
+            res.status(404).json({ message: 'Working time not found' });
+            return;
         }
         const workTimeId = timeResult.work_time_id;
 
@@ -837,20 +905,22 @@ app.get('/api/schedule-details', async (req, res) => {
 
         const detailResults = await connection.query(detailQuery, queryParams);
         if (detailResults.length === 0) {
-            return res.status(404).json({ message: 'Working detail not found' });
+            res.status(404).json({ message: 'Working detail not found' });
+            return;
         }
 
-        return res.json({
+        res.json({
             areaId,
             workTimeId,
             details: detailResults
         });
     } catch (err) {
         console.error('Error fetching schedule details:', err);
-        return res.status(500).json({ message: 'Server error' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: 'Server error' });
+        }
     }
 });
-
 //=================================================================
 // WorkingTime 데이터 조회 엔드포인트 (모든 행 반환)
 //=================================================================
@@ -858,7 +928,7 @@ app.get('/api/working-times', async (req, res) => {
     try {
         const connection = await conn;
         const results = await connection.query("SELECT * FROM WorkingTime");
-        return res.json(results);
+        res.json(results);
     } catch (err) {
         console.error('Error fetching working times:', err);
         if (!res.headersSent) {
@@ -875,11 +945,9 @@ app.get('/api/working-area/:area_id', async (req, res) => {
         const connection = await conn;
         const [result] = await connection.query("SELECT * FROM WorkingArea WHERE area_id = ?", [area_id]);
         if (result) {
-            return res.json(result);
+            res.json(result);
         } else {
-            if (!res.headersSent) {
-                res.status(404).json({ message: 'Area not found' });
-            }
+            res.status(404).json({ message: 'Area not found' });
         }
     } catch (err) {
         console.error('Error fetching working area:', err);
@@ -910,15 +978,14 @@ app.post('/api/insert-schedule', async (req, res) => {
         `;
         await connection.query(query, [area_name, section, schedule_type, time, formattedCreateAt, user_id, foreman, worker]);
 
-        return res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
+        res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
     } catch (err) {
         console.error('Error inserting schedule:', err);
         if (!res.headersSent) {
-            res.status(500).json({ message: '서버 오류' });
+            res.status(500).json({ success: false, message: '서버 오류' });
         }
     }
 });
-
 //=================================================================
 // Foreman 데이터 조회 엔드포인트
 //=================================================================
@@ -927,15 +994,15 @@ app.get('/api/foreman', async (req, res) => {
         const connection = await conn;
         const [result] = await connection.query("SELECT user_id FROM User WHERE role = 'ADMIN' LIMIT 1");
         if (result) {
-            return res.json(result);
+            res.json(result);
         } else {
-            if (!res.headersSent) {
-                res.status(404).json({ message: 'Foreman  not found' });
-            }
+            res.status(404).json({ message: 'Foreman not found' });
         }
     } catch (err) {
         console.error('Error fetching foreman:', err);
-        return res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
 startServer();
