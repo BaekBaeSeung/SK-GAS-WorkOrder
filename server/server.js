@@ -921,6 +921,8 @@ app.get('/api/schedule-details', async (req, res) => {
         }
     }
 });
+
+
 //=================================================================
 // WorkingTime 데이터 조회 엔드포인트 (모든 행 반환)
 //=================================================================
@@ -1005,6 +1007,27 @@ app.get('/api/foreman', async (req, res) => {
         }
     }
 });
+//=================================================================
+// 모든 섹션 조회 엔드포인트
+//=================================================================
+app.get('/api/all-sections', async (req, res) => {
+    try {
+        const connection = await conn;
+        const query = 'SELECT DISTINCT section FROM Section';
+        const results = await connection.query(query);
+        console.log('Results:', results);
+        const sections = results;
+        res.json(sections);
+        console.log('Sections:', sections);
+    } catch (error) {
+        console.error('Error fetching all sections:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+
 startServer();
+
 
 

@@ -57,6 +57,8 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
             
             if (detailsResponse.ok) {
                 detailsData = await detailsResponse.json();
+                // 여기에 scheduleDetails를 로컬 스토리지에 저장하는 코드 추가
+                localStorage.setItem('scheduleDetails', JSON.stringify(detailsData.details));
             } else if (detailsResponse.status === 404) {
                 console.warn('No working details found.');
             } else {
@@ -195,10 +197,10 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
                 if (incompleteTasksExist) {
                     const confirmDownload = await showConfirmModal('누락된 데이터가 있습니다. 그래도 다운로드 받으시겠습니까?');
                     if (confirmDownload) {
-                        await downloadExcel();
+                        await downloadExcel(scheduleData, details);
                     }
                 } else {
-                    await downloadExcel();
+                    await downloadExcel(scheduleData, details);
                 }
             });
         }
