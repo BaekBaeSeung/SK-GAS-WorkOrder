@@ -10,6 +10,7 @@
 //=================================================================
 // Import Renderer, Component
 //=================================================================
+
 import { renderLoadingPage } from './loading.js';
 import { renderLoginPage } from './login.js'; // login.js 파일에서 로그인 페이지 정의
 import { renderSchedulePage } from './schedule.js'; // schedule.js 파일에서 스케줄 페이지 정의
@@ -157,7 +158,7 @@ function loadPage(path, state = {}) {
         applyFadeEffect(app);
 
         // 모달 표시 여부 확인
-        if (state.showModal) {
+        if (state.showModal && path !== '/login') { // 로그인 페이지가 아닌 경우에만 모달 표시
             showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.');
         }
     }, 250); // 페이드 아웃을 위한 짧은 지연
@@ -278,4 +279,8 @@ style.innerHTML = `
     }
 `;
 document.head.appendChild(style);
+
+
+
+
 
