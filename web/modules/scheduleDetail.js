@@ -1,5 +1,6 @@
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, showErrorModal } from './utils.js'; // 유틸 함수 임포트
 import debounce from 'lodash/debounce';
+import { downloadExcel } from './xlsx.js';
 
 let isLoading = false;
 let controller = new AbortController();
@@ -110,6 +111,7 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
                     </div>
                 </div>
             </div>
+            ${userProfile.isAdmin === 'ADMIN' ? '<button id="download-excel"><img src="/assets/img/common/xls_pic.png" alt="엑셀 다운로드" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></button>' : ''}
             <div id="modal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
@@ -185,6 +187,21 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
         document.getElementById('logo').addEventListener('click', () => {
             navigateTo('/schedule');
         });
+
+        if (userProfile.isAdmin === 'ADMIN') {
+            document.getElementById('download-excel').addEventListener('click', async () => {
+                const incompleteTasksExist = document.querySelectorAll('.task-number:not(.input-active)').length > 0;
+                
+                if (incompleteTasksExist) {
+                    const confirmDownload = await showConfirmModal('누락된 데이터가 있습니다. 그래도 다운로드 받으시겠습니까?');
+                    if (confirmDownload) {
+                        await downloadExcel();
+                    }
+                } else {
+                    await downloadExcel();
+                }
+            });
+        }
     } catch (error) {
         if (error.name === 'AbortError') {
             console.log('Fetch aborted');
@@ -217,3 +234,28 @@ function updateTime() {
 }
 
 updateTime();
+
+function showConfirmModal(message) {
+    return new Promise((resolve) => {
+        const modal = document.createElement('div');
+        modal.className = 'confirm-modal';
+        modal.innerHTML = `
+            <div class="confirm-modal-content">
+                <p>${message}</p>
+                <button id="confirm-yes">확인</button>
+                <button id="confirm-no">취소</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        document.getElementById('confirm-yes').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            resolve(true);
+        });
+
+        document.getElementById('confirm-no').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            resolve(false);
+        });
+    });
+}

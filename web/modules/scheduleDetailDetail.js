@@ -16,7 +16,7 @@ function showModal(message, onConfirm) {
 
     const closeModal = () => {
         modal.style.display = 'none';
-        navigateTo('/scheduleDetail'); // 모달을 닫을 때 스케줄 디테일 페이지로 이동
+        navigateTo('/scheduleDetail'); // 모달을 닫을 때마다 스케줄 디테일 페이지로 이동
     };
 
     const closeModalButton = document.querySelector('.close');
@@ -27,9 +27,16 @@ function showModal(message, onConfirm) {
         confirmButton.addEventListener('click', () => {
             modal.style.display = 'none';
             onConfirm();
-            navigateTo('/scheduleDetail'); // 확인 버튼을 클릭할 때 스케줄 디테일 페이지로 이동
+            navigateTo('/scheduleDetail'); // 확인 버튼을 클릭할 때도 스케줄 디테일 페이지로 이동
         });
     }
+
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            closeModal();
+        }
+    });
 }
 
 export const renderScheduleDetailDetailPage = debounce(async function(container, sectionId) {
@@ -172,7 +179,13 @@ export const renderScheduleDetailDetailPage = debounce(async function(container,
         // 제출 버튼 이벤트 리스너 추가
         const submitButton = document.getElementById('submit-button');
         if (submitButton) {
+            let isSubmitting = false; // 제출 중인지 확인하는 플래그
+
             submitButton.addEventListener('click', async () => {
+                if (isSubmitting) return; // 이미 제출 중이면 추가 제출 방지
+                isSubmitting = true; // 제출 시작
+                submitButton.disabled = true; // 버튼 비활성화
+
                 const inputFields = document.querySelectorAll('.input-field');
                 const emptyFields = [];
                 const inputValues = [];
@@ -203,6 +216,15 @@ export const renderScheduleDetailDetailPage = debounce(async function(container,
                     const closeModal = document.querySelector('.close');
                     closeModal.addEventListener('click', () => {
                         modal.style.display = 'none';
+                        navigateTo('/scheduleDetail'); // 스케줄 디테일 페이지로 이동
+                    });
+
+                    // 모달 외부 클릭 시 닫기
+                    window.addEventListener('click', (event) => {
+                        if (event.target == modal) {
+                            modal.style.display = 'none';
+                            navigateTo('/scheduleDetail'); // 스케줄 디테일 페이지로 이동
+                        }
                     });
                 } else {
                     const value = inputValues.join(',');
@@ -232,6 +254,9 @@ export const renderScheduleDetailDetailPage = debounce(async function(container,
                             } catch (error) {
                                 console.error('Error updating data:', error);
                                 showModal('데이터 수정 중 오류가 발생했습니다.');
+                            } finally {
+                                isSubmitting = false; // 제출 완료
+                                submitButton.disabled = false; // 버튼 활성화
                             }
                         });
                     } else {
@@ -259,9 +284,31 @@ export const renderScheduleDetailDetailPage = debounce(async function(container,
                         } catch (error) {
                             console.error('Error submitting data:', error);
                             showModal('데이터 제출 중 오류가 발생했습니다.');
+                        } finally {
+                            isSubmitting = false; // 제출 완료
+                            submitButton.disabled = false; // 버튼 활성화
                         }
                     }
                 }
+
+                // 모달이 닫힐 때 제출 상태 초기화
+                const resetSubmitState = () => {
+                    isSubmitting = false;
+                    submitButton.disabled = false;
+                };
+
+                const modal = document.getElementById('modal');
+                const closeModal = document.querySelector('.close');
+                
+                if (closeModal) {
+                    closeModal.addEventListener('click', resetSubmitState);
+                }
+
+                window.addEventListener('click', (event) => {
+                    if (event.target == modal) {
+                        resetSubmitState();
+                    }
+                });
             });
         }
 
