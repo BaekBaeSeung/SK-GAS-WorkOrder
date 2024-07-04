@@ -52,32 +52,57 @@ function updateTime() {
 
 updateTime();
 
+    let isSubmitting = false; // 제출 중인지 확인하는 플래그
+
     document.getElementById('loginForm').addEventListener('submit', async (event) => {
         event.preventDefault();
+        if (isSubmitting) return; // 이미 제출 중이면 추가 제출 방지
+        isSubmitting = true; // 제출 시작
+
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
+        const form = event.target;
+        const submitButton = form.querySelector('button[type="submit"]');
 
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
+        // 폼과 제출 버튼 비활성화
+        form.disabled = true;
+        submitButton.disabled = true;
 
-        const result = await response.json();
-        if (result.success) {
-            showModal(`안녕하세요! ${result.name}계정으로 로그인 했습니다!<br><span id="countdown">3</span>&nbsp;초 뒤에 이동합니다.`, () => {
-                window.navigateTo('/schedule'); // 로그인 성공 시 스케줄 페이지로 이동
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
             });
-            document.cookie = `accessToken=${result.accessToken}; path=/; secure; HttpOnly`;
-            document.cookie = `refreshToken=${result.refreshToken}; path=/; secure; HttpOnly`;
-            document.cookie = `userRole=${result.userRole}; path=/; secure; HttpOnly`;
-        } else {
-            showModal('로그인 실패, 계정을 확인해주세요.');
+
+            const result = await response.json();
+            if (result.success) {
+                showModal(`안녕하세요! ${result.name}계정으로 로그인 했습니다!<br><span id="countdown">3</span>&nbsp;초 뒤에 이동합니다.`, () => {
+                    window.navigateTo('/schedule'); // 로그인 성공 시 스케줄 페이지로 이동
+                });
+                document.cookie = `accessToken=${result.accessToken}; path=/; secure; HttpOnly`;
+                document.cookie = `refreshToken=${result.refreshToken}; path=/; secure; HttpOnly`;
+                document.cookie = `userRole=${result.userRole}; path=/; secure; HttpOnly`;
+            } else {
+                showModal('로그인 실패, 계정을 확인해주세요.');
+                // 로그인 실패 시 폼과 버튼 다시 활성화
+                form.disabled = false;
+                submitButton.disabled = false;
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showModal('로그인 중 오류가 발생했습니다. 다시 시도해 주세요.');
+            // 오류 발생 시 폼과 버튼 다시 활성화
+            form.disabled = false;
+            submitButton.disabled = false;
+        } finally {
+            isSubmitting = false; // 제출 종료
         }
     });
-}
+
+    
 
 function showModal(message, onConfirm) {
     const modal = document.createElement('div');
@@ -124,3 +149,4 @@ function showModal(message, onConfirm) {
         }, 1000);
     }
 }
+};

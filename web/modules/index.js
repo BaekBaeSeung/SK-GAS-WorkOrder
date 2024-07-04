@@ -83,8 +83,7 @@ function loadPage(path, state = {}) {
 
         // 로그인 상태에서 로그인 페이지로 접근 시도 시
         if (path === '/login' && accessToken) {
-            showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.');
-            navigateTo('/schedule'); // 로그인 상태라면 스케줄 페이지로 리다이렉트
+            navigateTo('/schedule', { showModal: true });
             return;
         }
 
@@ -156,6 +155,11 @@ function loadPage(path, state = {}) {
 
         // 페이드인 효과 적용
         applyFadeEffect(app);
+
+        // 모달 표시 여부 확인
+        if (state.showModal) {
+            showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.');
+        }
     }, 250); // 페이드 아웃을 위한 짧은 지연
 }
 
@@ -233,8 +237,8 @@ style.innerHTML = `
         z-index: 1001;
         left: 0;
         top: 0;
-        width: 10lvh;
-        height: 10lvh;
+        width: 100%;
+        height: 100%;
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.5);
         justify-content: center;
@@ -246,8 +250,9 @@ style.innerHTML = `
         margin: auto;
         padding: 20px;
         border: 1px solid #888;
-        width: 15lvh; /* 너비를 자동으로 조정 */
-        border-radius: 10px;
+        width: 80%;
+        max-width: 25rem; /* 최대 너비를 rem 단위로 설정 */
+        border-radius: 0.625rem; /* 모서리 반경을 rem 단위로 설정 */
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         animation: slideIn 0.3s;
     }
@@ -273,3 +278,4 @@ style.innerHTML = `
     }
 `;
 document.head.appendChild(style);
+
