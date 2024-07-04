@@ -69,10 +69,25 @@ export const renderSchedulePage = debounce(async function(container) {
             return scheduleDateString !== todayDateString;
         });
 
+        // 중복 제거 및 카운트
+        const uniquePreviousSchedules = previousSchedules.reduce((acc, schedule) => {
+            const scheduleDate = new Date(schedule.create_at);
+            const scheduleDateString = `${scheduleDate.getFullYear()}-${String(scheduleDate.getMonth() + 1).padStart(2, '0')}-${String(scheduleDate.getDate()).padStart(2, '0')}`;
+            if (!acc.some(item => {
+                const itemDate = new Date(item.create_at);
+                const itemDateString = `${itemDate.getFullYear()}-${String(itemDate.getMonth() + 1).padStart(2, '0')}-${String(itemDate.getDate()).padStart(2, '0')}`;
+                return item.time === schedule.time && itemDateString === scheduleDateString;
+            })) {
+                acc.push(schedule);
+            }
+            return acc;
+        }, []);
+
         // 이전 점검 기록 카드 스택 생성
         let previousRecordsHTML = '';
-        for (let i = 0; i < Math.min(previousSchedules.length, 3); i++) {
-            const recordCount = previousSchedules.length < 10 ? `0${previousSchedules.length}` : previousSchedules.length;
+        const uniquePreviousSchedulesCount = uniquePreviousSchedules.length;
+        for (let i = 0; i < Math.min(uniquePreviousSchedulesCount, 3); i++) {
+            const recordCount = uniquePreviousSchedulesCount < 10 ? `0${uniquePreviousSchedulesCount}` : uniquePreviousSchedulesCount;
             previousRecordsHTML += `
                 <div class="previous-records" id="previous-records-${i + 1}">
                     <p>이전 점검 기록 [${recordCount}]</p>
