@@ -723,8 +723,12 @@ app.get('/api/working-time', async (req, res) => {
 //=================================================================
 // WorkingDetail 데이터 인서트 엔드포인트
 //=================================================================
+// 서버의 시간대를 한국 시간으로 설정
+process.env.TZ = 'Asia/Seoul';
+
 app.post('/api/insertWorkingDetail', async (req, res) => {
     const { work_time_id, value, create_at, section, user_id, time, schedule_type } = req.body;
+
 
     // 입력 유효성 검사
     if (!work_time_id || !value || !create_at || !section || !user_id || !time || !schedule_type) {
@@ -732,13 +736,12 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
         return;
     }
 
-    let connection;
     try {
-        connection = await conn;
-        await connection.beginTransaction(); // 트랜잭션 시작
-
+        const connection = await conn;
+        
         // create_at 값을 MariaDB에서 인식할 수 있는 형식으로 변환
-        const formattedCreateAt = new Date(create_at).toISOString().slice(0, 19).replace('T', ' ');
+        const date = new Date(create_at);
+        const formattedCreateAt = date.toISOString().slice(0, 19).replace('T', ' ');
 
         // time 값을 HH:MM 형식으로 포맷팅
         const formattedTime = time.slice(0, 5);
@@ -749,79 +752,72 @@ app.post('/api/insertWorkingDetail', async (req, res) => {
         `;
         await connection.query(query, [work_time_id, value, formattedCreateAt, section, user_id, formattedTime, schedule_type]);
 
-        await connection.commit(); // 트랜잭션 커밋
-
         res.json({ success: true, message: '데이터가 성공적으로 저장되었습니다.' });
     } catch (err) {
-        if (connection) await connection.rollback(); // 오류 발생 시 롤백
-
         console.error('Error inserting working detail:', err);
         if (!res.headersSent) {
             res.status(500).json({ message: '서버 오류' });
         }
-    } finally {
-        if (connection) connection.release(); // 연결 풀에 연결 반환
     }
 });
-
 //=================================================================
 // WorkingDetail 데이터 조회 엔드포인트
 //=================================================================
 app.get('/api/working-detail', async (req, res) => {
     const { section, user_id, time, schedule_type, date, isAdmin } = req.query;
+    const decodedSection = decodeURIComponent(section);
 
-    // 입력 유효성 검사
-    if (!section || !time || !schedule_type || !date) {
-        res.status(400).json({ message: '필수 파라미터가 누락되었습니다.' });
-        return;
-    }
-
+    const [year, month, day] = date.split('. ').map(part => part.trim());
+    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    
     try {
-        const [year, month, day] = date.split('. ').map(part => part.trim());
-        const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
         const connection = await conn;
         let query;
         let queryParams;
 
         if (isAdmin === 'ADMIN') {
             query = `
-                SELECT * FROM WorkingDetail
-                WHERE DATE(create_at) = ?
+                SELECT *, CONVERT_TZ(create_at, '+00:00', '+09:00') as korea_time 
+                FROM WorkingDetail
+                WHERE DATE(CONVERT_TZ(create_at, '+00:00', '+09:00')) = ?
                 AND section = ?
                 AND time = ?
                 AND schedule_type = ?
             `;
-            queryParams = [formattedDate, section, time, schedule_type];
+            queryParams = [formattedDate, decodedSection, time, schedule_type];
         } else {
-            if (!user_id) {
-                res.status(400).json({ message: 'user_id가 필요합니다.' });
-                return;
-            }
             query = `
-                SELECT * FROM WorkingDetail
-                WHERE DATE(create_at) = ?
+                SELECT *, CONVERT_TZ(create_at, '+00:00', '+09:00') as korea_time 
+                FROM WorkingDetail
+                WHERE DATE(CONVERT_TZ(create_at, '+00:00', '+09:00')) = ?
                 AND section = ?
                 AND user_id = ?
                 AND time = ?
                 AND schedule_type = ?
             `;
-            queryParams = [formattedDate, section, user_id, time, schedule_type];
+            queryParams = [formattedDate, decodedSection, user_id, time, schedule_type];
         }
 
         const results = await connection.query(query, queryParams);
 
         if (results.length > 0) {
-            res.json(results[0]);
+            // 한국 시간으로 변환된 결과를 반환
+            const result = results[0];
+            result.create_at = result.korea_time;
+            delete result.korea_time;
+            return res.json(result);
         } else {
-            res.status(404).json({ message: '일치하는 데이터가 없습니다.' });
+            if (!res.headersSent) {
+                res.status(404).json({ message: '일치하는 데이터가 없습니다.' });
+            }
         }
     } catch (err) {
         console.error('Error fetching working detail:', err);
-        res.status(500).json({ message: '서버 오류' });
+        if (!res.headersSent) {
+            res.status(500).json({ message: '서버 오류' });
+        }
     }
 });
-
 //=================================================================
 // WorkingDetail 데이터 업데이트 엔드포인트
 //=================================================================
@@ -856,9 +852,18 @@ app.put('/api/updateWorkingDetail', async (req, res) => {
 app.get('/api/schedule-details', async (req, res) => {
     const { area_name, schedule_type, time, sections, user_id, date, isAdmin } = req.query;
 
-    // date 변수를 YYYY-MM-DD 형식으로 변환
-    const [year, month, day] = date.split('. ').map(part => part.trim());
-    const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    let formattedDate;
+    if (date) {
+        try {
+            const [year, month, day] = date.split('. ').map(part => part.trim());
+            formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        } catch (error) {
+            console.error("Error formatting date:", error);
+            formattedDate = new Date().toISOString().split('T')[0];  // 오늘 날짜를 기본값으로 사용
+        }
+    } else {
+        formattedDate = new Date().toISOString().split('T')[0];  // 오늘 날짜를 기본값으로 사용
+    }
 
     try {
         const connection = await conn;
@@ -889,18 +894,31 @@ app.get('/api/schedule-details', async (req, res) => {
         let detailQuery;
         let queryParams;
 
+        const sectionArray = sections ? sections.split(',') : [];
+
         if (isAdmin === 'ADMIN') {
             detailQuery = `
-                SELECT * FROM WorkingDetail
-                WHERE work_time_id = ? AND section IN (?) AND time = ? AND schedule_type = ? AND DATE(create_at) = DATE(?)
+                SELECT *, CONVERT_TZ(create_at, '+00:00', '+09:00') as korea_time
+                FROM WorkingDetail
+                WHERE work_time_id = ? 
+                AND section IN (?) 
+                AND time = ? 
+                AND schedule_type = ? 
+                AND DATE(CONVERT_TZ(create_at, '+00:00', '+09:00')) = ?
             `;
-            queryParams = [workTimeId, sections.split(','), time, schedule_type, formattedDate];
+            queryParams = [workTimeId, sectionArray, time, schedule_type, formattedDate];
         } else {
             detailQuery = `
-                SELECT * FROM WorkingDetail
-                WHERE work_time_id = ? AND section IN (?) AND user_id = ? AND time = ? AND schedule_type = ? AND DATE(create_at) = DATE(?)
+                SELECT *, CONVERT_TZ(create_at, '+00:00', '+09:00') as korea_time
+                FROM WorkingDetail
+                WHERE work_time_id = ? 
+                AND section IN (?) 
+                AND user_id = ? 
+                AND time = ? 
+                AND schedule_type = ? 
+                AND DATE(CONVERT_TZ(create_at, '+00:00', '+09:00')) = ?
             `;
-            queryParams = [workTimeId, sections.split(','), user_id, time, schedule_type, formattedDate];
+            queryParams = [workTimeId, sectionArray, user_id, time, schedule_type, formattedDate];
         }
 
         const detailResults = await connection.query(detailQuery, queryParams);
@@ -909,20 +927,26 @@ app.get('/api/schedule-details', async (req, res) => {
             return;
         }
 
+        // 결과를 한국 시간으로 변환
+        const convertedResults = detailResults.map(result => {
+            return {
+                ...result,
+                create_at: result.korea_time
+            };
+        });
+
         res.json({
             areaId,
             workTimeId,
-            details: detailResults
+            details: convertedResults
         });
     } catch (err) {
         console.error('Error fetching schedule details:', err);
         if (!res.headersSent) {
-            res.status(500).json({ message: 'Server error' });
+            res.status(500).json({ message: 'Server error', error: err.message });
         }
     }
 });
-
-
 //=================================================================
 // WorkingTime 데이터 조회 엔드포인트 (모든 행 반환)
 //=================================================================
@@ -1015,16 +1039,72 @@ app.get('/api/all-sections', async (req, res) => {
         const connection = await conn;
         const query = 'SELECT DISTINCT section FROM Section';
         const results = await connection.query(query);
-        console.log('Results:', results);
+
         const sections = results;
         res.json(sections);
-        console.log('Sections:', sections);
+
     } catch (error) {
         console.error('Error fetching all sections:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
+
+app.post('/api/schedule-details-for-excel', async (req, res) => {
+    const { area_name, schedule_type, time, date } = req.body;
+
+    try {
+        const connection = await conn;
+
+        // WorkingArea 테이블에서 area_id 조회
+        const [areaResult] = await connection.query('SELECT area_id FROM WorkingArea WHERE area_name = ?', [area_name]);
+        if (!areaResult) {
+            return res.status(404).json({ message: 'Area not found' });
+        }
+        const areaId = areaResult.area_id;
+
+        // WorkingTime 테이블에서 work_time_id 조회
+        const [timeResult] = await connection.query(
+            'SELECT work_time_id FROM WorkingTime WHERE area_id = ? AND schedule_type = ? AND time = ?',
+            [areaId, schedule_type, time]
+        );
+        if (!timeResult) {
+            return res.status(404).json({ message: 'Working time not found' });
+        }
+        const workTimeId = timeResult.work_time_id;
+
+        // 날짜에 9시간을 더해 한국 시간으로 조정
+        const koreaDate = new Date(date);
+        koreaDate.setHours(koreaDate.getHours() + 9);
+        const adjustedDate = koreaDate.toISOString().split('T')[0];
+
+        // WorkingDetail 데이터 조회 (날짜 조정)
+        const detailQuery = `
+            SELECT *
+            FROM WorkingDetail
+            WHERE work_time_id = ? AND DATE(create_at) = ?
+        `;
+        const detailResults = await connection.query(detailQuery, [workTimeId, adjustedDate]);
+        console.log("detailResults : ",detailResults);
+        console.log("workTimeId : ",workTimeId);
+        console.log("adjustedDate : ",adjustedDate);
+
+        // 결과의 create_at을 한국 시간으로 조정
+        const convertedResults = detailResults.map(result => {
+            const koreaTime = new Date(result.create_at);
+            koreaTime.setHours(koreaTime.getHours() + 9);
+            return {
+                ...result,
+                create_at: koreaTime
+            };
+        });
+
+        res.json(convertedResults);
+    } catch (err) {
+        console.error('Error fetching schedule details for excel:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 
 startServer();

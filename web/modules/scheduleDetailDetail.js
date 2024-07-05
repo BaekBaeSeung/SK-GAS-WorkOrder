@@ -4,37 +4,31 @@ import debounce from 'lodash/debounce';
 let isLoading = false;
 let controller = new AbortController();
 
-function showModal(message, onConfirm) {
+function showModal(message, shouldNavigate = true) {
     const modalContent = document.querySelector('.modal-content');
     modalContent.innerHTML = `
         <span class="close">&times;</span>
-        <p>${message}</p>
-        ${onConfirm ? '<button id="confirm-button" class="submit-button">확인</button>' : ''}
+        ${message}
     `;
     const modal = document.getElementById('modal');
     modal.style.display = 'block';
 
-    const closeModal = () => {
+    // 모달의 x 버튼 이벤트 리스너 추가
+    const closeModal = document.querySelector('.close');
+    closeModal.addEventListener('click', () => {
         modal.style.display = 'none';
-        navigateTo('/scheduleDetail'); // 모달을 닫을 때마다 스케줄 디테일 페이지로 이동
-    };
-
-    const closeModalButton = document.querySelector('.close');
-    closeModalButton.addEventListener('click', closeModal);
-
-    if (onConfirm) {
-        const confirmButton = document.getElementById('confirm-button');
-        confirmButton.addEventListener('click', () => {
-            modal.style.display = 'none';
-            onConfirm();
-            navigateTo('/scheduleDetail'); // 확인 버튼을 클릭할 때도 스케줄 디테일 페이지로 이동
-        });
-    }
+        if (shouldNavigate) {
+            navigateTo('/scheduleDetail'); // 스케줄 디테일 페이지로 이동
+        }
+    });
 
     // 모달 외부 클릭 시 닫기
     window.addEventListener('click', (event) => {
         if (event.target == modal) {
-            closeModal();
+            modal.style.display = 'none';
+            if (shouldNavigate) {
+                navigateTo('/scheduleDetail'); // 스케줄 디테일 페이지로 이동
+            }
         }
     });
 }
@@ -73,10 +67,12 @@ export const renderScheduleDetailDetailPage = debounce(async function(container,
         const schedules = await scheduleResponse.json();
         const initial = schedules.length > 0 ? schedules[0].schedule_type.toUpperCase() : '';
 
+
+        console.log("sectionData.sectionName : ",sectionData.sectionName);
         // WorkingDetail 데이터 조회
-        const workingDetailResponse = await fetch(`/api/working-detail?section=${sectionData.sectionName}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}&date=${scheduleData.date}&isAdmin=${userProfile.isAdmin}`, { signal: controller.signal });
-        console.log("scheduleData.time : ",scheduleData.time);
+        const workingDetailResponse = await fetch(`/api/working-detail?section=${encodeURIComponent(sectionData.sectionName)}&user_id=${userProfile.userId}&time=${scheduleData.time}&schedule_type=${scheduleData.schedule_type}&date=${scheduleData.date}&isAdmin=${userProfile.isAdmin}`, { signal: controller.signal });
         const workingDetailData = await workingDetailResponse.json();
+
 
         // value 값을 구분자 ','로 분리하여 배열로 변환
         const inputValues = workingDetailData.value ? workingDetailData.value.split(',') : [];
@@ -84,14 +80,10 @@ export const renderScheduleDetailDetailPage = debounce(async function(container,
         // 오늘 날짜를 YYYY-MM-DD 형식으로 가져오기
         const today = new Date();
         const formattedToday = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}`; // 형식을 scheduleData.date와 동일하게 변경
-        console.log("formattedToday : ", formattedToday);
 
-
-        console.log("formattedToday : ", formattedToday);
-        console.log("scheduleData.date : ", scheduleData.date);
         // input 요소와 submit 버튼 비활성화 여부 결정
         const isEditable = scheduleData.date === formattedToday && userProfile.isAdmin !== 'ADMIN';
-        console.log("isEditable : ", isEditable);
+
         const showButton = isEditable;
 
         container.innerHTML = `
@@ -201,31 +193,13 @@ export const renderScheduleDetailDetailPage = debounce(async function(container,
                 });
 
                 if (emptyFields.length > 0) {
-                    const modalContent = document.querySelector('.modal-content');
-                    modalContent.innerHTML = `
-                        <span class="close">&times;</span>
+                    const modalContent = `
                         <p>다음 항목이 입력되지 않았습니다 :</p>
                         <ul>
                             ${emptyFields.map(field => `<li>${field}</li>`).join('')}
                         </ul>
                     `;
-                    const modal = document.getElementById('modal');
-                    modal.style.display = 'block';
-
-                    // 모달의 x 버튼 이벤트 리스너 추가
-                    const closeModal = document.querySelector('.close');
-                    closeModal.addEventListener('click', () => {
-                        modal.style.display = 'none';
-                        navigateTo('/scheduleDetail'); // 스케줄 디테일 페이지로 이동
-                    });
-
-                    // 모달 외부 클릭 시 닫기
-                    window.addEventListener('click', (event) => {
-                        if (event.target == modal) {
-                            modal.style.display = 'none';
-                            navigateTo('/scheduleDetail'); // 스케줄 디테일 페이지로 이동
-                        }
-                    });
+                    showModal(modalContent, false); // false를 전달하여 페이지 이동을 막습니다.
                 } else {
                     const value = inputValues.join(',');
                     const section = sectionData.sectionName;

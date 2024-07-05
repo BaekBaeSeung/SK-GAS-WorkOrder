@@ -1,33 +1,67 @@
 import ExcelJS from 'exceljs';
 import { getCookie } from './utils.js';
 
-export async function downloadExcel() {
+export async function downloadExcel(uniqueSchedules) {
+
     try {
-        const scheduleData = JSON.parse(localStorage.getItem('currentScheduleData')) || {};
-        const details = JSON.parse(localStorage.getItem('scheduleDetails')) || [];
-
-        console.log('scheduleData:', scheduleData);
-        console.log('details:', details);
-
-        if (!scheduleData.time) {
-            throw new Error('Schedule data is missing or invalid');
+        if (uniqueSchedules.length === 0) {
+            throw new Error('스케줄 데이터가 없습니다.');
         }
 
-        if (details.length === 0) {
-            throw new Error('No schedule details found');
+        const allDetails = [];
+
+        for (const schedule of uniqueSchedules) {
+
+            const response = await fetch('/api/schedule-details-for-excel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    area_name: schedule.area_name,
+                    schedule_type: schedule.schedule_type,
+                    time: schedule.time,
+                    date: schedule.create_at
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('스줄 세부 정보를 가져오는데 실패했습니다.');
+            }
+
+            const details = await response.json();
+            allDetails.push({ schedule, details });
+
         }
 
-        // 여기서 필요한 데이터를 가져옵니다.
-        const data = []; // 이 부분은 기존 데이터 구조에 따라 채워넣으세요.
-
-        await generateExcel(data, scheduleData, details);
+        await generateExcel(allDetails);
     } catch (error) {
-        console.error('Error downloading excel:', error);
+        console.error('엑셀 다운로드 중 오류가 발생했습니다:', error);
         alert('엑셀 다운로드 중 오류가 발생했습니다: ' + error.message);
     }
 }
+// export async function downloadExcel(scheduleData, details) {
+//     try {
 
-async function generateExcel(data, scheduleData, details) {
+//         if (!scheduleData.time) {
+//             throw new Error('Schedule data is missing or invalid');
+//         }
+
+//         if (details.length === 0) {
+//             throw new Error('No schedule details found');
+//         }
+
+//         // 여기서 필요한 데이터를 가져옵니다.
+//         const data = []; // 이 부분은 기존 데이터 구조에 따라 채워넣으세요.
+
+//         await generateExcel(data, scheduleData, details);
+//     } catch (error) {
+//         console.error('Error downloading excel:', error);
+//         alert('엑셀 다운로드 중 오류가 발생했습니다: ' + error.message);
+//     }
+// }
+
+// async function generateExcel(data, allDetails) {
+async function generateExcel(allDetails) {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Notices');
 
@@ -379,54 +413,56 @@ async function generateExcel(data, scheduleData, details) {
                 }
             // B3:C3, B4:C4, ... B17:C17 병합
 
-            // 데이터 추가 및 스타일 설정
-            data.forEach((item, index) => {
-                const row = worksheet.addRow(item);
-                row.eachCell((cell) => {
-                    cell.font = { name: '돋움', size: 10 }; // 데이터 행 폰트 설정
-                    cell.alignment = { vertical: 'middle', horizontal: 'center' };
-                    cell.border = {
-                        top: { style: 'thin', color: { argb: '000000' } },
-                        left: { style: 'thin', color: { argb: '000000' } },
-                        bottom: { style: 'thin', color: { argb: '000000' } },
-                        right: { style: 'thin', color: { argb: '000000' } }
-                    };
-                });
-            });
-
             // 데이터 매핑 객체 생성
             const sectionMapping = {
-                '석화사 출하펌프': { rows: [52, 53, 54, 55], valueIndex: 2 },
-                'UAC C3 loading': { rows: [48, 49, 50, 51], valueIndex: 3 }
+                'CHEMICAL': { rows: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], valueIndex: 0 },
+                '회수시설': { rows: [18, 19], valueIndex: 1 },
+                'AC1831': { rows: [20, 21, 22, 23, 24], valueIndex: 2 },
+                '태광 C3 loading': { rows: [25, 26, 27, 28], valueIndex: 3 },
+                'SKA/효성 #2 C3 loading': { rows: [29, 30, 31, 32], valueIndex: 4 },
+                '효성 #1 C3 loading': { rows: [33, 34, 35], valueIndex: 5 },
+                'SKE C3 unloading': { rows: [36, 37, 38], valueIndex: 6 },
+                'SKE C4 unloading': { rows: [39, 40, 41], valueIndex: 7 },
+                'SKGC C4 loading': { rows: [42, 43, 44], valueIndex: 8 },
+                '카프로 C3 loading': { rows: [45, 46, 47], valueIndex: 9 },
+                'UAC C3 loading': { rows: [48, 49, 50, 51], valueIndex: 10 },
+                '석화사 출하펌프': { rows: [52, 53, 54, 55], valueIndex: 11 },
+                'SKE H2 C3': { rows: [56, 57, 58, 59], valueIndex: 12 },
+                '기타': { rows: [60, 61], valueIndex: 13 }
             };
 
-            // 스케줄 데이터에서 시간 추출
-            const timeIndex = ['08:00', '12:00', '16:00', '20:00', '00:00', '04:00', '02:00', '06:00'].indexOf(scheduleData.time.slice(0, 5));
-            
-            if (timeIndex === -1) {
-                console.error('Invalid time in scheduleData:', scheduleData.time);
-                return;
-            }
+            allDetails.forEach(({ schedule, details }) => {
+    const scheduleTime = schedule.time;
+    if (!scheduleTime) {
+        console.error('Invalid time in schedule:', schedule);
+        return;
+    }
 
-            // details 배열을 순회하며 데이터 삽입
-            details.forEach(detail => {
-                const sectionInfo = sectionMapping[detail.section];
-                if (sectionInfo) {
-                    const values = detail.value.split(',');
-                    sectionInfo.rows.forEach((row, index) => {
-                        const cell = worksheet.getCell(`${String.fromCharCode(70 + timeIndex)}${row}`);
-                        cell.value = values[index] || '-';
-                        cell.alignment = { vertical: 'middle', horizontal: 'center' };
-                        cell.font = { name: '돋움', size: 10 };
-                        cell.border = {
-                            top: { style: 'thin', color: { argb: '000000' } },
-                            left: { style: 'thin', color: { argb: '000000' } },
-                            bottom: { style: 'thin', color: { argb: '000000' } },
-                            right: { style: 'thin', color: { argb: '000000' } }
-                        };
-                    });
-                }
+    const timeIndex = ['08:00', '12:00', '16:00', '20:00', '00:00', '04:00', '02:00', '06:00'].indexOf(scheduleTime);
+    if (timeIndex === -1) {
+        console.error('Invalid time in schedule:', scheduleTime);
+        return;
+    }
+
+    Object.entries(sectionMapping).forEach(([section, info]) => {
+        const detail = details.find(d => d.section === section);
+        if (detail) {
+            const values = detail.value.split(',');
+            info.rows.forEach((row, index) => {
+                const cell = worksheet.getCell(`${String.fromCharCode(70 + timeIndex)}${row}`);
+                cell.value = values[index] || '-';
+                cell.alignment = { vertical: 'middle', horizontal: 'center' };
+                cell.font = { name: '돋움', size: 10 };
+                cell.border = {
+                    top: { style: 'thin', color: { argb: '000000' } },
+                    left: { style: 'thin', color: { argb: '000000' } },
+                    bottom: { style: 'thin', color: { argb: '000000' } },
+                    right: { style: 'thin', color: { argb: '000000' } }
+                };
             });
+        }
+    });
+});
 
             // 나머지 셀들에 대해 '-' 값과 테두리 설정
             for (let i = 3; i <= 61; i++) {

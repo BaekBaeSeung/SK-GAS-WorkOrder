@@ -3,6 +3,7 @@ import { renderPreviousPage } from './previous.js';
 import { renderScheduleDetailPage } from './scheduleDetail.js'; // scheduleDetail.js 파일에서 스케줄 상세 페이지 정의
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime} from './utils.js'; // 유틸 함수 임포트
 import debounce from 'lodash/debounce';
+import { downloadExcel } from './xlsx.js'; // xlsx.js에서 downloadExcel 함수 import
 
 // AbortController 인스턴스를 모듈 스코프에 선언
 let controller = new AbortController();
@@ -163,6 +164,7 @@ export const renderSchedulePage = debounce(async function(container) {
                         <div class="notice" id="notice">
                             <p>공지사항 [${noticeCount}]<span class="dash">●</span></p>
                         </div>
+                        <button id="download-excel"><img src="./assets/img/common/xls_pic.png" alt="엑셀 다운로드" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></button>
                     </div>
                     <div class="schedule-container">
                         <div class="schedule-detail">
@@ -255,6 +257,7 @@ export const renderSchedulePage = debounce(async function(container) {
                 navigateTo('/previous');
             });
         });
+        console.log("uniqueSchedules : ",uniqueSchedules);
 
         document.querySelectorAll('.schedule-item').forEach(el => {
             el.addEventListener('click', async () => {
@@ -315,6 +318,19 @@ export const renderSchedulePage = debounce(async function(container) {
         document.getElementById('logo').addEventListener('click', () => {
             navigateTo('/schedule');
         });
+
+        // 엑셀 다운로드 버튼 이벤트 리스너 추가
+        const downloadExcelButton = document.getElementById('download-excel');
+        if (downloadExcelButton) {
+            downloadExcelButton.addEventListener('click', async () => {
+                try {
+                    await downloadExcel(uniqueSchedules);
+                } catch (error) {
+                    console.error('엑셀 다운로드 중 오류 발생:', error);
+                    alert('엑셀 다운로드 중 오류가 발생했습니다.');
+                }
+            });
+        }
     } catch (error) {
         if (error.name === 'AbortError') {
             console.log('Fetch aborted');
@@ -345,3 +361,4 @@ function updateTime() {
 }
 
 updateTime();
+

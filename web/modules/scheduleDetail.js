@@ -20,6 +20,8 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
         
         scheduleData = Object.keys(scheduleData).length > 0 ? scheduleData : storedData;
         sections = sections.length > 0 ? sections : storedSections;
+        console.log("scheduleData : ",scheduleData);
+        console.log("sections : ",sections);
 
         // 데이터를 로컬 스토리지에 저장
         localStorage.setItem('scheduleData', JSON.stringify(scheduleData));
@@ -54,7 +56,7 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
         let detailsData = {};
         try {
             const detailsResponse = await fetch(`/api/schedule-details?area_name=${scheduleData.area_name}&schedule_type=${scheduleData.schedule_type}&time=${scheduleData.time}&sections=${encodeURIComponent(sectionNames)}&user_id=${userProfile.userId}&date=${scheduleData.date}&isAdmin=${userProfile.isAdmin}`);
-            
+            console.log("detailsResponse59 : ",detailsResponse);
             if (detailsResponse.ok) {
                 detailsData = await detailsResponse.json();
                 // 여기에 scheduleDetails를 로컬 스토리지에 저장하는 코드 추가
@@ -113,7 +115,6 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
                     </div>
                 </div>
             </div>
-            ${userProfile.isAdmin === 'ADMIN' ? '<button id="download-excel"><img src="/assets/img/common/xls_pic.png" alt="엑셀 다운로드" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></button>' : ''}
             <div id="modal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
@@ -129,6 +130,7 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
         document.querySelectorAll('.task-item').forEach(item => {
             item.addEventListener('click', async () => {
                 const sectionId = item.dataset.taskId;
+                console.log("sectionId : ",sectionId);
                 const sectionName = item.querySelector('.task-name').textContent;
                 
                 try {
@@ -138,6 +140,7 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
                         throw new Error('Failed to fetch subsections');
                     }
                     const subSections = await response.json();
+                    
                     
 
                     // 현재 스케줄 데이터와 섹션 정보를 로컬 스토리지에 저장
@@ -189,21 +192,6 @@ export const renderScheduleDetailPage = debounce(async function(container, sched
         document.getElementById('logo').addEventListener('click', () => {
             navigateTo('/schedule');
         });
-
-        if (userProfile.isAdmin === 'ADMIN') {
-            document.getElementById('download-excel').addEventListener('click', async () => {
-                const incompleteTasksExist = document.querySelectorAll('.task-number:not(.input-active)').length > 0;
-                
-                if (incompleteTasksExist) {
-                    const confirmDownload = await showConfirmModal('누락된 데이터가 있습니다. 그래도 다운로드 받으시겠습니까?');
-                    if (confirmDownload) {
-                        await downloadExcel(scheduleData, details);
-                    }
-                } else {
-                    await downloadExcel(scheduleData, details);
-                }
-            });
-        }
     } catch (error) {
         if (error.name === 'AbortError') {
             console.log('Fetch aborted');

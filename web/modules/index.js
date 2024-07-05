@@ -157,10 +157,7 @@ function loadPage(path, state = {}) {
         // 페이드인 효과 적용
         applyFadeEffect(app);
 
-        // 모달 표시 여부 확인
-        if (state.showModal && path !== '/login') { // 로그인 페이지가 아닌 경우에만 모달 표시
-            showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.');
-        }
+
     }, 250); // 페이드 아웃을 위한 짧은 지연
 }
 
@@ -184,6 +181,11 @@ function navigateTo(path, state = {}) {
     setTimeout(() => {
         history.pushState(state, '', path);
         localStorage.setItem('pageState', JSON.stringify(state));
+
+                // 모달 표시 여부 확인
+        if (state.showModal && path !== '/login') { // 로그인 페이지가 아닌 경우에만 모달 표시
+            showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.');
+        }
         loadPage(path, state);
     }, 250); // 페이드 아웃을 위한 짧은 지연
 }

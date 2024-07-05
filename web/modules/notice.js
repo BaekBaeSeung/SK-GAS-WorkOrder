@@ -1,4 +1,3 @@
-import { downloadExcel } from './xlsx.js';
 import { getCurrentTime, getCurrentDate, getCurrentDay, fetchUserProfile, fetchNoticeCount, logout, formatTime, showErrorModal } from './utils.js'; // 유틸 함수 임포트
 import { renderNoticeDetailPage } from './noticeDetail.js'; // noticeDetail 임포트
 import debounce from 'lodash/debounce';
@@ -92,7 +91,6 @@ export const renderNoticePage = debounce(async function(container) {
                         </div>
                     `).join('')}
                 </div>
-                ${userProfile.isAdmin === 'ADMIN' ? '<button id="download-excel"><img src="./assets/img/common/xls_pic.png" alt="엑셀 다운로드" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></button>' : ''}
                 ${userProfile.isAdmin === 'ADMIN' ? '<button id="add-notice">+</button>' : ''}
                 <div id="modal" class="modal">
                     <div class="modal-content">
@@ -154,10 +152,6 @@ export const renderNoticePage = debounce(async function(container) {
         });
 
         if (userProfile.isAdmin === 'ADMIN') {
-            document.getElementById('download-excel').addEventListener('click', async () => {
-                await downloadExcel();
-            });
-
             document.getElementById('add-notice').addEventListener('click', () => {
                 navigateTo('/noticeAdmin');
             });
@@ -185,4 +179,4 @@ export const renderNoticePage = debounce(async function(container) {
     } finally {
         isLoading = false;
     }
-}, 0);  // 300ms 디바운스 적용
+}, 0);  
