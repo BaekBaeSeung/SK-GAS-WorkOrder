@@ -22,6 +22,7 @@ import { renderScheduleDetailDetailPage } from './scheduleDetailDetail.js'; // �
 import { renderNoticeAdminPage } from './noticeAdmin.js'; // noticeAdmin.js 파일에서 공지 작성 페이지 정의
 import { renderNoticeDetailPage } from './noticeDetail.js'; // noticeDetail.js 파일에서 공지사항 상세 페이지 정의
 import { renderScheduleSelectPage } from './scheduleSelect.js'; // 추가
+import { createMenu } from './menu.js';
 
 //=================================================================
 // Element List
@@ -39,12 +40,10 @@ import { renderScheduleSelectPage } from './scheduleSelect.js'; // 추가
 
 function loadCSS(filename) {
     const link = document.createElement('link');
-    link.rel = 'preload'; // 변경된 부분
-    link.as = 'style'; // 변경된 부분
+    link.rel = 'stylesheet';
     link.type = 'text/css';
     link.href = filename;
-    link.setAttribute('data-page-style', 'true'); // 페이지별 CSS 파일임을 표시
-    link.onload = () => { link.rel = 'stylesheet'; }; // 변경된 부분
+    link.setAttribute('data-page-style', 'true');
     document.head.appendChild(link);
 }
 
@@ -58,6 +57,9 @@ function applyFadeEffect(container) {
         container.classList.remove('fade-in', 'active');
     }, 500);
 }
+
+// 전역 변수로 메뉴 컨테이너 선언
+let menuContainer;
 
 function loadPage(path, state = {}) {
     const app = document.getElementById('app');
@@ -90,6 +92,31 @@ function loadPage(path, state = {}) {
 
         // localStorage에서 상태 복원
         const savedState = JSON.parse(localStorage.getItem('pageState')) || {};
+
+        // 햄버거 메뉴 처리
+        if (path === '/' || path === '/login') {
+            // 로딩 페이지와 로그인 페이지에서는 메뉴 숨김
+            if (menuContainer) {
+                menuContainer.style.display = 'none';
+            }
+        } else {
+            // 다른 페이지에서는 메뉴 표시
+            if (!menuContainer) {
+                menuContainer = document.createElement('div');
+                menuContainer.id = 'menu-container';
+                document.body.insertBefore(menuContainer, document.body.firstChild);
+                createMenu(menuContainer);
+            }
+            menuContainer.style.display = 'block';
+            
+            // 메뉴 가시성 업데이트
+            if (menuContainer.updateMenuVisibility) {
+                menuContainer.updateMenuVisibility();
+            }
+        }
+
+        // 기존 컨텐츠 제거
+        app.innerHTML = '';
 
         switch(true) {
             case path === '/':
@@ -161,6 +188,7 @@ function loadPage(path, state = {}) {
     }, 250); // 페이드 아웃을 위한 짧은 지연
 }
 
+// DOMContentLoaded 이벤트 리스너에서 메뉴 생성 부분 제거
 window.addEventListener("DOMContentLoaded", () => {
     const app = document.getElementById('app');
     applyFadeEffect(app);
@@ -282,7 +310,16 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-
-
+// 전역 스타일 추가
+const globalStyle = document.createElement('style');
+globalStyle.textContent = `
+    #menu-container {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+    }
+`;
+document.head.appendChild(globalStyle);
 
 

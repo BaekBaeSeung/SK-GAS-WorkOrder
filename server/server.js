@@ -44,8 +44,9 @@ console.log("JWT_SECRET:", JWT_SECRET);
 console.log("REFRESH_SECRET:", REFRESH_SECRET);
 
 const app = express();
-app.use(bodyParser.json()); // 추가
 app.use(cookieParser()); // 추가
+app.use(bodyParser.json()); // 추가
+
 
 const options = {
     key: fs.readFileSync(SSL_KEY_PATH),

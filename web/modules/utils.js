@@ -26,18 +26,31 @@ import { showModal } from './index.js'; // showModal 함수 가져오기
 
 // 로그아웃 요청 함수
 export async function logout() {
-    const response = await fetch('/logout', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+    try {
+        // 서버에 로그아웃 요청
+        const response = await fetch('/logout', {
+            method: 'POST',
+            credentials: 'include' // 쿠키를 포함하여 요청
+        });
 
-    if (response.ok) {
-        showModal('로그아웃 되었습니다.'); // 모달로 변경
-        window.navigateTo('/login');
-    } else {
-        showModal('로그아웃에 실패했습니다.'); // 모달로 변경
+        if (response.ok) {
+            // 모든 쿠키 삭제
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+            
+            // 로컬 스토리지 클리어
+            localStorage.clear();
+
+            // 캐시를 무시하고 로그인 페이지로 리다이렉트
+            window.location.href = '/login?t=' + new Date().getTime();
+        } else {
+            console.error('로그아웃 실패');
+            showModal('로그아웃에 실패했습니다. 다시 시도해주세요.');
+        }
+    } catch (error) {
+        console.error('로그아웃 중 오류 발생:', error);
+        showModal('로그아웃 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
 }
 
