@@ -28,6 +28,7 @@ export function createMenu(container) {
     if (existingStyle) {
         existingStyle.remove();
     }
+    console.count("몇개나 찍힐까");
     const style = document.createElement('style');
     style.id = 'menu-style';
     style.textContent = `
@@ -56,20 +57,19 @@ export function createMenu(container) {
             border-radius: 3px;
             opacity: 1;
             left: 0;
-            transform: rotate(0deg);
             transition: .25s ease-in-out;
         }
         .tb-menu-toggle span:nth-child(1) { top: 0px; }
         .tb-menu-toggle span:nth-child(2) { top: 10px; }
         .tb-menu-toggle span:nth-child(3) { top: 20px; }
-        .tb-menu-toggle.tb-active-toggle span:nth-child(1) {
+        .tb-menu-toggle.active span:nth-child(1) {
             top: 10px;
             transform: rotate(45deg);
         }
-        .tb-menu-toggle.tb-active-toggle span:nth-child(2) {
+        .tb-menu-toggle.active span:nth-child(2) {
             opacity: 0;
         }
-        .tb-menu-toggle.tb-active-toggle span:nth-child(3) {
+        .tb-menu-toggle.active span:nth-child(3) {
             top: 10px;
             transform: rotate(-45deg);
         }
@@ -82,14 +82,9 @@ export function createMenu(container) {
             border: 1px solid #ddd;
             border-radius: 4px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
         }
         .tb-mobile-menu.active {
             display: block;
-            opacity: 1;
-            transform: translateY(0);
         }
         .tb-mobile-menu li {
             padding: 10px 20px;
@@ -102,7 +97,6 @@ export function createMenu(container) {
             text-decoration: none;
             color: #333;
             display: block;
-            transition: color 0.2s ease;
         }
         .tb-mobile-menu a:hover {
             color: orange;
@@ -110,14 +104,13 @@ export function createMenu(container) {
     `;
     document.head.appendChild(style);
 
-
     // JavaScript 기능 추가
     const menuToggle = document.getElementById('menu-toggle');
     const menu = document.getElementById('menu');
 
     menuToggle.addEventListener('click', (event) => {
         event.preventDefault();
-        menuToggle.classList.toggle('tb-active-toggle');
+        menuToggle.classList.toggle('active');
         menu.classList.toggle('active');
         updateMenuVisibility(); // 메뉴 토글 시 가시성 업데이트
     });
@@ -134,8 +127,16 @@ export function createMenu(container) {
                 window.navigateTo(href);
             }
             menu.classList.remove('active');
-            menuToggle.classList.remove('tb-active-toggle');
+            menuToggle.classList.remove('active');
         });
+    });
+
+    // 메뉴 외부 클릭 시 메뉴 닫기
+    document.addEventListener('click', (event) => {
+        if (!container.contains(event.target) && menu.classList.contains('active')) {
+            menu.classList.remove('active');
+            menuToggle.classList.remove('active');
+        }
     });
 
     // 현재 페이지에 따라 메뉴 항목 가시성 업데이트
@@ -157,4 +158,3 @@ export function createMenu(container) {
     // 메뉴 가시성 업데이트 함수를 외부에서 접근 가능하게 만듦
     container.updateMenuVisibility = updateMenuVisibility;
 }
-

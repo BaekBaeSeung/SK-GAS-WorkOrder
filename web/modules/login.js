@@ -1,10 +1,13 @@
-import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus, formatTime} from './utils.js';
+import { getCurrentTime, getCurrentDate, getCurrentDay, checkLoginStatus, formatTime, getCookie} from './utils.js';
 
 export function renderLoginPage(container) {
-    // // 로그인 상태 확인
-    // if (!checkLoginStatus()) {
-    //     return;
-    // }
+    // 로그인 상태 확인
+    if (getCookie('accessToken')) {
+        showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.', () => {
+            navigateTo('/schedule');
+        });
+        return;
+    }
 
     container.innerHTML = `
         <head>

@@ -58,10 +58,29 @@ function applyFadeEffect(container) {
     }, 500);
 }
 
-// 전역 변수로 메뉴 컨테이너 선언
+// 전역 변수로 메뉴 컨테이너와 로딩 상태 선언
 let menuContainer;
+let isLoading = false;
+let isMenuCreated = false;
+
+function createMenuIfNeeded() {
+    if (!isMenuCreated) {
+        menuContainer = document.getElementById('menu-container');
+        if (!menuContainer) {
+            menuContainer = document.createElement('div');
+            menuContainer.id = 'menu-container';
+            document.body.insertBefore(menuContainer, document.body.firstChild);
+        }
+        createMenu(menuContainer);
+        isMenuCreated = true;
+    }
+}
 
 function loadPage(path, state = {}) {
+    // 이미 로딩 중이면 함수 실행을 중단
+    if (isLoading) return;
+    isLoading = true;
+
     const app = document.getElementById('app');
     
     // 페이드 아웃 효과 적용
@@ -81,12 +100,7 @@ function loadPage(path, state = {}) {
         if (path !== '/' && path !== '/login' && !accessToken) {
             showModal('로그인이 필요합니다.');
             navigateTo('/login');
-            return;
-        }
-
-        // 로그인 상태에서 로그인 페이지로 접근 시도 시
-        if (path === '/login' && accessToken) {
-            navigateTo('/schedule', { showModal: true });
+            isLoading = false;
             return;
         }
 
@@ -101,17 +115,9 @@ function loadPage(path, state = {}) {
             }
         } else {
             // 다른 페이지에서는 메뉴 표시
-            if (!menuContainer) {
-                menuContainer = document.createElement('div');
-                menuContainer.id = 'menu-container';
-                document.body.insertBefore(menuContainer, document.body.firstChild);
-                createMenu(menuContainer);
-            }
-            menuContainer.style.display = 'block';
-            
-            // 메뉴 가시성 업데이트
-            if (menuContainer.updateMenuVisibility) {
-                menuContainer.updateMenuVisibility();
+            createMenuIfNeeded();
+            if (menuContainer) {
+                menuContainer.style.display = 'block';
             }
         }
 
@@ -184,14 +190,21 @@ function loadPage(path, state = {}) {
         // 페이드인 효과 적용
         applyFadeEffect(app);
 
-
+        // 페이지 로딩 완료 후 상태 리셋
+        isLoading = false;
     }, 250); // 페이드 아웃을 위한 짧은 지연
 }
 
-// DOMContentLoaded 이벤트 리스너에서 메뉴 생성 부분 제거
+// DOMContentLoaded 이벤트 리스너 수정
 window.addEventListener("DOMContentLoaded", () => {
     const app = document.getElementById('app');
     applyFadeEffect(app);
+    
+    // 초기 페이지 로드 시 메뉴 생성
+    if (window.location.pathname !== '/' && window.location.pathname !== '/login') {
+        createMenuIfNeeded();
+    }
+    
     loadPage(window.location.pathname);
 });
 
@@ -200,6 +213,9 @@ window.addEventListener('popstate', (event) => {
 });
 
 function navigateTo(path, state = {}) {
+    // 이미 로딩 중이면 함수 실행을 중단
+    if (isLoading) return;
+
     const app = document.getElementById('app');
     
     // 페이드 아웃 효과 적용
@@ -209,13 +225,8 @@ function navigateTo(path, state = {}) {
     setTimeout(() => {
         history.pushState(state, '', path);
         localStorage.setItem('pageState', JSON.stringify(state));
-
-                // 모달 표시 여부 확인
-        if (state.showModal && path !== '/login') { // 로그인 페이지가 아닌 경우에만 모달 표시
-            showModal('이미 로그인된 상태입니다. 프로필을 눌러서 로그아웃 해주세요.');
-        }
         loadPage(path, state);
-    }, 250); // 페이드 아웃을 위한 짧은 지연
+    }, 150); // 페이드 아웃을 위한 짧은 지연
 }
 
 // navigateTo 함수를 전역으로 사용 가능하게 설정
@@ -233,7 +244,13 @@ function getCookie(name) {
 // 브라우저 콘솔에서 실행
 console.log(getCookie('accessToken'));
 
+// 모달 표시 함수 수정
+let modalVisible = false;
+
 export function showModal(message) {
+    if (modalVisible) return; // 이미 모달이 표시 중이면 함수 실행을 중단
+
+    modalVisible = true;
     const modal = document.createElement('div');
     modal.classList.add('modal');
     modal.innerHTML = `
@@ -247,6 +264,7 @@ export function showModal(message) {
     const closeModal = () => {
         modal.style.display = 'none';
         document.body.removeChild(modal);
+        modalVisible = false;
     };
 
     modal.querySelector('.close').addEventListener('click', closeModal);

@@ -247,7 +247,7 @@ export const renderSchedulePage = debounce(async function(container) {
                 </div>
             `;
         }
-
+console.count("몇개나 찍힐까");
         document.getElementById('notice').addEventListener('click', () => {
             navigateTo('/notice');
         });
